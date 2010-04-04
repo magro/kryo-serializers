@@ -19,7 +19,9 @@ import java.util.Arrays;
 import com.esotericsoftware.kryo.serialize.IntSerializer;
 
 /**
- * @author Martin Grotzke (martin.grotzke@freiheit.com) (initial creation)
+ * A kryo {@link Serializer} for lists created via {@link Arrays#asList(Object...)}.
+ * 
+ * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 @SuppressWarnings( "unchecked" )
 public class ArraysAsListSerializer extends Serializer {

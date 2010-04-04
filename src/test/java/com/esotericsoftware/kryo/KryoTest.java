@@ -55,7 +55,7 @@ import com.esotericsoftware.kryo.TestClasses.SomeInterface;
 import com.esotericsoftware.kryo.TestClasses.Person.Gender;
 
 /**
- * Test for {@link JavolutionTranscoder}
+ * Test for {@link Kryo} serialization.
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
