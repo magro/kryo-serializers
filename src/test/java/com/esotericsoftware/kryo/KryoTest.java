@@ -67,6 +67,7 @@ public class KryoTest {
     protected void beforeTest() {
         _kryo = new Kryo();
         _kryo.setAllowUnregisteredClasses( true );
+        _kryo.setSerializer( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
     }
 
     @Test( enabled = true )
@@ -107,8 +108,8 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsUnmodifiableList() throws Exception {
-        List<String> unmodifiableList = Collections.unmodifiableList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) );
-        List<String> deserialized = deserialize( serialize( unmodifiableList ), List.class );
+        final List<String> unmodifiableList = Collections.unmodifiableList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) );
+        final List<String> deserialized = deserialize( serialize( unmodifiableList ), List.class );
         assertDeepEquals( deserialized, unmodifiableList );
     }
     
@@ -117,33 +118,33 @@ public class KryoTest {
     public void testJavaUtilCollectionsUnmodifiableMap() throws Exception {
         final HashMap<String, String> m = new HashMap<String, String>();
         m.put( "foo", "bar" );
-        Map<String, String> unmodifiableMap = Collections.unmodifiableMap( m );
-        Map<String, String> deserialized = deserialize( serialize( unmodifiableMap ), Map.class );
+        final Map<String, String> unmodifiableMap = Collections.unmodifiableMap( m );
+        final Map<String, String> deserialized = deserialize( serialize( unmodifiableMap ), Map.class );
         assertDeepEquals( deserialized, unmodifiableMap );
     }
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsEmptyList() throws Exception {
-        List<String> emptyList = Collections.<String>emptyList();
-        List<String> deserialized = deserialize( serialize( emptyList ), List.class );
+        final List<String> emptyList = Collections.<String>emptyList();
+        final List<String> deserialized = deserialize( serialize( emptyList ), List.class );
         assertDeepEquals( deserialized, emptyList );
     }
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsEmptyMap() throws Exception {
-        Map<String, String> emptyMap = Collections.<String, String>emptyMap();
-        Map<String, String> deserialized = deserialize( serialize( emptyMap ), Map.class );
+        final Map<String, String> emptyMap = Collections.<String, String>emptyMap();
+        final Map<String, String> deserialized = deserialize( serialize( emptyMap ), Map.class );
         assertDeepEquals( deserialized, emptyMap );
     }
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilArraysAsList() throws Exception {
-        List<String> asList = Arrays.asList( "foo", "bar" );
-        List<String> deserialized = deserialize( serialize( asList ), List.class );
-        assertDeepEquals( deserialized, asList );
+        final Holder<List<String>> asListHolder = new Holder( Arrays.asList( "foo", "bar" ) );
+        final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
+        assertDeepEquals( deserialized, asListHolder );
     }
 
     @Test( enabled = true )
@@ -168,7 +169,7 @@ public class KryoTest {
         final CounterHolder holder2 = new CounterHolder( sharedObject );
         final CounterHolderArray holderHolder = new CounterHolderArray( holder1, holder2 );
         
-        CounterHolderArray deserialized = deserialize( serialize( holderHolder ), CounterHolderArray.class );
+        final CounterHolderArray deserialized = deserialize( serialize( holderHolder ), CounterHolderArray.class );
         assertDeepEquals( deserialized, holderHolder );
         Assert.assertTrue( deserialized.holders[0].item == deserialized.holders[1].item );
 
@@ -188,7 +189,7 @@ public class KryoTest {
         final Holder<T> holder2 = new Holder<T>( sharedObject );
         final HolderArray<T> holderHolder = new HolderArray<T>( holder1, holder2 );
         
-        HolderArray<T> deserialized = deserialize( serialize( holderHolder ), HolderArray.class );
+        final HolderArray<T> deserialized = deserialize( serialize( holderHolder ), HolderArray.class );
         assertDeepEquals( deserialized, holderHolder );
         Assert.assertTrue( deserialized.holders[0].item == deserialized.holders[1].item );
     }
@@ -200,7 +201,7 @@ public class KryoTest {
         final Holder<T> holder2 = new Holder<T>( sharedObject );
         final HolderList<T> holderHolder = new HolderList<T>( new ArrayList<Holder<T>>( Arrays.asList( holder1, holder2 ) ) );
         
-        HolderList<T> deserialized = deserialize( serialize( holderHolder ), HolderList.class );
+        final HolderList<T> deserialized = deserialize( serialize( holderHolder ), HolderList.class );
         assertDeepEquals( deserialized, holderHolder );
         Assert.assertTrue( deserialized.holders.get( 0 ).item == deserialized.holders.get( 1 ).item );
     }
@@ -244,35 +245,35 @@ public class KryoTest {
 
     @Test( enabled = true, dataProvider = "typesAsSessionAttributesProvider" )
     public <T> void testTypesAsSessionAttributes( final Class<T> type, final T instance ) throws Exception {
-        T deserialized = deserialize( serialize( instance ), type );
+        final T deserialized = deserialize( serialize( instance ), type );
         assertDeepEquals( deserialized, instance );
     }
 
     @Test( enabled = true )
     public void testTypesInContainerClass() throws Exception {
-        MyContainer myContainer = new MyContainer();
-        MyContainer deserialized = deserialize( serialize( myContainer ), MyContainer.class );
+        final MyContainer myContainer = new MyContainer();
+        final MyContainer deserialized = deserialize( serialize( myContainer ), MyContainer.class );
         assertDeepEquals( deserialized, myContainer );
     }
 
     @Test( enabled = true )
     public void testClassWithoutDefaultConstructor() throws Exception {
-        ClassWithoutDefaultConstructor obj = TestClasses.createClassWithoutDefaultConstructor( "foo" );
-        ClassWithoutDefaultConstructor deserialized = deserialize( serialize( obj ), ClassWithoutDefaultConstructor.class );
+        final ClassWithoutDefaultConstructor obj = TestClasses.createClassWithoutDefaultConstructor( "foo" );
+        final ClassWithoutDefaultConstructor deserialized = deserialize( serialize( obj ), ClassWithoutDefaultConstructor.class );
         assertDeepEquals( deserialized, obj );
     }
 
     @Test( enabled = true )
     public void testPrivateClass() throws Exception {
-        Holder<?> holder = new Holder<Object>( TestClasses.createPrivateClass( "foo" ) );
-        Holder<?> deserialized = deserialize( serialize( holder ), Holder.class );
+        final Holder<?> holder = new Holder<Object>( TestClasses.createPrivateClass( "foo" ) );
+        final Holder<?> deserialized = deserialize( serialize( holder ), Holder.class );
         assertDeepEquals( deserialized, holder );
     }
 
     @Test( enabled = true )
     public void testCollections() throws Exception {
-        EntityWithCollections obj = new EntityWithCollections();
-        EntityWithCollections deserialized = deserialize( serialize( obj ), EntityWithCollections.class );
+        final EntityWithCollections obj = new EntityWithCollections();
+        final EntityWithCollections deserialized = deserialize( serialize( obj ), EntityWithCollections.class );
         assertDeepEquals( deserialized, obj );
     }
 
@@ -283,7 +284,7 @@ public class KryoTest {
         p1.addFriend( p2 );
         p2.addFriend( p1 );
 
-        Person deserialized = deserialize( serialize( p1 ), Person.class );
+        final Person deserialized = deserialize( serialize( p1 ), Person.class );
         assertDeepEquals( deserialized, p1 );
     }
 

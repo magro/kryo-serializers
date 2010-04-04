@@ -804,6 +804,12 @@ public class TestClasses {
 
     static class Holder<T> {
         T item;
+        
+        /**
+         * Default constructor, added for kryo...
+         */
+        public Holder() {
+        }
 
         public Holder( final T item ) {
             this.item = item;
