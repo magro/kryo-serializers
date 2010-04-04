@@ -1,3 +1,3 @@
-A test that shows how serialization works with kryo (http://code.google.com/p/kryo/).
+A project that shows how serialization works with kryo (http://code.google.com/p/kryo/) and adds serializers for some jdk types.
 
 For building you can use buildr (http://buildr.apache.org).

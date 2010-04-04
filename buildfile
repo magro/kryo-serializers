@@ -13,7 +13,7 @@ CLANG = 'commons-lang:commons-lang:jar:2.4' # tests of javolution-serializer, xs
 
 
 desc 'Kryo/binary serialization strategy'
-define 'kryo-hello' do
+define 'kryo-serializers' do
   project.group = 'kryo'
   project.version = '0.1-SNAPSHOT'
 
