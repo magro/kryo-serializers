@@ -86,8 +86,8 @@ public class TestClasses {
         return result;
     }
 
-    static Container createContainer( final String bodyContent ) {
-        return new Container( bodyContent );
+    static Container createContainer() {
+        return new Container();
     }
 
     static SomeInterface createProxy() {
@@ -132,13 +132,11 @@ public class TestClasses {
 
         private final Body _body;
 
-        public Container( final String bodyContent ) {
+        public Container() {
             _body = new Body();
-            _body.someContent = bodyContent;
         }
 
         class Body {
-            String someContent;
         }
 
     }

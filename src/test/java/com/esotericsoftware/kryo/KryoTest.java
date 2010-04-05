@@ -196,7 +196,7 @@ public class KryoTest {
 
     @Test( enabled = true )
     public void testInnerClass() throws Exception {
-        final Container container = TestClasses.createContainer( "some content" );
+        final Container container = TestClasses.createContainer();
         final Container deserialized = deserialize( serialize( container ), Container.class );
         assertDeepEquals( deserialized, container );
     }
