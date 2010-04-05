@@ -45,9 +45,9 @@ public class ArraysAsListSerializer extends Serializer {
     @Override
     public <T> T readObjectData( final ByteBuffer buffer, final Class<T> clazz ) {
         final int length = IntSerializer.get( buffer, true );
-        final String componentType = _kryo.readObject( buffer, String.class );
+        final Class<?> componentType = _kryo.readClass( buffer ).getType();
         try {
-            final Object[] items = (Object[]) Array.newInstance( Class.forName( componentType ), length );
+            final Object[] items = (Object[]) Array.newInstance( componentType, length );
             for( int i = 0; i < length; i++ ) {
                 items[i] = _kryo.readClassAndObject( buffer );
             }
@@ -65,8 +65,8 @@ public class ArraysAsListSerializer extends Serializer {
          try {
             final Object[] array = (Object[]) _arrayField.get( obj );
             IntSerializer.put( buffer, array.length, true );
-            final String componentType = array.getClass().getComponentType().getName();
-            _kryo.writeObject( buffer, componentType );
+            final Class<?> componentType = array.getClass().getComponentType();
+            _kryo.writeClass( buffer, componentType );
             for( final Object item : array ) {
                 _kryo.writeClassAndObject( buffer, item );
             }

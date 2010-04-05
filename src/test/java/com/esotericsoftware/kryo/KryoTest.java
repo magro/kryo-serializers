@@ -141,9 +141,34 @@ public class KryoTest {
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
-    public void testJavaUtilArraysAsList() throws Exception {
+    public void testJavaUtilArraysAsListEmpty() throws Exception {
+        final Holder<List<String>> asListHolder = new Holder( Arrays.asList() );
+        final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
+        assertDeepEquals( deserialized, asListHolder );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilArraysAsListPrimitiveArrayElement() throws Exception {
+        final int[] values = { 1, 2 };
+        final Holder<List<String>> asListHolder = new Holder( Arrays.asList( values ) );
+        final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
+        assertDeepEquals( deserialized, asListHolder );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilArraysAsListString() throws Exception {
         final Holder<List<String>> asListHolder = new Holder( Arrays.asList( "foo", "bar" ) );
         final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
+        assertDeepEquals( deserialized, asListHolder );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilArraysAsListEmail() throws Exception {
+        final Holder<List<Email>> asListHolder = new Holder( Arrays.asList( new Email( "foo", "foo@example.org" ) ) );
+        final Holder<List<Email>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
     }
 
