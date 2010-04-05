@@ -18,6 +18,7 @@ package com.esotericsoftware.kryo;
 
 import static com.esotericsoftware.kryo.TestClasses.createPerson;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -41,6 +42,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import sun.reflect.ReflectionFactory;
+
 import com.esotericsoftware.kryo.TestClasses.ClassWithoutDefaultConstructor;
 import com.esotericsoftware.kryo.TestClasses.Container;
 import com.esotericsoftware.kryo.TestClasses.CounterHolder;
@@ -61,12 +64,58 @@ import com.esotericsoftware.kryo.TestClasses.Person.Gender;
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class KryoTest {
+
+    private static final ReflectionFactory REFLECTION_FACTORY = ReflectionFactory.getReflectionFactory();
+    private static final Object[] INITARGS = new Object[0];
     
     private Kryo _kryo;
 
     @BeforeTest
     protected void beforeTest() {
-        _kryo = new Kryo();
+        _kryo = new Kryo() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <T> T newInstance( final Class<T> type ) {
+                final T result = newInstanceFromNoArgsConstructor( type );
+                return result != null ? result : newInstanceFromReflectionFactory( type );
+            }
+
+            @SuppressWarnings( "unchecked" )
+            private <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
+                try {
+                    final Constructor<?> constructor = REFLECTION_FACTORY.newConstructorForSerialization( type, Object.class.getDeclaredConstructor( new Class[0] ) );
+                    constructor.setAccessible( true );
+                    return (T) constructor.newInstance( INITARGS );
+                } catch ( final Exception e ) {
+                    throw new RuntimeException( e );
+                }
+            }
+            
+            private <T> T newInstanceFromNoArgsConstructor( final Class<T> type ) {
+                final Constructor<T> noArgsConstructor = getNoArgsConstructor( type );
+                if ( noArgsConstructor != null ) {
+                    try {
+                        return noArgsConstructor.newInstance();
+                    } catch ( final Exception e ) {
+                        throw new RuntimeException( e );
+                    }
+                }
+                return null;
+            }
+            
+            @SuppressWarnings( "unchecked" )
+            private <T> Constructor<T> getNoArgsConstructor( final Class<T> type ) {
+                final Constructor<?>[] constructors = type.getConstructors();
+                for ( final Constructor<?> constructor : constructors ) {
+                    if ( constructor.getParameterTypes().length == 0 ) {
+                        return (Constructor<T>) constructor;
+                    }
+                }
+                return null;
+            }
+        };
         _kryo.setRegistrationOptional( true );
         _kryo.setSerializer( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
         _kryo.setSerializer( Currency.class, new CurrencySerializer( _kryo ) );
