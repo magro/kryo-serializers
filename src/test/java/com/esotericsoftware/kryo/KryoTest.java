@@ -71,6 +71,7 @@ public class KryoTest {
         _kryo.setSerializer( Currency.class, new CurrencySerializer( _kryo ) );
         _kryo.setSerializer( StringBuffer.class, new StringBufferSerializer( _kryo ) );
         _kryo.setSerializer( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
+        _kryo.setSerializer( Collections.emptyList().getClass(), new CollectionsEmptyListSerializer() );
     }
 
     @Test( enabled = true )
@@ -129,8 +130,8 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsEmptyList() throws Exception {
-        final List<String> emptyList = Collections.<String>emptyList();
-        final List<String> deserialized = deserialize( serialize( emptyList ), List.class );
+        final Holder<List<String>> emptyList = new Holder<List<String>>( Collections.<String>emptyList() );
+        final Holder<List<String>> deserialized = deserialize( serialize( emptyList ), Holder.class );
         assertDeepEquals( deserialized, emptyList );
     }
     
