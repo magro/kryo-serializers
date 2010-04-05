@@ -134,6 +134,7 @@ public class KryoTest {
         _kryo.setSerializer( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
         _kryo.setSerializer( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
         _kryo.setSerializer( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
+        _kryo.setSerializer( Class.class, new ClassSerializer( _kryo ) );
     }
 
     @Test( enabled = true )
