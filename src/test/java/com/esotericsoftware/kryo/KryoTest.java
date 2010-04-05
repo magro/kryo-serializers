@@ -57,6 +57,7 @@ import com.esotericsoftware.kryo.TestClasses.MyContainer;
 import com.esotericsoftware.kryo.TestClasses.Person;
 import com.esotericsoftware.kryo.TestClasses.SomeInterface;
 import com.esotericsoftware.kryo.TestClasses.Person.Gender;
+import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
 
 /**
  * Test for {@link Kryo} serialization.
@@ -73,6 +74,15 @@ public class KryoTest {
     @BeforeTest
     protected void beforeTest() {
         _kryo = new Kryo() {
+            
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected Serializer newDefaultSerializer( final Class type ) {
+                return new ReferenceFieldSerializer( _kryo, type );
+            }
+            
             /**
              * {@inheritDoc}
              */
@@ -245,6 +255,7 @@ public class KryoTest {
 
     @Test( enabled = true )
     public void testInnerClass() throws Exception {
+        // seems to be related to #15
         final Container container = TestClasses.createContainer();
         final Container deserialized = deserialize( serialize( container ), Container.class );
         assertDeepEquals( deserialized, container );
@@ -505,11 +516,13 @@ public class KryoTest {
         if ( o == null ) {
             throw new NullPointerException( "Can't serialize null" );
         }
+        Kryo.reset();
         return new ObjectBuffer(_kryo).writeObject( o );
         
     }
 
     protected <T> T deserialize( final byte[] in, final Class<T> clazz ) {
+        Kryo.reset();
         return new ObjectBuffer( _kryo ).readObject( in, clazz );
     }
 
