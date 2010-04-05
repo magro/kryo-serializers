@@ -69,18 +69,20 @@ public class KryoTest {
         _kryo.setAllowUnregisteredClasses( true );
         _kryo.setSerializer( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
         _kryo.setSerializer( Currency.class, new CurrencySerializer( _kryo ) );
+        _kryo.setSerializer( StringBuffer.class, new StringBufferSerializer( _kryo ) );
+        _kryo.setSerializer( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
     }
 
     @Test( enabled = true )
     public void testStringBuffer() throws Exception {
-        final StringBuffer stringBuffer = new StringBuffer( "<string\n&buffer/>" );
+        final StringBuffer stringBuffer = new StringBuffer( "<stringbuffer>with some content \n& some lines...</stringbuffer>" );
         final StringBuffer deserialized = deserialize( serialize( stringBuffer ), StringBuffer.class );
         assertDeepEquals( deserialized, stringBuffer );
     }
 
     @Test( enabled = true )
     public void testStringBuilder() throws Exception {
-        final StringBuilder stringBuilder = new StringBuilder( "<string\n&buffer/>" );
+        final StringBuilder stringBuilder = new StringBuilder( "<stringbuilder>with some content \n& some lines...</stringbuilder>" );
         final StringBuilder deserialized = deserialize( serialize( stringBuilder ), StringBuilder.class );
         assertDeepEquals( deserialized, stringBuilder );
     }
