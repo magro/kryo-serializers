@@ -35,7 +35,7 @@ public class CollectionsEmptyMapSerializer extends SimpleSerializer<Map<?, ?>> {
      */
     @Override
     public Map<?, ?> read( final ByteBuffer buffer ) {
-        return Collections.emptyMap();
+        return Collections.EMPTY_MAP;
     }
 
     /**

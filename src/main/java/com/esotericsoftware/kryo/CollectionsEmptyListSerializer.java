@@ -35,7 +35,7 @@ public class CollectionsEmptyListSerializer extends SimpleSerializer<List<?>> {
      */
     @Override
     public List<?> read( final ByteBuffer buffer ) {
-        return Collections.emptyList();
+        return Collections.EMPTY_LIST;
     }
 
     /**
