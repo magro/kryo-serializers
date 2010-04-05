@@ -18,31 +18,31 @@ package com.esotericsoftware.kryo;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * A kryo {@link Serializer} for {@link List}s created via {@link Collections#emptyList()}
- * or that were just assigned the {@link Collections#EMPTY_LIST}.
+ * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptyMap()}
+ * or that were just assigned the {@link Collections#EMPTY_MAP}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsEmptyListSerializer extends SimpleSerializer<List<?>> {
+public class CollectionsEmptyMapSerializer extends SimpleSerializer<Map<?, ?>> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<?> read( final ByteBuffer buffer ) {
-        return Collections.emptyList();
+    public Map<?, ?> read( final ByteBuffer buffer ) {
+        return Collections.emptyMap();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final List<?> emptyList ) {
+    public void write( final ByteBuffer buffer, final Map<?, ?> emptyList ) {
     }
 
 }

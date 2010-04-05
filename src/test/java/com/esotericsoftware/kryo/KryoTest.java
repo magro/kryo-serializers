@@ -72,6 +72,7 @@ public class KryoTest {
         _kryo.setSerializer( StringBuffer.class, new StringBufferSerializer( _kryo ) );
         _kryo.setSerializer( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
         _kryo.setSerializer( Collections.emptyList().getClass(), new CollectionsEmptyListSerializer() );
+        _kryo.setSerializer( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
     }
 
     @Test( enabled = true )
@@ -138,8 +139,8 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsEmptyMap() throws Exception {
-        final Map<String, String> emptyMap = Collections.<String, String>emptyMap();
-        final Map<String, String> deserialized = deserialize( serialize( emptyMap ), Map.class );
+        final Holder<Map<String, String>> emptyMap = new Holder<Map<String, String>>( Collections.<String, String>emptyMap() );
+        final Holder<Map<String, String>> deserialized = deserialize( serialize( emptyMap ), Holder.class );
         assertDeepEquals( deserialized, emptyMap );
     }
     
