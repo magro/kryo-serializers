@@ -66,7 +66,7 @@ public class KryoTest {
     @BeforeTest
     protected void beforeTest() {
         _kryo = new Kryo();
-        _kryo.setAllowUnregisteredClasses( true );
+        _kryo.setRegistrationOptional( true );
         _kryo.setSerializer( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
         _kryo.setSerializer( Currency.class, new CurrencySerializer( _kryo ) );
         _kryo.setSerializer( StringBuffer.class, new StringBufferSerializer( _kryo ) );

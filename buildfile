@@ -4,9 +4,11 @@
 repositories.remote << 'http://repo2.maven.org/maven2'
 repositories.remote << 'http://www.ibiblio.org/maven2'
 
-KRYO = artifact( 'kryo:kryo:jar:1.0' ).from( file( 'lib/kryo-1.0.jar' ) )
+#KRYO = artifact( 'kryo:kryo:jar:1.0' ).from( file( 'lib/kryo-1.0.jar' ) )
+KRYO = 'com.esotericsoftware:kryo:jar:1.1-SNAPSHOT'
+REFLECTASM = artifact('com.esotericsoftware:reflectasm:jar:0.8').from(file('lib/reflectasm-0.8.jar'))
+MINLOG = artifact('com.esotericsoftware:minlog:jar:1.2').from(file('lib/minlog-1.2.jar'))
 ASM = 'asm:asm:jar:3.2'
-MINLOG = artifact( 'kryo:minlog:jar:1.1' ).from( file( 'lib/minlog-1.1.jar' ) )
 
 CLANG = 'commons-lang:commons-lang:jar:2.4' # tests of javolution-serializer, xstream-serializer
 
@@ -22,7 +24,7 @@ define 'kryo-serializers' do
   package :sources, :javadoc
   package_with_javadoc
 
-  compile.with( KRYO, ASM, MINLOG )
+  compile.with( KRYO, REFLECTASM, ASM, MINLOG )
   test.with( compile.dependencies, CLANG )
   package :jar
 
