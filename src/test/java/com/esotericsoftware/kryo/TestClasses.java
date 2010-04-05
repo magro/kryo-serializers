@@ -531,32 +531,32 @@ public class TestClasses {
 
         public MyContainer() {
 
-            _int = 42;
-            _long = 42;
+            _int = 1;
+            _long = 2;
             _boolean = true;
             _Boolean = Boolean.TRUE;
             _Class = String.class;
-            _String = "42";
+            _String = "3";
             _StringBuffer = new StringBuffer( "foo" );
             _StringBuilder = new StringBuilder( "foo" );
-            _Long = new Long( 42 );
-            _Integer = new Integer( 42 );
+            _Long = new Long( 4 );
+            _Integer = new Integer( 5 );
             _Character = new Character( 'c' );
             _Byte = new Byte( "b".getBytes()[0] );
-            _Double = new Double( 42d );
-            _Float = new Float( 42f );
-            _Short = new Short( (short) 42 );
-            _BigDecimal = new BigDecimal( 42 );
-            _AtomicInteger = new AtomicInteger( 42 );
-            _AtomicLong = new AtomicLong( 42 );
-            _MutableInt = new MutableInt( 42 );
-            _IntegerArray = new Integer[] { 42 };
+            _Double = new Double( 6d );
+            _Float = new Float( 7f );
+            _Short = new Short( (short) 8 );
+            _BigDecimal = new BigDecimal( 9 );
+            _AtomicInteger = new AtomicInteger( 10 );
+            _AtomicLong = new AtomicLong( 11 );
+            _MutableInt = new MutableInt( 12 );
+            _IntegerArray = new Integer[] { 13 };
             _Date = new Date( System.currentTimeMillis() - 10000 );
             _Calendar = Calendar.getInstance();
             _Currency = Currency.getInstance( "EUR" );
             _ArrayList = new ArrayList<String>( Arrays.asList( "foo" ) );
             _HashSet = new HashSet<String>();
-            _HashSet.add( "42" );
+            _HashSet.add( "14" );
 
             _HashMap = new HashMap<String, Integer>();
             _HashMap.put( "foo", 23 );

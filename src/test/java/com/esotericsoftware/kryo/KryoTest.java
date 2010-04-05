@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -57,6 +58,8 @@ import com.esotericsoftware.kryo.TestClasses.MyContainer;
 import com.esotericsoftware.kryo.TestClasses.Person;
 import com.esotericsoftware.kryo.TestClasses.SomeInterface;
 import com.esotericsoftware.kryo.TestClasses.Person.Gender;
+import com.esotericsoftware.kryo.serialize.BigDecimalSerializer;
+import com.esotericsoftware.kryo.serialize.BigIntegerSerializer;
 import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
 
 /**
@@ -135,6 +138,8 @@ public class KryoTest {
         _kryo.setSerializer( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
         _kryo.setSerializer( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
         _kryo.setSerializer( Class.class, new ClassSerializer( _kryo ) );
+        _kryo.setSerializer( BigDecimal.class, new BigDecimalSerializer() );
+        _kryo.setSerializer( BigInteger.class, new BigIntegerSerializer() );
     }
 
     @Test( enabled = true )
@@ -309,8 +314,7 @@ public class KryoTest {
 
     @DataProvider( name = "typesAsSessionAttributesProvider" )
     protected Object[][] createTypesAsSessionAttributesData() {
-        return new Object[][] { { int.class, 42 },
-                { long.class, 42 },
+        return new Object[][] {
                 { Boolean.class, Boolean.TRUE },
                 { String.class, "42" },
                 { StringBuilder.class, new StringBuilder( "42" ) },
