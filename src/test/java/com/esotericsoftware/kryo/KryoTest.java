@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -71,8 +72,9 @@ public class KryoTest {
         _kryo.setSerializer( Currency.class, new CurrencySerializer( _kryo ) );
         _kryo.setSerializer( StringBuffer.class, new StringBufferSerializer( _kryo ) );
         _kryo.setSerializer( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
-        _kryo.setSerializer( Collections.emptyList().getClass(), new CollectionsEmptyListSerializer() );
+        _kryo.setSerializer( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
         _kryo.setSerializer( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
+        _kryo.setSerializer( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
     }
 
     @Test( enabled = true )
@@ -133,6 +135,14 @@ public class KryoTest {
     public void testJavaUtilCollectionsEmptyList() throws Exception {
         final Holder<List<String>> emptyList = new Holder<List<String>>( Collections.<String>emptyList() );
         final Holder<List<String>> deserialized = deserialize( serialize( emptyList ), Holder.class );
+        assertDeepEquals( deserialized, emptyList );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilCollectionsEmptySet() throws Exception {
+        final Holder<Set<String>> emptyList = new Holder<Set<String>>( Collections.<String>emptySet() );
+        final Holder<Set<String>> deserialized = deserialize( serialize( emptyList ), Holder.class );
         assertDeepEquals( deserialized, emptyList );
     }
     
