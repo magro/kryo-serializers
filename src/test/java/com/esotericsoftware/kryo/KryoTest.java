@@ -84,7 +84,7 @@ public class KryoTest {
             @SuppressWarnings( "unchecked" )
             @Override
             protected Serializer newDefaultSerializer( final Class type ) {
-                return new ReferenceFieldSerializer( _kryo, type );
+                return new ReferenceFieldSerializer( this, type );
             }
             
             /**
