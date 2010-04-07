@@ -81,6 +81,7 @@ public class KryoTest {
             /**
              * {@inheritDoc}
              */
+            @SuppressWarnings( "unchecked" )
             @Override
             protected Serializer newDefaultSerializer( final Class type ) {
                 return new ReferenceFieldSerializer( _kryo, type );
@@ -521,13 +522,11 @@ public class KryoTest {
         if ( o == null ) {
             throw new NullPointerException( "Can't serialize null" );
         }
-        Kryo.reset();
         return new ObjectBuffer(_kryo).writeObject( o );
         
     }
 
     protected <T> T deserialize( final byte[] in, final Class<T> clazz ) {
-        Kryo.reset();
         return new ObjectBuffer( _kryo ).readObject( in, clazz );
     }
 

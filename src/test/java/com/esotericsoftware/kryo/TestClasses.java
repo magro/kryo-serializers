@@ -130,6 +130,7 @@ public class TestClasses {
 
     public static class Container {
 
+        @SuppressWarnings( "unused" )
         private final Body _body;
 
         public Container() {
