@@ -143,7 +143,7 @@ public class KryoTest {
         _kryo.setSerializer( Class.class, new ClassSerializer( _kryo ) );
         _kryo.setSerializer( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.setSerializer( BigInteger.class, new BigIntegerSerializer() );
-        CollectionsUnmodifiableSerializer.setSerializer( _kryo );
+        UnmodifiableCollectionsSerializer.setSerializer( _kryo );
     }
 
     @Test( enabled = true )

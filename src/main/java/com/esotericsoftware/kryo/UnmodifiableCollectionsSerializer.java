@@ -41,7 +41,7 @@ import com.esotericsoftware.kryo.serialize.IntSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsUnmodifiableSerializer extends Serializer {
+public class UnmodifiableCollectionsSerializer extends Serializer {
     
     private static final Field SOURCE_COLLECTION_FIELD;
     private static final Field SOURCE_MAP_FIELD;
@@ -67,7 +67,7 @@ public class CollectionsUnmodifiableSerializer extends Serializer {
     /**
      * @param kryo the kryo instance
      */
-    public CollectionsUnmodifiableSerializer( final Kryo kryo ) {
+    public UnmodifiableCollectionsSerializer( final Kryo kryo ) {
         _kryo = kryo;
     }
 
@@ -173,7 +173,7 @@ public class CollectionsUnmodifiableSerializer extends Serializer {
     }
 
     /**
-     * Creates a new {@link CollectionsUnmodifiableSerializer} and sets it as serializer
+     * Creates a new {@link UnmodifiableCollectionsSerializer} and sets it as serializer
      * for the several unmodifiable Collections that can be created via {@link Collections},
      * including {@link Map}s.
      * 
@@ -187,7 +187,7 @@ public class CollectionsUnmodifiableSerializer extends Serializer {
      * @see Collections#unmodifiableSortedMap(SortedMap)
      */
     public static void setSerializer( final Kryo kryo ) {
-        final CollectionsUnmodifiableSerializer serializer = new CollectionsUnmodifiableSerializer( kryo );
+        final UnmodifiableCollectionsSerializer serializer = new UnmodifiableCollectionsSerializer( kryo );
         UnmodifiableCollection.values();
         for ( final UnmodifiableCollection item : UnmodifiableCollection.values() ) {
             kryo.setSerializer( item.type, serializer );
