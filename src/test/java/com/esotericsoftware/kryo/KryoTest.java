@@ -84,7 +84,9 @@ public class KryoTest {
             @SuppressWarnings( "unchecked" )
             @Override
             protected Serializer newDefaultSerializer( final Class type ) {
-                return new ReferenceFieldSerializer( this, type );
+                final ReferenceFieldSerializer result = new ReferenceFieldSerializer( this, type );
+                result.setIgnoreSyntheticFields( false );
+                return result;
             }
             
             /**
@@ -141,6 +143,7 @@ public class KryoTest {
         _kryo.setSerializer( Class.class, new ClassSerializer( _kryo ) );
         _kryo.setSerializer( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.setSerializer( BigInteger.class, new BigIntegerSerializer() );
+        CollectionsUnmodifiableSerializer.setSerializer( _kryo );
     }
 
     @Test( enabled = true )
@@ -181,8 +184,8 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsUnmodifiableList() throws Exception {
-        final List<String> unmodifiableList = Collections.unmodifiableList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) );
-        final List<String> deserialized = deserialize( serialize( unmodifiableList ), List.class );
+        final Holder<List<String>> unmodifiableList = new Holder<List<String>>( Collections.unmodifiableList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) ) );
+        final Holder<List<String>> deserialized = deserialize( serialize( unmodifiableList ), Holder.class );
         assertDeepEquals( deserialized, unmodifiableList );
     }
     
@@ -191,8 +194,8 @@ public class KryoTest {
     public void testJavaUtilCollectionsUnmodifiableMap() throws Exception {
         final HashMap<String, String> m = new HashMap<String, String>();
         m.put( "foo", "bar" );
-        final Map<String, String> unmodifiableMap = Collections.unmodifiableMap( m );
-        final Map<String, String> deserialized = deserialize( serialize( unmodifiableMap ), Map.class );
+        final Holder<Map<String, String>> unmodifiableMap = new Holder<Map<String, String>>( Collections.unmodifiableMap( m ) );
+        final Holder<Map<String, String>> deserialized = deserialize( serialize( unmodifiableMap ), Holder.class );
         assertDeepEquals( deserialized, unmodifiableMap );
     }
     
