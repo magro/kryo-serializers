@@ -384,7 +384,8 @@ public class KryoTest {
 
     @Test( enabled = true, dataProvider = "typesAsSessionAttributesProvider" )
     public <T> void testTypesAsSessionAttributes( final Class<T> type, final T instance ) throws Exception {
-        final T deserialized = deserialize( serialize( instance ), type );
+        @SuppressWarnings( "unchecked" )
+        final T deserialized = (T) deserialize( serialize( instance ), instance.getClass() );
         assertDeepEquals( deserialized, instance );
     }
 
