@@ -38,7 +38,7 @@ public class ClassSerializer extends SimpleSerializer<Class<?>> {
      */
     @Override
     public Class<?> read( final ByteBuffer buffer ) {
-        return _kryo.readClass( buffer ).getClass();
+        return _kryo.readClass( buffer ).getType();
     }
 
     /**
