@@ -14,35 +14,36 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptyMap()}
- * or that were just assigned the {@link Collections#EMPTY_MAP}.
+ * A kryo {@link Serializer} for {@link List}s created via {@link Collections#emptyList()}
+ * or that were just assigned the {@link Collections#EMPTY_LIST}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsEmptyMapSerializer extends SimpleSerializer<Map<?, ?>> {
+public class CollectionsEmptyListSerializer extends SimpleSerializer<List<?>> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Map<?, ?> read( final ByteBuffer buffer ) {
-        return Collections.EMPTY_MAP;
+    public List<?> read( final ByteBuffer buffer ) {
+        return Collections.EMPTY_LIST;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final Map<?, ?> emptyList ) {
+    public void write( final ByteBuffer buffer, final List<?> emptyList ) {
     }
 
 }

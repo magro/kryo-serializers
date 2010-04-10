@@ -14,39 +14,37 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * A kryo {@link Serializer} for fields of type {@link Class}.
+ * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptySet()}
+ * or that were just assigned the {@link Collections#EMPTY_SET}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class ClassSerializer extends SimpleSerializer<Class<?>> {
+public class CollectionsEmptySetSerializer extends SimpleSerializer<Set<?>> {
 
-    private final Kryo _kryo;
-
-    public ClassSerializer( final Kryo kryo ) {
-        _kryo = kryo;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<?> read( final ByteBuffer buffer ) {
+        return Collections.EMPTY_SET;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<?> read( final ByteBuffer buffer ) {
-        return _kryo.readClass( buffer ).getType();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write( final ByteBuffer buffer, final Class<?> clazz ) {
-        _kryo.writeClass( buffer, clazz );
+    public void write( final ByteBuffer buffer, final Set<?> emptyList ) {
     }
 
 }

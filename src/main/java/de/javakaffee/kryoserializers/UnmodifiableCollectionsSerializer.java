@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -33,6 +33,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.IntSerializer;
 
 /**

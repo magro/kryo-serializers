@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.IntSerializer;
 import com.esotericsoftware.kryo.serialize.LongSerializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;

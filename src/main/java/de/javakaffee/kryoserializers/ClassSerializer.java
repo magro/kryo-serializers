@@ -14,23 +14,24 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.nio.ByteBuffer;
-import java.util.Currency;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * A kryo {@link Serializer} for {@link Currency}.
+ * A kryo {@link Serializer} for fields of type {@link Class}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CurrencySerializer extends SimpleSerializer<Currency> {
+public class ClassSerializer extends SimpleSerializer<Class<?>> {
 
     private final Kryo _kryo;
 
-    public CurrencySerializer( final Kryo kryo ) {
+    public ClassSerializer( final Kryo kryo ) {
         _kryo = kryo;
     }
 
@@ -38,16 +39,16 @@ public class CurrencySerializer extends SimpleSerializer<Currency> {
      * {@inheritDoc}
      */
     @Override
-    public Currency read( final ByteBuffer buffer ) {
-        return Currency.getInstance( _kryo.readObject( buffer, String.class ) );
+    public Class<?> read( final ByteBuffer buffer ) {
+        return _kryo.readClass( buffer ).getType();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final Currency currency ) {
-        _kryo.writeObject( buffer, currency.getCurrencyCode() );
+    public void write( final ByteBuffer buffer, final Class<?> clazz ) {
+        _kryo.writeClass( buffer, clazz );
     }
 
 }

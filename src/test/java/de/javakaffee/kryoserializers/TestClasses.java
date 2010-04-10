@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.mutable.MutableInt;
 
-import com.esotericsoftware.kryo.TestClasses.Person.Gender;
+import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 
 
 /**

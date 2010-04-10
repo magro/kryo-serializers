@@ -14,35 +14,43 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.List;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * A kryo {@link Serializer} for {@link List}s created via {@link Collections#emptyList()}
- * or that were just assigned the {@link Collections#EMPTY_LIST}.
+ * A kryo {@link Serializer} for {@link StringBuffer} that serializes the {@link String}
+ * representation, so that not the internal <code>char</code> array is serialized. This
+ * reduces the number of serialized bytes.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsEmptyListSerializer extends SimpleSerializer<List<?>> {
+public class StringBufferSerializer extends SimpleSerializer<StringBuffer> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<?> read( final ByteBuffer buffer ) {
-        return Collections.EMPTY_LIST;
+    private final Kryo _kryo;
+
+    public StringBufferSerializer( final Kryo kryo ) {
+        _kryo = kryo;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final List<?> emptyList ) {
+    public StringBuffer read( final ByteBuffer buffer ) {
+        return new StringBuffer( _kryo.readObject( buffer, String.class ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write( final ByteBuffer buffer, final StringBuffer sb ) {
+        _kryo.writeObject( buffer, sb.toString() );
     }
 
 }

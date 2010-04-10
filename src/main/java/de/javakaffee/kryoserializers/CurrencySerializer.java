@@ -14,24 +14,25 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
 import java.nio.ByteBuffer;
+import java.util.Currency;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * A kryo {@link Serializer} for {@link StringBuffer} that serializes the {@link String}
- * representation, so that not the internal <code>char</code> array is serialized. This
- * reduces the number of serialized bytes.
+ * A kryo {@link Serializer} for {@link Currency}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class StringBufferSerializer extends SimpleSerializer<StringBuffer> {
+public class CurrencySerializer extends SimpleSerializer<Currency> {
 
     private final Kryo _kryo;
 
-    public StringBufferSerializer( final Kryo kryo ) {
+    public CurrencySerializer( final Kryo kryo ) {
         _kryo = kryo;
     }
 
@@ -39,16 +40,16 @@ public class StringBufferSerializer extends SimpleSerializer<StringBuffer> {
      * {@inheritDoc}
      */
     @Override
-    public StringBuffer read( final ByteBuffer buffer ) {
-        return new StringBuffer( _kryo.readObject( buffer, String.class ) );
+    public Currency read( final ByteBuffer buffer ) {
+        return Currency.getInstance( _kryo.readObject( buffer, String.class ) );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final StringBuffer sb ) {
-        _kryo.writeObject( buffer, sb.toString() );
+    public void write( final ByteBuffer buffer, final Currency currency ) {
+        _kryo.writeObject( buffer, currency.getCurrencyCode() );
     }
 
 }

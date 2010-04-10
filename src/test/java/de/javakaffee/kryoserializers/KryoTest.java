@@ -14,9 +14,9 @@
  * limitations under the License.
  *
  */
-package com.esotericsoftware.kryo;
+package de.javakaffee.kryoserializers;
 
-import static com.esotericsoftware.kryo.TestClasses.createPerson;
+import static de.javakaffee.kryoserializers.TestClasses.createPerson;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Constructor;
@@ -49,22 +49,37 @@ import org.testng.annotations.Test;
 
 import sun.reflect.ReflectionFactory;
 
-import com.esotericsoftware.kryo.TestClasses.ClassWithoutDefaultConstructor;
-import com.esotericsoftware.kryo.TestClasses.Container;
-import com.esotericsoftware.kryo.TestClasses.CounterHolder;
-import com.esotericsoftware.kryo.TestClasses.CounterHolderArray;
-import com.esotericsoftware.kryo.TestClasses.Email;
-import com.esotericsoftware.kryo.TestClasses.HashMapWithIntConstructorOnly;
-import com.esotericsoftware.kryo.TestClasses.Holder;
-import com.esotericsoftware.kryo.TestClasses.HolderArray;
-import com.esotericsoftware.kryo.TestClasses.HolderList;
-import com.esotericsoftware.kryo.TestClasses.MyContainer;
-import com.esotericsoftware.kryo.TestClasses.Person;
-import com.esotericsoftware.kryo.TestClasses.SomeInterface;
-import com.esotericsoftware.kryo.TestClasses.Person.Gender;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.ObjectBuffer;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serialize.BigIntegerSerializer;
 import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
+
+import de.javakaffee.kryoserializers.ArraysAsListSerializer;
+import de.javakaffee.kryoserializers.ClassSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
+import de.javakaffee.kryoserializers.CurrencySerializer;
+import de.javakaffee.kryoserializers.GregorianCalendarSerializer;
+import de.javakaffee.kryoserializers.JdkProxySerializer;
+import de.javakaffee.kryoserializers.StringBufferSerializer;
+import de.javakaffee.kryoserializers.StringBuilderSerializer;
+import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
+import de.javakaffee.kryoserializers.TestClasses.Container;
+import de.javakaffee.kryoserializers.TestClasses.CounterHolder;
+import de.javakaffee.kryoserializers.TestClasses.CounterHolderArray;
+import de.javakaffee.kryoserializers.TestClasses.Email;
+import de.javakaffee.kryoserializers.TestClasses.HashMapWithIntConstructorOnly;
+import de.javakaffee.kryoserializers.TestClasses.Holder;
+import de.javakaffee.kryoserializers.TestClasses.HolderArray;
+import de.javakaffee.kryoserializers.TestClasses.HolderList;
+import de.javakaffee.kryoserializers.TestClasses.MyContainer;
+import de.javakaffee.kryoserializers.TestClasses.Person;
+import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
+import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 
 /**
  * Test for {@link Kryo} serialization.
