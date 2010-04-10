@@ -21,6 +21,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -147,6 +148,7 @@ public class KryoTest {
         _kryo.setSerializer( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.setSerializer( BigInteger.class, new BigIntegerSerializer() );
         _kryo.setSerializer( GregorianCalendar.class, new GregorianCalendarSerializer() );
+        _kryo.setSerializer( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
         UnmodifiableCollectionsSerializer.setSerializer( _kryo );
     }
 
@@ -277,9 +279,18 @@ public class KryoTest {
 
     @Test( enabled = true )
     public void testJdkProxy() throws Exception {
-        final SomeInterface bean = TestClasses.createProxy();
-        final SomeInterface deserialized = deserialize( serialize( bean ), SomeInterface.class );
+        final Holder<SomeInterface> bean = new Holder<SomeInterface>( TestClasses.createProxy() );
+        @SuppressWarnings( "unchecked" )
+        final Holder<SomeInterface> deserialized = deserialize( serialize( bean ), Holder.class );
         assertDeepEquals( deserialized, bean );
+    }
+
+    @Test( enabled = true )
+    public void testClassSerializer() throws Exception {
+        final Holder<Class<?>> clazz = new Holder<Class<?>>( String.class );
+        @SuppressWarnings( "unchecked" )
+        final Holder<Class<?>> deserialized = deserialize( serialize( clazz ), Holder.class );
+        assertDeepEquals( deserialized, clazz );
     }
 
     @Test( enabled = true )
@@ -494,7 +505,8 @@ public class KryoTest {
         alreadyChecked.put( one, another );
 
         Assert.assertEquals( one.getClass(), another.getClass() );
-        if ( one.getClass().isPrimitive() || one instanceof String || one instanceof Character || one instanceof Boolean ) {
+        if ( one.getClass().isPrimitive() || one instanceof String || one instanceof Character || one instanceof Boolean
+                || one instanceof Class<?> ) {
             Assert.assertEquals( one, another );
             return;
         }
