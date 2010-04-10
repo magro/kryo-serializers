@@ -17,6 +17,7 @@
 package com.esotericsoftware.kryo;
 
 import static com.esotericsoftware.kryo.TestClasses.createPerson;
+import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,9 +30,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -143,7 +146,23 @@ public class KryoTest {
         _kryo.setSerializer( Class.class, new ClassSerializer( _kryo ) );
         _kryo.setSerializer( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.setSerializer( BigInteger.class, new BigIntegerSerializer() );
+        _kryo.setSerializer( GregorianCalendar.class, new GregorianCalendarSerializer() );
         UnmodifiableCollectionsSerializer.setSerializer( _kryo );
+    }
+
+    @Test( enabled = true )
+    public void testGregorianCalendar() throws Exception {
+        final Holder<Calendar> cal = new Holder<Calendar>( Calendar.getInstance( Locale.ENGLISH ) );
+        System.out.println( "have size: " + serialize( Calendar.getInstance( Locale.ENGLISH ) ).length );
+        @SuppressWarnings( "unchecked" )
+        final Holder<Calendar> deserialized = deserialize( serialize( cal ), Holder.class );
+        assertDeepEquals( deserialized, cal );
+        
+        assertEquals( deserialized.item.getTimeInMillis(), cal.item.getTimeInMillis() );
+        assertEquals( deserialized.item.getTimeZone(), cal.item.getTimeZone() );
+        assertEquals( deserialized.item.getMinimalDaysInFirstWeek(), cal.item.getMinimalDaysInFirstWeek() );
+        assertEquals( deserialized.item.getFirstDayOfWeek(), cal.item.getFirstDayOfWeek() );
+        assertEquals( deserialized.item.isLenient(), cal.item.isLenient() );
     }
 
     @Test( enabled = true )
