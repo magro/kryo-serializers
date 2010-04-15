@@ -19,7 +19,6 @@ package de.javakaffee.kryoserializers;
 import static de.javakaffee.kryoserializers.TestClasses.createPerson;
 import static org.testng.Assert.assertEquals;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
@@ -47,14 +46,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import sun.reflect.ReflectionFactory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.ObjectBuffer;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serialize.BigIntegerSerializer;
-import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
 
 import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
 import de.javakaffee.kryoserializers.TestClasses.Container;
@@ -76,70 +72,12 @@ import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class KryoTest {
-
-    private static final ReflectionFactory REFLECTION_FACTORY = ReflectionFactory.getReflectionFactory();
-    private static final Object[] INITARGS = new Object[0];
     
     private Kryo _kryo;
 
     @BeforeTest
     protected void beforeTest() {
-        _kryo = new Kryo() {
-            
-            /**
-             * {@inheritDoc}
-             */
-            @SuppressWarnings( "unchecked" )
-            @Override
-            protected Serializer newDefaultSerializer( final Class type ) {
-                final ReferenceFieldSerializer result = new ReferenceFieldSerializer( this, type );
-                result.setIgnoreSyntheticFields( false );
-                return result;
-            }
-            
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public <T> T newInstance( final Class<T> type ) {
-                final T result = newInstanceFromNoArgsConstructor( type );
-                return result != null ? result : newInstanceFromReflectionFactory( type );
-            }
-
-            @SuppressWarnings( "unchecked" )
-            private <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
-                try {
-                    final Constructor<?> constructor = REFLECTION_FACTORY.newConstructorForSerialization( type, Object.class.getDeclaredConstructor( new Class[0] ) );
-                    constructor.setAccessible( true );
-                    return (T) constructor.newInstance( INITARGS );
-                } catch ( final Exception e ) {
-                    throw new RuntimeException( e );
-                }
-            }
-            
-            private <T> T newInstanceFromNoArgsConstructor( final Class<T> type ) {
-                final Constructor<T> noArgsConstructor = getNoArgsConstructor( type );
-                if ( noArgsConstructor != null ) {
-                    try {
-                        return noArgsConstructor.newInstance();
-                    } catch ( final Exception e ) {
-                        throw new RuntimeException( e );
-                    }
-                }
-                return null;
-            }
-            
-            @SuppressWarnings( "unchecked" )
-            private <T> Constructor<T> getNoArgsConstructor( final Class<T> type ) {
-                final Constructor<?>[] constructors = type.getConstructors();
-                for ( final Constructor<?> constructor : constructors ) {
-                    if ( constructor.getParameterTypes().length == 0 ) {
-                        return (Constructor<T>) constructor;
-                    }
-                }
-                return null;
-            }
-        };
+        _kryo = new KryoReflectionFactorySupport();
         _kryo.setRegistrationOptional( true );
         _kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
         _kryo.register( Currency.class, new CurrencySerializer( _kryo ) );

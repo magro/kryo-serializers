@@ -42,9 +42,8 @@ public class JdkProxySerializer extends SimpleSerializer<Object> {
     @Override
     public Object read( final ByteBuffer buffer ) {
         final InvocationHandler invocationHandler = (InvocationHandler) _kryo.readClassAndObject( buffer );
-        final String[] interfaceNames = _kryo.readObjectData( buffer, String[].class );
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final Class<?>[] interfaces = getInterfaces( interfaceNames, classLoader );
+        final Class<?>[] interfaces = _kryo.readObjectData( buffer, Class[].class );
         return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
     }
 
@@ -53,37 +52,8 @@ public class JdkProxySerializer extends SimpleSerializer<Object> {
      */
     @Override
     public void write( final ByteBuffer buffer, final Object obj ) {
-        final InvocationHandler invocationHandler = Proxy.getInvocationHandler( obj );
-        _kryo.writeClassAndObject( buffer, invocationHandler );
-        final String[] interfaceNames = getInterfaceNames( obj );
-        _kryo.writeObjectData( buffer, interfaceNames );
-    }
-
-    public static String[] getInterfaceNames( final Object obj ) {
-        final Class<?>[] interfaces = obj.getClass().getInterfaces();
-        if ( interfaces != null ) {
-            final String[] interfaceNames = new String[interfaces.length];
-            for ( int i = 0; i < interfaces.length; i++ ) {
-                interfaceNames[i] = interfaces[i].getName();
-            }
-            return interfaceNames;
-        }
-        return new String[0];
-    }
-
-    public static Class<?>[] getInterfaces( final String[] interfaceNames, final ClassLoader classLoader ) {
-        if ( interfaceNames != null ) {
-            try {
-                final Class<?>[] interfaces = new Class<?>[interfaceNames.length];
-                for ( int i = 0; i < interfaceNames.length; i++ ) {
-                    interfaces[i] = Class.forName( interfaceNames[i], true, classLoader );
-                }
-                return interfaces;
-            } catch ( final ClassNotFoundException e ) {
-                throw new RuntimeException( e );
-            }
-        }
-        return new Class<?>[0];
+        _kryo.writeClassAndObject( buffer, Proxy.getInvocationHandler( obj ) );
+        _kryo.writeObjectData( buffer, obj.getClass().getInterfaces() );
     }
 
 }

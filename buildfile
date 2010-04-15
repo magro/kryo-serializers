@@ -8,10 +8,10 @@ KRYO = artifact( 'com.esotericsoftware:kryo:jar:1.1-SNAPSHOT' ).from( file( 'lib
 REFLECTASM = artifact('com.esotericsoftware:reflectasm:jar:0.8').from(file('lib/reflectasm-0.8.jar'))
 MINLOG = artifact('com.esotericsoftware:minlog:jar:1.2').from(file('lib/minlog-1.2.jar'))
 ASM = 'asm:asm:jar:3.2'
-
-CLANG = 'commons-lang:commons-lang:jar:2.4' # tests of javolution-serializer, xstream-serializer
-
-
+JODA_TIME = 'joda-time:joda-time:jar:1.6'
+CGLIB = transitive( 'cglib:cglib:jar:2.2' )
+WICKET = transitive( 'org.apache.wicket:wicket:jar:1.4.7' )
+CLANG = 'commons-lang:commons-lang:jar:2.4' # test with some Integer subtype
 
 desc 'Kryo/binary serialization strategy'
 define 'kryo-serializers' do
@@ -23,7 +23,7 @@ define 'kryo-serializers' do
   package :sources, :javadoc
   package_with_javadoc
 
-  compile.with( KRYO, REFLECTASM, ASM, MINLOG )
+  compile.with( KRYO, REFLECTASM, ASM, MINLOG, JODA_TIME, CGLIB, WICKET )
   test.with( compile.dependencies, CLANG )
   package :jar
 
