@@ -27,8 +27,9 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * A kryo serializer for cglib proxies. It needs to be registered for {@link CGLibProxyMarker} class.
- * When the default serializer for a certain class is requested (via {@link Kryo#newDefaultSerializer(Class)})
- * {@link #canSerialize(Class)} has to be checked with the provided class.
+ * When the serializer for a certain class is requested (via {@link Kryo#newSerializer(Class)})
+ * {@link #canSerialize(Class)} has to be checked with the provided class to see if 
+ * a {@link CGLibProxySerializer} should be returned.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
