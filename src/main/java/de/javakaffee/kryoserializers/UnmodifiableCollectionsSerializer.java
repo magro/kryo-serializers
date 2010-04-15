@@ -175,7 +175,7 @@ public class UnmodifiableCollectionsSerializer extends Serializer {
     }
 
     /**
-     * Creates a new {@link UnmodifiableCollectionsSerializer} and sets it as serializer
+     * Creates a new {@link UnmodifiableCollectionsSerializer} and registers its serializer
      * for the several unmodifiable Collections that can be created via {@link Collections},
      * including {@link Map}s.
      * 
@@ -188,11 +188,11 @@ public class UnmodifiableCollectionsSerializer extends Serializer {
      * @see Collections#unmodifiableMap(Map)
      * @see Collections#unmodifiableSortedMap(SortedMap)
      */
-    public static void setSerializer( final Kryo kryo ) {
+    public static void registerSerializers( final Kryo kryo ) {
         final UnmodifiableCollectionsSerializer serializer = new UnmodifiableCollectionsSerializer( kryo );
         UnmodifiableCollection.values();
         for ( final UnmodifiableCollection item : UnmodifiableCollection.values() ) {
-            kryo.setSerializer( item.type, serializer );
+            kryo.register( item.type, serializer );
         }
     }
 

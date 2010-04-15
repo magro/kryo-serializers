@@ -56,17 +56,6 @@ import com.esotericsoftware.kryo.serialize.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serialize.BigIntegerSerializer;
 import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
 
-import de.javakaffee.kryoserializers.ArraysAsListSerializer;
-import de.javakaffee.kryoserializers.ClassSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
-import de.javakaffee.kryoserializers.CurrencySerializer;
-import de.javakaffee.kryoserializers.GregorianCalendarSerializer;
-import de.javakaffee.kryoserializers.JdkProxySerializer;
-import de.javakaffee.kryoserializers.StringBufferSerializer;
-import de.javakaffee.kryoserializers.StringBuilderSerializer;
-import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
 import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
 import de.javakaffee.kryoserializers.TestClasses.Container;
 import de.javakaffee.kryoserializers.TestClasses.CounterHolder;
@@ -152,19 +141,19 @@ public class KryoTest {
             }
         };
         _kryo.setRegistrationOptional( true );
-        _kryo.setSerializer( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
-        _kryo.setSerializer( Currency.class, new CurrencySerializer( _kryo ) );
-        _kryo.setSerializer( StringBuffer.class, new StringBufferSerializer( _kryo ) );
-        _kryo.setSerializer( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
-        _kryo.setSerializer( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
-        _kryo.setSerializer( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
-        _kryo.setSerializer( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
-        _kryo.setSerializer( Class.class, new ClassSerializer( _kryo ) );
-        _kryo.setSerializer( BigDecimal.class, new BigDecimalSerializer() );
-        _kryo.setSerializer( BigInteger.class, new BigIntegerSerializer() );
-        _kryo.setSerializer( GregorianCalendar.class, new GregorianCalendarSerializer() );
-        _kryo.setSerializer( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
-        UnmodifiableCollectionsSerializer.setSerializer( _kryo );
+        _kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
+        _kryo.register( Currency.class, new CurrencySerializer( _kryo ) );
+        _kryo.register( StringBuffer.class, new StringBufferSerializer( _kryo ) );
+        _kryo.register( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
+        _kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
+        _kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
+        _kryo.register( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
+        _kryo.register( Class.class, new ClassSerializer( _kryo ) );
+        _kryo.register( BigDecimal.class, new BigDecimalSerializer() );
+        _kryo.register( BigInteger.class, new BigIntegerSerializer() );
+        _kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );
+        _kryo.register( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
+        UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
     }
 
     @Test( enabled = true )
