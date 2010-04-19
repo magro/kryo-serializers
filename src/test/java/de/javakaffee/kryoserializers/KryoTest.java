@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
@@ -34,6 +35,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +52,7 @@ import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.ObjectBuffer;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serialize.BigIntegerSerializer;
 
@@ -77,7 +81,19 @@ public class KryoTest {
 
     @BeforeTest
     protected void beforeTest() {
-        _kryo = new KryoReflectionFactorySupport();
+        _kryo = new KryoReflectionFactorySupport() {
+            @Override
+            @SuppressWarnings( "unchecked" )
+            public Serializer newSerializer( final Class type ) {
+                if ( Collection.class.isAssignableFrom( type ) ) {
+                    return new CopyForIterateCollectionSerializer( this );
+                }
+                if ( Map.class.isAssignableFrom( type ) ) {
+                    return new CopyForIterateMapSerializer( this );
+                }
+                return super.newSerializer( type );
+            }
+        };
         _kryo.setRegistrationOptional( true );
         _kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
         _kryo.register( Currency.class, new CurrencySerializer( _kryo ) );
@@ -93,6 +109,23 @@ public class KryoTest {
         _kryo.register( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
         SynchronizedCollectionsSerializer.registerSerializers( _kryo );
+    }
+
+    /**
+     * Test that linked hash map is serialized correctly with the {@link CopyForIterateMapSerializer}:
+     * test that insertion order is retained.
+     * @throws Exception
+     */
+    @Test( enabled = true )
+    public void testCopyForIterateMapSerializer() throws Exception {
+        final Map<Double, String> map = new LinkedHashMap<Double, String>();
+        // use doubles as e.g. integers hash to the value...
+        for( int i = 0; i < 10; i++ ) {
+            map.put( Double.valueOf( String.valueOf( i ) + "." + Math.abs( i ) ), "value: " + i );
+        }
+        @SuppressWarnings( "unchecked" )
+        final Map<Double, String> deserialized = deserialize( serialize( map ), map.getClass() );
+        assertDeepEquals( deserialized, map );
     }
 
     @Test( enabled = true )
@@ -493,8 +526,11 @@ public class KryoTest {
             final Map<?, ?> m1 = (Map<?, ?>) one;
             final Map<?, ?> m2 = (Map<?, ?>) another;
             Assert.assertEquals( m1.size(), m2.size() );
-            for ( final Map.Entry<?, ?> entry : m1.entrySet() ) {
-                assertDeepEquals( entry.getValue(), m2.get( entry.getKey() ) );
+            final Iterator<? extends Map.Entry<?, ?>> iter1 = m1.entrySet().iterator();
+            final Iterator<? extends Map.Entry<?, ?>> iter2 = m2.entrySet().iterator();
+            while( iter1.hasNext() ) {
+                Assert.assertTrue( iter2.hasNext() );
+                assertDeepEquals( iter1.next(), iter2.next(), alreadyChecked );
             }
             return;
         }
