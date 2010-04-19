@@ -32,6 +32,7 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +46,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.ObjectBuffer;
@@ -92,6 +92,7 @@ public class KryoTest {
         _kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );
         _kryo.register( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
+        SynchronizedCollectionsSerializer.registerSerializers( _kryo );
     }
 
     @Test( enabled = true )
@@ -154,12 +155,46 @@ public class KryoTest {
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
+    public void testJavaUtilCollectionsUnmodifiableSet() throws Exception {
+        final Set<String> set = Collections.unmodifiableSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) );
+        final Set<String> deserialized = deserialize( serialize( set ), set.getClass() );
+        assertDeepEquals( deserialized, set );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
     public void testJavaUtilCollectionsUnmodifiableMap() throws Exception {
         final HashMap<String, String> m = new HashMap<String, String>();
         m.put( "foo", "bar" );
         final Holder<Map<String, String>> unmodifiableMap = new Holder<Map<String, String>>( Collections.unmodifiableMap( m ) );
         final Holder<Map<String, String>> deserialized = deserialize( serialize( unmodifiableMap ), Holder.class );
         assertDeepEquals( deserialized, unmodifiableMap );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilCollectionsSynchronizedList() throws Exception {
+        final List<String> list = Collections.synchronizedList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) );
+        final List<String> deserialized = deserialize( serialize( list ), list.getClass() );
+        assertDeepEquals( deserialized, list );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilCollectionsSynchronizedSet() throws Exception {
+        final Set<String> set = Collections.synchronizedSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) );
+        final Set<String> deserialized = deserialize( serialize( set ), set.getClass() );
+        assertDeepEquals( deserialized, set );
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilCollectionsSynchronizedMap() throws Exception {
+        final HashMap<String, String> m = new HashMap<String, String>();
+        m.put( "foo", "bar" );
+        final Map<String, String> map = Collections.synchronizedMap( m );
+        final Map<String, String> deserialized = deserialize( serialize( map ), map.getClass() );
+        assertDeepEquals( deserialized, map );
     }
     
     @SuppressWarnings( "unchecked" )
