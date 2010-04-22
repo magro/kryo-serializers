@@ -42,9 +42,17 @@ public class JdkProxySerializer extends SimpleSerializer<Object> {
     @Override
     public Object read( final ByteBuffer buffer ) {
         final InvocationHandler invocationHandler = (InvocationHandler) _kryo.readClassAndObject( buffer );
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final Class<?>[] interfaces = _kryo.readObjectData( buffer, Class[].class );
-        return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
+        final ClassLoader classLoader = _kryo.getClassLoader();
+        try {
+            return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
+        } catch( final RuntimeException e ) {
+            System.err.println( getClass().getName()+ ".read:\n" +
+            		"Could not create proxy using classLoader " + classLoader + "," +
+            		" have invoctaionhandler.classloader: " + invocationHandler.getClass().getClassLoader() +
+                    " have contextclassloader: " + Thread.currentThread().getContextClassLoader() );
+            throw e;
+        }
     }
 
     /**
