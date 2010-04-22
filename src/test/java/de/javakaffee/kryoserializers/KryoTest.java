@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,6 +87,12 @@ public class KryoTest {
             @Override
             @SuppressWarnings( "unchecked" )
             public Serializer newSerializer( final Class type ) {
+                if ( EnumSet.class.isAssignableFrom( type ) ) {
+                    return new EnumSetSerializer( this );
+                }
+                if ( EnumMap.class.isAssignableFrom( type ) ) {
+                    return new EnumMapSerializer( this );
+                }
                 if ( Collection.class.isAssignableFrom( type ) ) {
                     return new CopyForIterateCollectionSerializer( this );
                 }
@@ -109,6 +117,22 @@ public class KryoTest {
         _kryo.register( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
         SynchronizedCollectionsSerializer.registerSerializers( _kryo );
+    }
+    
+    @Test( enabled = true )
+    public void testEnumSet() throws Exception {
+        final EnumSet<?> set = EnumSet.allOf( Gender.class );
+        final EnumSet<?> deserialized = deserialize( serialize( set ), set.getClass() );
+        assertDeepEquals( deserialized, set );
+    }
+    
+    @Test( enabled = true )
+    public void testEnumMap() throws Exception {
+        final EnumMap<Gender, String> map = new EnumMap<Gender, String>( Gender.class );
+        map.put( Gender.FEMALE, "female" );
+        @SuppressWarnings( "unchecked" )
+        final EnumMap<Gender, String> deserialized = deserialize( serialize( map ), map.getClass() );
+        assertDeepEquals( deserialized, map );
     }
 
     /**
