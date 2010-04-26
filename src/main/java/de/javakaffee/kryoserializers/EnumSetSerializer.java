@@ -25,6 +25,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.serialize.EnumSerializer;
 import com.esotericsoftware.kryo.serialize.IntSerializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
@@ -62,7 +63,7 @@ public class EnumSetSerializer extends SimpleSerializer<EnumSet> {
         final EnumSet result = EnumSet.noneOf( elementType );
         final int size = IntSerializer.get( buffer, true );
         for ( int i = 0; i < size; i++ ) {
-            result.add( _kryo.readClassAndObject( buffer ) );
+            result.add( EnumSerializer.get( buffer, elementType ) );
         }
         return result;
     }
@@ -71,8 +72,8 @@ public class EnumSetSerializer extends SimpleSerializer<EnumSet> {
     public void write( final ByteBuffer buffer, final EnumSet set ) {
         _kryo.writeClass( buffer, getElementType( set ) );
         IntSerializer.put( buffer, set.size(), true );
-        for ( final Iterator<?> iter = set.iterator(); iter.hasNext(); ) {
-            _kryo.writeClassAndObject( buffer, iter.next() );
+        for ( final Iterator<Enum> iter = set.iterator(); iter.hasNext(); ) {
+            EnumSerializer.put( buffer, iter.next() );
         }
         if ( TRACE ) trace( "kryo", "Wrote EnumSet: " + set );
     }

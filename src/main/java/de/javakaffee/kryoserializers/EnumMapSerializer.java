@@ -25,6 +25,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.serialize.EnumSerializer;
 import com.esotericsoftware.kryo.serialize.IntSerializer;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
@@ -33,7 +34,7 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class EnumMapSerializer extends SimpleSerializer<EnumMap<?, ?>> {
+public class EnumMapSerializer extends SimpleSerializer<EnumMap<? extends Enum<?>, ?>> {
     
     private static final Field TYPE_FIELD;
     
@@ -62,7 +63,7 @@ public class EnumMapSerializer extends SimpleSerializer<EnumMap<?, ?>> {
         final EnumMap result = new EnumMap( keyType );
         final int size = IntSerializer.get( buffer, true );
         for ( int i = 0; i < size; i++ ) {
-            final Object key = _kryo.readClassAndObject( buffer );
+            final Object key = EnumSerializer.get( buffer, keyType );
             final Object value = _kryo.readClassAndObject( buffer );
             result.put( key, value );
         }
@@ -70,11 +71,11 @@ public class EnumMapSerializer extends SimpleSerializer<EnumMap<?, ?>> {
     }
 
     @Override
-    public void write( final ByteBuffer buffer, final EnumMap<?, ?> map ) {
+    public void write( final ByteBuffer buffer, final EnumMap<? extends Enum<?>, ?> map ) {
         _kryo.writeClass( buffer, getKeyType( map ) );
         IntSerializer.put( buffer, map.size(), true );
-        for ( final Map.Entry<?,?> entry :  map.entrySet() ) {
-            _kryo.writeClassAndObject( buffer, entry.getKey() );
+        for ( final Map.Entry<? extends Enum<?>,?> entry :  map.entrySet() ) {
+            EnumSerializer.put( buffer, entry.getKey() );
             _kryo.writeClassAndObject( buffer, entry.getValue() );
         }
         if ( TRACE ) trace( "kryo", "Wrote EnumMap: " + map );
