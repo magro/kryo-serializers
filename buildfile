@@ -4,7 +4,7 @@
 repositories.remote << 'http://repo2.maven.org/maven2'
 repositories.remote << 'http://www.ibiblio.org/maven2'
 
-KRYO = artifact( 'com.esotericsoftware:kryo:jar:1.1-SNAPSHOT' ).from( file( 'lib/kryo-1.1-SNAPSHOT.jar' ) )
+KRYO = artifact( 'com.esotericsoftware:kryo:jar:1.01' ).from( file( 'lib/kryo-1.01.jar' ) )
 REFLECTASM = artifact('com.esotericsoftware:reflectasm:jar:0.8').from(file('lib/reflectasm-0.8.jar'))
 MINLOG = artifact('com.esotericsoftware:minlog:jar:1.2').from(file('lib/minlog-1.2.jar'))
 ASM = 'asm:asm:jar:3.2'
@@ -16,15 +16,15 @@ CLANG = 'commons-lang:commons-lang:jar:2.4' # test with some Integer subtype
 desc 'Kryo/binary serialization strategy'
 define 'kryo-serializers' do
   project.group = 'kryo'
-  project.version = '0.1'
+  project.version = '0.2'
 
   compile.using :source=>'1.5', :target=>'1.5'
   test.using :testng
-  package :sources, :javadoc
-  package_with_javadoc
 
   compile.with( KRYO, REFLECTASM, ASM, MINLOG, JODA_TIME, CGLIB, WICKET )
   test.with( compile.dependencies, CLANG )
   package :jar
+  package(:jar, :classifier => 'sources').include :from => compile.sources 
+  package :javadoc
 
 end
