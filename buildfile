@@ -19,7 +19,7 @@ CLANG = 'commons-lang:commons-lang:jar:2.4' # test with some Integer subtype
 desc 'Kryo/binary serialization strategy'
 define 'kryo-serializers' do
   project.group = 'kryo'
-  project.version = '0.2'
+  project.version = '0.3'
 
   compile.using :source=>'1.5', :target=>'1.5'
   test.using :testng
