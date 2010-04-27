@@ -11,6 +11,9 @@ ASM = 'asm:asm:jar:3.2'
 JODA_TIME = 'joda-time:joda-time:jar:1.6'
 CGLIB = transitive( 'cglib:cglib:jar:2.2' )
 WICKET = transitive( 'org.apache.wicket:wicket:jar:1.4.7' )
+SERVLET_API = 'javax.servlet:servlet-api:jar:2.5' # for tests with WicketTester
+SLF4J = transitive( 'org.slf4j:slf4j-log4j12:jar:1.5.6' ) # for wicket stuff required but not pulled in
+JUNIT = 'junit:junit:jar:4.7' # for WicketTester required
 CLANG = 'commons-lang:commons-lang:jar:2.4' # test with some Integer subtype
 
 desc 'Kryo/binary serialization strategy'
@@ -22,7 +25,7 @@ define 'kryo-serializers' do
   test.using :testng
 
   compile.with( KRYO, REFLECTASM, ASM, MINLOG, JODA_TIME, CGLIB, WICKET )
-  test.with( compile.dependencies, CLANG )
+  test.with( compile.dependencies, SERVLET_API, SLF4J, JUNIT, CLANG )
   package :jar
   package(:jar, :classifier => 'sources').include :from => compile.sources 
   package :javadoc

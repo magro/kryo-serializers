@@ -546,11 +546,11 @@ public class KryoTest {
         }
     }
     
-    private void assertDeepEquals( final Object one, final Object another ) throws Exception {
+    public static void assertDeepEquals( final Object one, final Object another ) throws Exception {
         assertDeepEquals( one, another, new IdentityHashMap<Object, Object>() );
     }
 
-    private void assertDeepEquals( final Object one, final Object another, final Map<Object, Object> alreadyChecked )
+    private static void assertDeepEquals( final Object one, final Object another, final Map<Object, Object> alreadyChecked )
         throws Exception {
         if ( one == another ) {
             return;
@@ -604,7 +604,7 @@ public class KryoTest {
 
     }
 
-    private void assertEqualDeclaredFields( final Class<? extends Object> clazz, final Object one, final Object another,
+    private static void assertEqualDeclaredFields( final Class<? extends Object> clazz, final Object one, final Object another,
             final Map<Object, Object> alreadyChecked ) throws Exception, IllegalAccessException {
         for ( final Field field : clazz.getDeclaredFields() ) {
             field.setAccessible( true );
