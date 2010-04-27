@@ -110,6 +110,9 @@ public class KryoTest {
         _kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
         _kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
         _kryo.register( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
+        _kryo.register( Collections.singletonList( "" ).getClass(), new CollectionsSingletonListSerializer( _kryo ) );
+        _kryo.register( Collections.singleton( "" ).getClass(), new CollectionsSingletonSetSerializer( _kryo ) );
+        _kryo.register( Collections.singletonMap( "", "" ).getClass(), new CollectionsSingletonMapSerializer( _kryo ) );
         _kryo.register( Class.class, new ClassSerializer( _kryo ) );
         _kryo.register( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.register( BigInteger.class, new BigIntegerSerializer() );
@@ -117,6 +120,27 @@ public class KryoTest {
         _kryo.register( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
         SynchronizedCollectionsSerializer.registerSerializers( _kryo );
+    }
+
+    @Test( enabled = true )
+    public void testSingletonList() throws Exception {
+        final List<?> obj = Collections.singletonList( "foo" );
+        final List<?> deserialized = deserialize( serialize( obj ), obj.getClass() );
+        assertDeepEquals( deserialized, obj );
+    }
+
+    @Test( enabled = true )
+    public void testSingletonSet() throws Exception {
+        final Set<?> obj = Collections.singleton( "foo" );
+        final Set<?> deserialized = deserialize( serialize( obj ), obj.getClass() );
+        assertDeepEquals( deserialized, obj );
+    }
+
+    @Test( enabled = true )
+    public void testSingletonMap() throws Exception {
+        final Map<?, ?> obj = Collections.singletonMap( "foo", "bar" );
+        final Map<?, ?> deserialized = deserialize( serialize( obj ), obj.getClass() );
+        assertDeepEquals( deserialized, obj );
     }
     
     @Test( enabled = true )
