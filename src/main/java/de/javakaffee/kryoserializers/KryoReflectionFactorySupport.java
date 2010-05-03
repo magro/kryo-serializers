@@ -56,7 +56,7 @@ public class KryoReflectionFactorySupport extends Kryo {
     }
 
     @SuppressWarnings( "unchecked" )
-    private <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
+    public static <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
         try {
             final Constructor<?> constructor = REFLECTION_FACTORY.newConstructorForSerialization( type, Object.class.getDeclaredConstructor( new Class[0] ) );
             constructor.setAccessible( true );
@@ -66,7 +66,7 @@ public class KryoReflectionFactorySupport extends Kryo {
         }
     }
 
-    private <T> T newInstanceFromNoArgsConstructor( final Class<T> type ) {
+    public static <T> T newInstanceFromNoArgsConstructor( final Class<T> type ) {
         final Constructor<T> noArgsConstructor = getNoArgsConstructor( type );
         if ( noArgsConstructor != null ) {
             try {
@@ -79,7 +79,7 @@ public class KryoReflectionFactorySupport extends Kryo {
     }
 
     @SuppressWarnings( "unchecked" )
-    private <T> Constructor<T> getNoArgsConstructor( final Class<T> type ) {
+    private static <T> Constructor<T> getNoArgsConstructor( final Class<T> type ) {
         final Constructor<?>[] constructors = type.getConstructors();
         for ( final Constructor<?> constructor : constructors ) {
             if ( constructor.getParameterTypes().length == 0 ) {
@@ -88,4 +88,5 @@ public class KryoReflectionFactorySupport extends Kryo {
         }
         return null;
     }
+    
 }
