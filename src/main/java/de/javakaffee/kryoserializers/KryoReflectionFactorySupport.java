@@ -17,6 +17,8 @@
 package de.javakaffee.kryoserializers;
 
 import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import sun.reflect.ReflectionFactory;
 
@@ -35,6 +37,8 @@ public class KryoReflectionFactorySupport extends Kryo {
     private static final ReflectionFactory REFLECTION_FACTORY = ReflectionFactory.getReflectionFactory();
     private static final Object[] INITARGS = new Object[0];
     
+    private static final Map<Class<?>, Constructor<?>> _constructors = new ConcurrentHashMap<Class<?>, Constructor<?>>();
+    
     /**
      * {@inheritDoc}
      */
@@ -51,39 +55,51 @@ public class KryoReflectionFactorySupport extends Kryo {
      */
     @Override
     public <T> T newInstance( final Class<T> type ) {
-        final T result = newInstanceFromNoArgsConstructor( type );
-        return result != null ? result : newInstanceFromReflectionFactory( type );
+        Constructor<?> constructor = _constructors.get( type );
+        if ( constructor == null ) {
+            constructor = getNoArgsConstructor( type );
+            if ( constructor == null ) {
+                constructor = newConstructorForSerialization( type );
+            }
+            _constructors.put( type, constructor );
+        }
+        return newInstanceFrom( constructor );
     }
 
     @SuppressWarnings( "unchecked" )
-    public static <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
+    private static <T> T newInstanceFrom( final Constructor<?> constructor ) {
         try {
-            final Constructor<?> constructor = REFLECTION_FACTORY.newConstructorForSerialization( type, Object.class.getDeclaredConstructor( new Class[0] ) );
-            constructor.setAccessible( true );
             return (T) constructor.newInstance( INITARGS );
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }
     }
 
-    public static <T> T newInstanceFromNoArgsConstructor( final Class<T> type ) {
-        final Constructor<T> noArgsConstructor = getNoArgsConstructor( type );
-        if ( noArgsConstructor != null ) {
-            try {
-                return noArgsConstructor.newInstance();
-            } catch ( final Exception e ) {
-                throw new RuntimeException( e );
-            }
+    public static <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
+        Constructor<?> constructor = _constructors.get( type );
+        if ( constructor == null ) {
+            constructor = newConstructorForSerialization( type );
+            _constructors.put( type, constructor );
         }
-        return null;
+        return newInstanceFrom( constructor );
     }
 
-    @SuppressWarnings( "unchecked" )
-    private static <T> Constructor<T> getNoArgsConstructor( final Class<T> type ) {
+    private static <T> Constructor<?> newConstructorForSerialization( final Class<T> type ) {
+        try {
+            final Constructor<?> constructor = REFLECTION_FACTORY.newConstructorForSerialization( type, Object.class.getDeclaredConstructor( new Class[0] ) );
+            constructor.setAccessible( true );
+            return constructor;
+        } catch ( final Exception e ) {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private static Constructor<?> getNoArgsConstructor( final Class<?> type ) {
         final Constructor<?>[] constructors = type.getConstructors();
         for ( final Constructor<?> constructor : constructors ) {
             if ( constructor.getParameterTypes().length == 0 ) {
-                return (Constructor<T>) constructor;
+                constructor.setAccessible( true );
+                return constructor;
             }
         }
         return null;
