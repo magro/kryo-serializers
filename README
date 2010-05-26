@@ -20,6 +20,7 @@ Provided serializers / supporting classes:
 * ReferenceFieldSerializerReflectionFactorySupport - a ReferenceFieldSerializer specialization that uses sun's ReflectionFactory to create new instances
 * StringBufferSerializer - optimized serializer for StringBuffer
 * StringBuilderSerializer - optimized serializer for StringBuilder
+* SubListSerializer - serializer for lists created via List#subList(int, int)
 * SynchronizedCollectionsSerializer - for synchronized Collections and Maps created via Collections.synchronized*.
 * UnmodifiableCollectionsSerializer - for unmodifiable Collections and Maps created via Collections.unmodifiable*.
 
