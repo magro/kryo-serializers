@@ -16,10 +16,12 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
 import org.testng.annotations.AfterTest;
@@ -63,7 +65,9 @@ public class WicketTest {
             
             @Override
             protected Serializer newDefaultSerializer( final Class type ) {
-                return new ReferenceFieldSerializer( this, type );
+                final ReferenceFieldSerializer result = new ReferenceFieldSerializer( this, type );
+                result.setIgnoreSyntheticFields( false );
+                return result;
             }
             
         };
@@ -101,6 +105,21 @@ public class WicketTest {
         markupContainer.add( new Label( "label", "hello" ) );
         final byte[] serialized = new ObjectBuffer( _kryo, 1024 * 1024 ).writeObject( markupContainer );
         final MarkupContainer deserialized = new ObjectBuffer( _kryo, 1024 * 1024 ).readObject( serialized, markupContainer.getClass() );
+        KryoTest.assertDeepEquals( deserialized, markupContainer );
+    }
+
+    @Test( enabled = true )
+    public void testFeedbackPanel() throws Exception {
+        final FeedbackPanel markupContainer = new FeedbackPanel("foo");
+        //markupContainer.info( "foo" );
+        final Component child = markupContainer.get( 0 );
+        child.isVisible();
+        final byte[] serialized = new ObjectBuffer( _kryo, 1024 * 1024 ).writeObject( markupContainer );
+        final MarkupContainer deserialized = new ObjectBuffer( _kryo, 1024 * 1024 ).readObject( serialized, markupContainer.getClass() );
+
+        final Component deserializedChild = deserialized.get( 0 );
+        deserializedChild.isVisible();
+        
         KryoTest.assertDeepEquals( deserialized, markupContainer );
     }
 
