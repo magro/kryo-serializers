@@ -34,7 +34,6 @@ import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.ObjectBuffer;
-import com.esotericsoftware.kryo.Serializer;
 
 import de.javakaffee.kryoserializers.ClassSerializer;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
@@ -50,21 +49,63 @@ public class CGLibProxySerializerTest {
 
     @BeforeTest
     protected void beforeTest() {
-        _kryo = new KryoReflectionFactorySupport() {
-            
+        _kryo = createKryo();
+    }
+
+    private Kryo createKryo() {
+        final Kryo kryo = new KryoReflectionFactorySupport() {
+
             @SuppressWarnings( "unchecked" )
             @Override
-            public Serializer newSerializer( final Class type ) {
+            protected void handleUnregisteredClass( final Class type ) {
                 if ( CGLibProxySerializer.canSerialize( type ) ) {
-                    return new CGLibProxySerializer( this );
+                    putRegisteredClass( type, getRegisteredClass( CGLibProxySerializer.CGLibProxyMarker.class ) );
                 }
-                return super.newSerializer( type );
+                else {
+                    super.handleUnregisteredClass( type );
+                }
             }
             
         };
-        _kryo.setRegistrationOptional( true );
-        _kryo.register( Class.class, new ClassSerializer( _kryo ) );
-        _kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( _kryo ) );
+        kryo.setRegistrationOptional( true );
+        kryo.register( Class.class, new ClassSerializer( kryo ) );
+        kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( kryo ) );
+        return kryo;
+    }
+
+//    @Test( enabled = false )
+//    public void testContainerWithCGLibProxyWrite() throws Exception {
+//        Log.TRACE = true;
+//        final MyService proxy = createProxy( new MyServiceImpl() );
+//        final MySpecialContainer myContainer = new MySpecialContainer( proxy );
+//        final OutputStream out = new FileOutputStream( new File( "/tmp/kryotest.ser" ) );
+//        new ObjectBuffer( _kryo ).writeObject( out, myContainer );
+//        out.close();
+//    }
+//
+//    @Test( enabled = false )
+//    public void testContainerWithCGLibProxyRead() throws Exception {
+//        Log.TRACE = true;
+//        final InputStream in = new FileInputStream( new File( "/tmp/kryotest.ser" ) );
+//        new ObjectBuffer( _kryo ).readObject( in, MySpecialContainer.class );
+//        // Assert.assertEquals( deserialized.getMyService().sayHello(), myContainer.getMyService().sayHello() );
+//        in.close();
+//    }
+
+    @Test( enabled = true )
+    public void testContainerWithCGLibProxy() throws Exception {
+        final CustomClassLoader loader = new CustomClassLoader( getClass().getClassLoader() );
+        
+        final Class<?> myServiceClass = loader.loadClass( MyServiceImpl.class.getName() );
+        final Object proxy = createProxy( myServiceClass.newInstance() );
+        
+        final Class<?> myContainerClass = loader.loadClass( MyContainer.class.getName() );
+        final Object myContainer = myContainerClass.getConstructors()[0].newInstance( proxy );
+        
+        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( myContainer );
+        
+        new ObjectBuffer( _kryo ).readObject( serialized, MyContainer.class );
+        // If we reached this kryo was able to deserialize the proxy, so we're fine
     }
 
     @Test( enabled = true )
@@ -142,6 +183,45 @@ public class CGLibProxySerializerTest {
         public String getValue() {
             return _value;
         }
+    }
+    
+    public static class MySpecialContainer extends MyContainer {
+
+        public MySpecialContainer( final MyService myService ) {
+            super( myService );
+        }
+        
+    }
+    
+    public static class MyContainer {
+        
+        private MyService _myService;
+
+        public MyContainer( final MyService myService ) {
+            _myService = myService;
+        }
+
+        public MyService getMyService() {
+            return _myService;
+        }
+
+        public void setMyService( final MyService myService ) {
+            _myService = myService;
+        }
+        
+    }
+    
+    public static interface MyService {
+        String sayHello();
+    }
+    
+    public static class MyServiceImpl implements MyService {
+
+        @Override
+        public String sayHello() {
+            return "hi";
+        }
+        
     }
 
 }

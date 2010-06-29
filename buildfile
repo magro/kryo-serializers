@@ -4,7 +4,7 @@
 repositories.remote << 'http://repo2.maven.org/maven2'
 repositories.remote << 'http://www.ibiblio.org/maven2'
 
-KRYO = artifact( 'com.esotericsoftware:kryo:jar:1.01' ).from( file( 'lib/kryo-1.01.jar' ) )
+KRYO = artifact( 'com.esotericsoftware:kryo:jar:1.02-r110-p22' ).from( file( 'lib/kryo-1.02-r110-p22.jar' ) )
 REFLECTASM = artifact('com.esotericsoftware:reflectasm:jar:0.8').from(file('lib/reflectasm-0.8.jar'))
 MINLOG = artifact('com.esotericsoftware:minlog:jar:1.2').from(file('lib/minlog-1.2.jar'))
 ASM = 'asm:asm:jar:3.2'
