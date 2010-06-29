@@ -54,6 +54,7 @@ public class KryoReflectionFactorySupport extends Kryo {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings( "unchecked" )
     public <T> T newInstance( final Class<T> type ) {
         Constructor<?> constructor = _constructors.get( type );
         if ( constructor == null ) {
@@ -63,25 +64,25 @@ public class KryoReflectionFactorySupport extends Kryo {
             }
             _constructors.put( type, constructor );
         }
-        return newInstanceFrom( constructor );
+        return (T) newInstanceFrom( constructor );
     }
 
-    @SuppressWarnings( "unchecked" )
-    private static <T> T newInstanceFrom( final Constructor<?> constructor ) {
+    private static Object newInstanceFrom( final Constructor<?> constructor ) {
         try {
-            return (T) constructor.newInstance( INITARGS );
+            return constructor.newInstance( INITARGS );
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     public static <T> T newInstanceFromReflectionFactory( final Class<T> type ) {
         Constructor<?> constructor = _constructors.get( type );
         if ( constructor == null ) {
             constructor = newConstructorForSerialization( type );
             _constructors.put( type, constructor );
         }
-        return newInstanceFrom( constructor );
+        return (T) newInstanceFrom( constructor );
     }
 
     private static <T> Constructor<?> newConstructorForSerialization( final Class<T> type ) {
