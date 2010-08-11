@@ -80,12 +80,8 @@ public class SynchronizedCollectionsSerializer extends Serializer {
     public <T> T readObjectData( final ByteBuffer buffer, final Class<T> clazz ) {
         final int ordinal = IntSerializer.get( buffer, true );
         final SynchronizedCollection collection = SynchronizedCollection.values()[ordinal];
-        try {
-            final Object sourceCollection = _kryo.readClassAndObject( buffer );
-            return (T) collection.create( sourceCollection );
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        }
+        final Object sourceCollection = _kryo.readClassAndObject( buffer );
+        return (T) collection.create( sourceCollection );
     }
 
     /**
@@ -98,6 +94,10 @@ public class SynchronizedCollectionsSerializer extends Serializer {
             // the ordinal could be replaced by s.th. else (e.g. a explicitely managed "id")
             IntSerializer.put( buffer, collection.ordinal(), true );
             _kryo.writeClassAndObject( buffer, collection.sourceCollectionField.get( object ) );
+        } catch ( final RuntimeException e ) {
+            // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
+            // handles SerializationException specifically (resizing the buffer)...
+            throw e;
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }

@@ -93,6 +93,10 @@ public class SubListSerializer extends Serializer {
             IntSerializer.put( buffer, fromIndex, true );
             final int toIndex = fromIndex + _sizeField.getInt( obj );
             IntSerializer.put( buffer, toIndex, true );
+        } catch ( final RuntimeException e ) {
+            // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
+            // handles SerializationException specifically (resizing the buffer)...
+            throw e;
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }

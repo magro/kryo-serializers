@@ -81,12 +81,8 @@ public class UnmodifiableCollectionsSerializer extends Serializer {
     public <T> T readObjectData( final ByteBuffer buffer, final Class<T> clazz ) {
         final int ordinal = IntSerializer.get( buffer, true );
         final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.values()[ordinal];
-        try {
-            final Object sourceCollection = _kryo.readClassAndObject( buffer );
-            return (T) unmodifiableCollection.create( sourceCollection );
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        }
+        final Object sourceCollection = _kryo.readClassAndObject( buffer );
+        return (T) unmodifiableCollection.create( sourceCollection );
     }
 
     /**
@@ -99,6 +95,10 @@ public class UnmodifiableCollectionsSerializer extends Serializer {
             // the ordinal could be replaced by s.th. else (e.g. a explicitely managed "id")
             IntSerializer.put( buffer, unmodifiableCollection.ordinal(), true );
             _kryo.writeClassAndObject( buffer, unmodifiableCollection.sourceCollectionField.get( object ) );
+        } catch ( final RuntimeException e ) {
+            // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
+            // handles SerializationException specifically (resizing the buffer)...
+            throw e;
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }

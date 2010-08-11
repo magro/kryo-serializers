@@ -77,9 +77,13 @@ public class ArraysAsListSerializer extends Serializer {
             for( final Object item : array ) {
                 _kryo.writeClassAndObject( buffer, item );
             }
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        }
+         } catch ( final RuntimeException e ) {
+             // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
+             // handles SerializationException specifically (resizing the buffer)...
+             throw e;
+         } catch ( final Exception e ) {
+             throw new RuntimeException( e );
+         }
     }
 
 }
