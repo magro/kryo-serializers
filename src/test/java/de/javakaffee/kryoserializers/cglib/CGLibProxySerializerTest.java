@@ -59,7 +59,7 @@ public class CGLibProxySerializerTest {
             @Override
             protected void handleUnregisteredClass( final Class type ) {
                 if ( CGLibProxySerializer.canSerialize( type ) ) {
-                    putRegisteredClass( type, getRegisteredClass( CGLibProxySerializer.CGLibProxyMarker.class ) );
+                    register( type, getRegisteredClass( CGLibProxySerializer.CGLibProxyMarker.class ) );
                 }
                 else {
                     super.handleUnregisteredClass( type );
