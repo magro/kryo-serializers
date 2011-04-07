@@ -51,6 +51,15 @@ Then you have to register the custom serializers at the kryo instance. The follo
     UnmodifiableCollectionsSerializer.registerSerializers( kryo );
     SynchronizedCollectionsSerializer.registerSerializers( kryo );
     
+    // custom serializers for non-jdk libs
+    
+    // register CGLibProxySerializer, works in combination with the appropriate action in handleUnregisteredClass (see below)
+    kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( kryo ) );
+    // joda datetime
+    kryo.register( DateTime.class, new JodaDateTimeSerializer() );
+    // wicket
+    kryo.register( MiniMap.class, new MiniMapSerializer( kryo ) );
+    
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `newSerializer` method. If you don't want to use the `KryoReflectionFactorySupport` you can override the `newSerializer` method for your `new Kryo()` instance.
 
     final Kryo kryo = new KryoReflectionFactorySupport() {
@@ -66,6 +75,13 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
 	    if ( SubListSerializer.canSerialize( clazz ) ) {
 		return new SubListSerializer( this );
 	    }
+	    if ( ClassWithEvilDefaultConstructor.class.isAssignableFrom( type ) ) {
+	        // for this class we want to create new instances via ReflectionFactory, not by calling the default constructor
+	        // can only be used with sun/oracle jdk
+		final ReferenceFieldSerializerReflectionFactorySupport result = new ReferenceFieldSerializerReflectionFactorySupport( _kryo, type );
+		result.setIgnoreSyntheticFields( false );
+		return result;
+	    }
 	    if ( copyCollectionsForSerialization ) {
 		if ( Collection.class.isAssignableFrom( clazz ) ) {
 		    return new CopyForIterateCollectionSerializer( this );
@@ -75,6 +91,17 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
 		}
 	    }
 	    return super.newSerializer( clazz );
+	}
+	
+	@Override
+	public boolean handleUnregisteredClass( final Class<?> type ) {
+	    // see if the given class is a cglib proxy
+	    if ( CGLibProxySerializer.canSerialize( type ) ) {
+	        // register the CGLibProxySerializer for this class
+		_kryo.register( type, _kryo.getRegisteredClass( CGLibProxySerializer.CGLibProxyMarker.class ) );
+		return true;
+	    }
+	    return false;
 	}
 	
     };
