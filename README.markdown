@@ -1,6 +1,7 @@
 A project that shows how serialization works with kryo (http://code.google.com/p/kryo/) and adds serializers for some jdk types.
 
-Provided serializers / supporting classes:
+# Provided serializers / supporting classes:
+
 * ArraysAsListSerializer - serializer for lists created via Arrays#asList(Object...)
 * ClassSerializer - for class instances
 * CollectionsEmptyListSerializer - for Collections#EMPTY_LIST or lists created via Collections#emptyList()
@@ -29,4 +30,53 @@ Provided serializers / supporting classes:
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
 
 
-For building you can use buildr (http://buildr.apache.org).
+# Usage
+To use the custom serializers you have to register them. The following code snippet shows how this is done for serializers that can be registered statically.
+
+    kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( kryo ) );
+    kryo.register( Class.class, new ClassSerializer( kryo ) );
+    kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
+    kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
+    kryo.register( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
+    kryo.register( Collections.singletonList( "" ).getClass(), new CollectionsSingletonListSerializer( kryo ) );
+    kryo.register( Collections.singleton( "" ).getClass(), new CollectionsSingletonSetSerializer( kryo ) );
+    kryo.register( Collections.singletonMap( "", "" ).getClass(), new CollectionsSingletonMapSerializer( kryo ) );
+    kryo.register( Currency.class, new CurrencySerializer( kryo ) );
+    kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );
+    kryo.register( InvocationHandler.class, new JdkProxySerializer( kryo ) );
+    kryo.register( StringBuffer.class, new StringBufferSerializer( kryo ) );
+    kryo.register( StringBuilder.class, new StringBuilderSerializer( kryo ) );
+    UnmodifiableCollectionsSerializer.registerSerializers( kryo );
+    SynchronizedCollectionsSerializer.registerSerializers( kryo );
+    
+The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `newSerializer` method.
+
+    final Kryo kryo = new KryoReflectionFactorySupport() {
+	
+	@Override
+	public Serializer newSerializer(final Class clazz) {
+	    if ( EnumSet.class.isAssignableFrom( clazz ) ) {
+		return new EnumSetSerializer( this );
+	    }
+	    if ( EnumMap.class.isAssignableFrom( clazz ) ) {
+		return new EnumMapSerializer( this );
+	    }
+	    if ( SubListSerializer.canSerialize( clazz ) ) {
+		return new SubListSerializer( this );
+	    }
+	    if ( copyCollectionsForSerialization ) {
+		if ( Collection.class.isAssignableFrom( clazz ) ) {
+		    return new CopyForIterateCollectionSerializer( this );
+		}
+		if ( Map.class.isAssignableFrom( clazz ) ) {
+		    return new CopyForIterateMapSerializer( this );
+		}
+	    }
+	    return super.newSerializer( clazz );
+	}
+	
+    };
+    
+
+# How to build
+For building you can use buildr (http://buildr.apache.org). Follow the [installation instructions](http://buildr.apache.org/installing.html) and afterwards run `buildr install`.
