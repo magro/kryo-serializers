@@ -31,7 +31,9 @@ A project that shows how serialization works with kryo (http://code.google.com/p
 
 
 # Usage
-To use the custom serializers you have to register them. The following code snippet shows how this is done for serializers that can be registered statically.
+To be able to use the serializers you have to add the jar (from downloads section) to you classpath. Unfortunately, it's not yet in any maven repo.
+
+Then you have to register the custom serializers at the kryo instance. The following code snippet shows how this is done for serializers that can be registered statically (directly for a known class).
 
     kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( kryo ) );
     kryo.register( Class.class, new ClassSerializer( kryo ) );
@@ -49,7 +51,7 @@ To use the custom serializers you have to register them. The following code snip
     UnmodifiableCollectionsSerializer.registerSerializers( kryo );
     SynchronizedCollectionsSerializer.registerSerializers( kryo );
     
-The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `newSerializer` method.
+The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `newSerializer` method. If you don't want to use the `KryoReflectionFactorySupport` you can override the `newSerializer` method for your `new Kryo()` instance.
 
     final Kryo kryo = new KryoReflectionFactorySupport() {
 	
