@@ -1,4 +1,4 @@
-A project that provides [http://code.google.com/p/kryo/](kryo) serializers for some jdk types and some external libs like e.g. joda time.
+A project that provides [kryo](http://code.google.com/p/kryo) serializers for some jdk types and some external libs like e.g. joda time.
 
 # Provided serializers / supporting classes:
 
@@ -108,7 +108,7 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
     
 
 # Where to get help
-You can [https://github.com/inbox/new/magro](contact me via github) or [https://github.com/magro/kryo-serializers/issues](submit an issue).
+You can [contact me via github](https://github.com/inbox/new/magro) or [submit an issue](https://github.com/magro/kryo-serializers/issues).
 
 # How to contribute
-If you want to contribute to this project you can fork the [https://github.com/magro/kryo-serializers](sources on github), make your changes and submit a pull request. Alternatively you can [https://github.com/magro/kryo-serializers/issues](submit an issue) with a patch attached.
+If you want to contribute to this project you can fork the [sources on github](https://github.com/magro/kryo-serializers), make your changes and submit a pull request. Alternatively you can [submit an issue](https://github.com/magro/kryo-serializers/issues) with a patch attached.
