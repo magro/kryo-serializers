@@ -1,4 +1,4 @@
-A project that shows how serialization works with kryo (http://code.google.com/p/kryo/) and adds serializers for some jdk types.
+A project that provides [http://code.google.com/p/kryo/](kryo) serializers for some jdk types and some external libs like e.g. joda time.
 
 # Provided serializers / supporting classes:
 
@@ -107,5 +107,8 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
     };
     
 
-# How to build
-For building you can use buildr (http://buildr.apache.org). Follow the [installation instructions](http://buildr.apache.org/installing.html) and afterwards run `buildr install`.
+# Where to get help
+You can [https://github.com/inbox/new/magro](contact me via github) or [https://github.com/magro/kryo-serializers/issues](submit an issue).
+
+# How to contribute
+If you want to contribute to this project you can fork the [https://github.com/magro/kryo-serializers](sources on github), make your changes and submit a pull request. Alternatively you can [https://github.com/magro/kryo-serializers/issues](submit an issue) with a patch attached.
