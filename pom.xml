@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<name>kryo serializers</name>
 	<description>
-    Additional serializers for standard jdk types (e.g. currency, jdk proxies) and some for external libs (e.g. joda time, cglib proxies, wicket).
+    Additional kryo (http://kryo.googlecode.com) serializers for standard jdk types (e.g. currency, jdk proxies) and some for external libs (e.g. joda time, cglib proxies, wicket).
     </description>
 	<url>https://github.com/magro/kryo-serializers</url>
 
@@ -133,8 +133,13 @@
 	</dependencyManagement>
 
 	<dependencies>
+        <!--
+          kryo jars were uploaded as 3rd party jars following
+          https://docs.sonatype.org/display/Repository/Uploading+3rd-party+Artifacts+to+Maven+Central
+          this also required groupId com.googlecode (instead of com.esotericsoftware) du to project url
+        -->
 		<dependency>
-			<groupId>com.esotericsoftware</groupId>
+			<groupId>com.googlecode</groupId>
 			<artifactId>kryo</artifactId>
 			<version>1.04</version>
 		</dependency>
@@ -190,13 +195,11 @@
 	</dependencies>
 
 	<repositories>
-
-		<!-- msm maven repo with custom javolution jar and kryo jars -->
-		<repository>
-			<id>msm</id>
-			<name>msm repository</name>
-			<url>http://memcached-session-manager.googlecode.com/svn/maven</url>
-		</repository>
+		<!--
+		  kryo jars were uploaded as 3rd party jars following
+		  https://docs.sonatype.org/display/Repository/Uploading+3rd-party+Artifacts+to+Maven+Central
+		  and are now available in maven central
+		-->
 	</repositories>
 
 </project>
