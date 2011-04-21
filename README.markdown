@@ -32,11 +32,13 @@ A project that provides [kryo](http://code.google.com/p/kryo) serializers for so
 
 # Usage
 To be able to use the serializers you have to add the jar to your classpath. If you're using maven or ivy you can use this dependency definition:
+
     <dependency>
         <groupId>de.javakaffee</groupId>
         <artifactId>kryo-serializers</artifactId>
         <version>0.9</version>
     </dependency>
+    
 It's available in maven central, so you don't need an additional repository definition.
 If you're managing the classpath differently you can get the jar from the downloads section or [download from maven central](http://repo1.maven.org/maven2/de/javakaffee/kryo-serializers/).
 
