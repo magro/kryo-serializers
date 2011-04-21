@@ -31,7 +31,7 @@ A project that provides [kryo](http://code.google.com/p/kryo) serializers for so
 
 
 # Usage
-To be able to use the serializers you have to add the jar to your classpath. If you're using maven or ivy you can use this dependency definition:
+To be able to use the serializers you have to add the jar to your classpath. If your build tool support maven repositories you can use this dependency:
 
     <dependency>
         <groupId>de.javakaffee</groupId>
