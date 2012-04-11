@@ -48,7 +48,6 @@ public class EnumMapSerializer implements Serializer<EnumMap<? extends Enum<?>, 
     }
 
     @SuppressWarnings( "unchecked" )
-    @Override
     public EnumMap<? extends Enum<?>, ?> read(Kryo kryo, Input input,
         Class<EnumMap<? extends Enum<?>, ?>> type) {
         final Class<? extends Enum> keyType = kryo.readClass( input ).getType();
@@ -64,7 +63,6 @@ public class EnumMapSerializer implements Serializer<EnumMap<? extends Enum<?>, 
         return result;
     }
 
-    @Override
     public void write(Kryo kryo, Output output, EnumMap<? extends Enum<?>, ?> map) {
         kryo.writeClass( output, getKeyType( map ) );
         output.writeInt(map.size(), true);

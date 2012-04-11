@@ -50,11 +50,6 @@ public class SynchronizedCollectionsSerializer implements Serializer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings( "unchecked" )
-    @Override
     public Object read(Kryo kryo, Input input, Class clazz) {
         final int ordinal = input.readInt( true );
         final SynchronizedCollection collection = SynchronizedCollection.values()[ordinal];
@@ -62,10 +57,6 @@ public class SynchronizedCollectionsSerializer implements Serializer {
         return collection.create( sourceCollection );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, Object object) {
         try {
             final SynchronizedCollection collection = SynchronizedCollection.valueOfType( object.getClass() );

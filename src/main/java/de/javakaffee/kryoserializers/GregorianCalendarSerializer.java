@@ -51,10 +51,6 @@ public class GregorianCalendarSerializer implements Serializer<GregorianCalendar
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public GregorianCalendar read(Kryo kryo, Input input, Class<GregorianCalendar> type) {
         final Calendar result = GregorianCalendar.getInstance();
         
@@ -74,10 +70,6 @@ public class GregorianCalendarSerializer implements Serializer<GregorianCalendar
         return (GregorianCalendar) result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, GregorianCalendar calendar) {
         output.writeLong( calendar.getTimeInMillis(), true );
         output.writeLong( calendar.getTimeInMillis(), true );

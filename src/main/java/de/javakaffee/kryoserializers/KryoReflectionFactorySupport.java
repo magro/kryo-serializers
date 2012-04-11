@@ -17,8 +17,6 @@
 package de.javakaffee.kryoserializers;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
 import sun.reflect.ReflectionFactory;
 
 import java.lang.reflect.Constructor;
@@ -37,13 +35,6 @@ public class KryoReflectionFactorySupport extends Kryo {
     private static final Object[] INITARGS = new Object[0];
     
     private static final Map<Class<?>, Constructor<?>> _constructors = new ConcurrentHashMap<Class<?>, Constructor<?>>();
-
-    @SuppressWarnings("unchecked")
-    public KryoReflectionFactorySupport() {
-        super();
-        Class klass = CompatibleFieldSerializer.class;
-        setDefaultSerializer((Class<Serializer>) klass.asSubclass(Serializer.class));
-    }
 
     /**
      * {@inheritDoc}

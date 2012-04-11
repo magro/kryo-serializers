@@ -32,18 +32,10 @@ import java.util.Map;
  */
 public class CollectionsEmptyMapSerializer implements Serializer<Map<?, ?>> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
         return Collections.EMPTY_MAP;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, Map<?, ?> object) {
     }
 }

@@ -31,10 +31,6 @@ import java.lang.reflect.Proxy;
  */
 public class JdkProxySerializer implements Serializer<Object> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Object read(Kryo kryo, Input input, Class<Object> type) {
         final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
         final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
@@ -50,10 +46,6 @@ public class JdkProxySerializer implements Serializer<Object> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, Object obj) {
         kryo.writeClassAndObject( output, Proxy.getInvocationHandler( obj ) );
         kryo.writeObject( output, obj.getClass().getInterfaces() );

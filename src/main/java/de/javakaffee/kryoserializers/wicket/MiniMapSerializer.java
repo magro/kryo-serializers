@@ -57,7 +57,6 @@ public class MiniMapSerializer implements Serializer<MiniMap<?, ?>> {
         }
     }
 
-    @Override
     public void write(Kryo kryo, Output output, MiniMap<?, ?> map) {
         output.writeInt(getMaxEntries( map ), true);
         output.writeInt( map.size(), true);
@@ -70,7 +69,6 @@ public class MiniMapSerializer implements Serializer<MiniMap<?, ?>> {
         if ( TRACE ) trace( "kryo", "Wrote map: " + map );
     }
 
-    @Override
     public MiniMap<?, ?> read(Kryo kryo, Input input, Class<MiniMap<?, ?>> type) {
         final int maxEntries = input.readInt( true );
         final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );

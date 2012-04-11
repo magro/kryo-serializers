@@ -69,10 +69,6 @@ public class SubListSerializer implements Serializer {
         return SUBLIST_CLASS.isAssignableFrom( type );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Object read(Kryo kryo, Input input, Class clazz) {
         final List<?> list = (List<?>) kryo.readClassAndObject( input );
         final int fromIndex = input.readInt(true);
@@ -80,10 +76,6 @@ public class SubListSerializer implements Serializer {
         return list.subList( fromIndex, toIndex );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, Object obj) {
         try {
             kryo.writeClassAndObject( output, _listField.get( obj ) );

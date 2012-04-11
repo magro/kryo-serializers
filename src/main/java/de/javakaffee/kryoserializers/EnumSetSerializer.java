@@ -47,7 +47,6 @@ public class EnumSetSerializer implements Serializer<EnumSet> {
         }
     }
 
-    @Override
     public EnumSet read(Kryo kryo, Input input, Class<EnumSet> type) {
         final Class<Enum> elementType = kryo.readClass( input ).getType();
         DefaultSerializers.EnumSerializer enumSerializer = new DefaultSerializers.EnumSerializer(kryo, elementType);
@@ -59,7 +58,6 @@ public class EnumSetSerializer implements Serializer<EnumSet> {
         return result;
     }
 
-    @Override
     public void write(Kryo kryo, Output output, EnumSet set) {
         Class<Enum> elementType = getElementType( set );
         kryo.writeClass( output, elementType );

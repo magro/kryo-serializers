@@ -33,14 +33,12 @@ import java.util.Map.Entry;
  */
 public class CollectionsSingletonMapSerializer implements Serializer<Map<?, ?>> {
 
-    @Override
     public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
         final Object key = kryo.readClassAndObject( input );
         final Object value = kryo.readClassAndObject( input );
         return Collections.singletonMap( key, value );
     }
 
-    @Override
     public void write(Kryo kryo, Output output, Map<?, ?> map) {
         final Entry<?, ?> entry = map.entrySet().iterator().next();
         kryo.writeClassAndObject( output, entry.getKey() );

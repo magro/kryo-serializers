@@ -51,11 +51,6 @@ public class UnmodifiableCollectionsSerializer implements Serializer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings( "unchecked" )
-    @Override
     public Object read(Kryo kryo, Input input, Class clazz) {
         final int ordinal = input.readInt( true );
         final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.values()[ordinal];
@@ -63,10 +58,6 @@ public class UnmodifiableCollectionsSerializer implements Serializer {
         return unmodifiableCollection.create( sourceCollection );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, Object object) {
         try {
             final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.valueOfType( object.getClass() );

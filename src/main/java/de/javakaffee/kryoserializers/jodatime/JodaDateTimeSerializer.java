@@ -55,10 +55,6 @@ public class JodaDateTimeSerializer implements Serializer<DateTime> {
     static final String CHRONOLOGY = "ch";
     static final String TIME_ZONE = "tz";
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public DateTime read(Kryo kryo, Input input, Class<DateTime> type) {
         final long millis = input.readLong(true);
         final Chronology chronology = readChronology( input );
@@ -66,10 +62,6 @@ public class JodaDateTimeSerializer implements Serializer<DateTime> {
         return new DateTime( millis, chronology.withZone( tz ) );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, DateTime obj) {
         output.writeLong(obj.getMillis(), true);
         final String chronologyId = getChronologyId( obj.getChronology() );

@@ -31,13 +31,11 @@ import java.util.List;
  */
 public class CollectionsSingletonListSerializer implements Serializer<List<?>> {
 
-    @Override
     public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
         final Object obj = kryo.readClassAndObject( input );
         return Collections.singletonList( obj );
     }
 
-    @Override
     public void write(Kryo kryo, Output output, List<?> list) {
         kryo.writeClassAndObject(output, list.get( 0 ));
     }

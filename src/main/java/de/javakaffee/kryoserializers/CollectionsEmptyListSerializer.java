@@ -32,18 +32,10 @@ import java.util.List;
  */
 public class CollectionsEmptyListSerializer implements Serializer<List<?>> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
         return Collections.EMPTY_LIST;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, List<?> object) {
     }
 }

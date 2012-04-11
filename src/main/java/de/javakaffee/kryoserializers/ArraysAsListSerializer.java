@@ -44,10 +44,6 @@ public class ArraysAsListSerializer<T> implements Serializer<T> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public T read(Kryo kryo, Input input, Class<T> type) {
         final int length = input.readInt(true);
         final Class<?> componentType = kryo.readClass( input ).getType();
@@ -62,10 +58,6 @@ public class ArraysAsListSerializer<T> implements Serializer<T> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, T obj) {
          try {
             final Object[] array = (Object[]) _arrayField.get( obj );

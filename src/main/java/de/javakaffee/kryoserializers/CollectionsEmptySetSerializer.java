@@ -33,18 +33,10 @@ import java.util.Set;
  */
 public class CollectionsEmptySetSerializer implements Serializer<Set<?>> {
 
-    /**
-    * {@inheritDoc}
-    */
-    @Override
     public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
         return Collections.EMPTY_SET;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void write(Kryo kryo, Output output, Set<?> object) {
     }
 }

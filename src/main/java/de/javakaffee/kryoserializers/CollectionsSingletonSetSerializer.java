@@ -32,13 +32,11 @@ import java.util.Set;
  */
 public class CollectionsSingletonSetSerializer implements Serializer<Set<?>> {
 
-    @Override
     public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
         final Object obj = kryo.readClassAndObject( input );
         return Collections.singleton( obj );
     }
 
-    @Override
     public void write(Kryo kryo, Output output, Set<?> set) {
         kryo.writeClassAndObject( output, set.iterator().next() );
     }
