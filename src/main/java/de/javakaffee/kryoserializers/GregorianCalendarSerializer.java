@@ -16,17 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
-import com.esotericsoftware.kryo.serialize.LongSerializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
-import com.esotericsoftware.kryo.serialize.StringSerializer;
 
 /**
  * A more efficient kryo {@link Serializer} for {@link GregorianCalendar} instances (which
@@ -40,7 +38,7 @@ import com.esotericsoftware.kryo.serialize.StringSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class GregorianCalendarSerializer extends SimpleSerializer<GregorianCalendar> {
+public class GregorianCalendarSerializer implements Serializer<GregorianCalendar> {
 
     private final Field _zoneField;
 
@@ -53,22 +51,18 @@ public class GregorianCalendarSerializer extends SimpleSerializer<GregorianCalen
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GregorianCalendar read( final ByteBuffer buffer ) {
+    public GregorianCalendar read(Kryo kryo, Input input, Class<GregorianCalendar> type) {
         final Calendar result = GregorianCalendar.getInstance();
         
-        result.setTimeInMillis( LongSerializer.get( buffer, true ) );
-        result.setLenient( fromInt( IntSerializer.get( buffer, true ) ) );
-        result.setFirstDayOfWeek( IntSerializer.get( buffer, true ) );
-        result.setMinimalDaysInFirstWeek( IntSerializer.get( buffer, true ) );
+        result.setTimeInMillis( input.readLong( true ) );
+        result.setLenient( fromInt( input.readInt( true ) ) );
+        result.setFirstDayOfWeek( input.readInt( true ) );
+        result.setMinimalDaysInFirstWeek( input.readInt( true ) );
         
         /* check if we actually need to set the timezone, as
          * TimeZone.getTimeZone is synchronized, so we might prevent this
          */
-        final String timeZoneId = StringSerializer.get( buffer );
+        final String timeZoneId = input.readString();
         if ( !getTimeZone( result ).getID().equals( timeZoneId ) ) {
             result.setTimeZone( TimeZone.getTimeZone( timeZoneId ) );
         }
@@ -76,16 +70,13 @@ public class GregorianCalendarSerializer extends SimpleSerializer<GregorianCalen
         return (GregorianCalendar) result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write( final ByteBuffer buffer, final GregorianCalendar calendar ) {
-        LongSerializer.put( buffer, calendar.getTimeInMillis(), true );
-        IntSerializer.put( buffer, toInt( calendar.isLenient() ), true );
-        IntSerializer.put( buffer, calendar.getFirstDayOfWeek(), true );
-        IntSerializer.put( buffer, calendar.getMinimalDaysInFirstWeek(), true );
-        StringSerializer.put( buffer, getTimeZone( calendar ).getID() );
+    public void write(Kryo kryo, Output output, GregorianCalendar calendar) {
+        output.writeLong( calendar.getTimeInMillis(), true );
+        output.writeLong( calendar.getTimeInMillis(), true );
+        output.writeInt( toInt( calendar.isLenient() ), true );
+        output.writeInt( calendar.getFirstDayOfWeek(), true );
+        output.writeInt( calendar.getMinimalDaysInFirstWeek(), true );
+        output.writeString( getTimeZone( calendar ).getID() );
     }
     
     private int toInt( final boolean b ) {
@@ -108,5 +99,4 @@ public class GregorianCalendarSerializer extends SimpleSerializer<GregorianCalen
             throw new RuntimeException( e );
         }
     }
-
 }

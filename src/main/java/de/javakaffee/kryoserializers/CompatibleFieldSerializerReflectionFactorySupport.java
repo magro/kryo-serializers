@@ -16,31 +16,31 @@
  */
 package de.javakaffee.kryoserializers;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
 import sun.reflect.ReflectionFactory;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
-
 /**
- * A {@link ReferenceFieldSerializer} specialization that uses sun's {@link ReflectionFactory} to create
+ * A {@link CompatibleFieldSerializer} specialization that uses sun's {@link ReflectionFactory} to create
  * new instances for classes without a default constructor (via reuse of
  * {@link KryoReflectionFactorySupport#newInstanceFromReflectionFactory(Class)}).
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class ReferenceFieldSerializerReflectionFactorySupport extends ReferenceFieldSerializer {
+public class CompatibleFieldSerializerReflectionFactorySupport extends CompatibleFieldSerializer {
 
     /**
      * Creates a new instance.
-     * @param kryo the kryo instance that is passed to {@link ReferenceFieldSerializer#ReferenceFieldSerializer(Kryo, Class)}.
+     * @param kryo the kryo instance that is passed to {@link CompatibleFieldSerializer#CompatibleFieldSerializer(Kryo, Class)}.
      * @param type the type to serialize.
      */
-    public ReferenceFieldSerializerReflectionFactorySupport( final Kryo kryo, final Class<?> type ) {
+    public CompatibleFieldSerializerReflectionFactorySupport(final Kryo kryo, final Class<?> type) {
         super( kryo, type );
     }
     
     @Override
-    public <T> T newInstance( final Kryo kryo, final Class<T> type ) {
+    public <T> T newInstance( final Kryo kryo, final Input input, final Class<T> type ) {
         return KryoReflectionFactorySupport.newInstanceFromReflectionFactory( type );
     }
     

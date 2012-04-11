@@ -16,52 +16,38 @@
  */
 package de.javakaffee.kryoserializers;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-import java.nio.ByteBuffer;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * A serializer for jdk proxies (proxies created via <code>java.lang.reflect.Proxy.newProxyInstance</code>).
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class JdkProxySerializer extends SimpleSerializer<Object> {
+public class JdkProxySerializer implements Serializer<Object> {
 
-    private final Kryo _kryo;
-
-    public JdkProxySerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object read( final ByteBuffer buffer ) {
-        final InvocationHandler invocationHandler = (InvocationHandler) _kryo.readClassAndObject( buffer );
-        final Class<?>[] interfaces = _kryo.readObjectData( buffer, Class[].class );
-        final ClassLoader classLoader = _kryo.getClassLoader();
+    public Object read(Kryo kryo, Input input, Class<Object> type) {
+        final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
+        final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
+        final ClassLoader classLoader = kryo.getClass().getClassLoader(); // TODO: can we do this?
         try {
             return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
         } catch( final RuntimeException e ) {
             System.err.println( getClass().getName()+ ".read:\n" +
             		"Could not create proxy using classLoader " + classLoader + "," +
-            		" have invoctaionhandler.classloader: " + invocationHandler.getClass().getClassLoader() +
+                    " have invocationhandler.classloader: " + invocationHandler.getClass().getClassLoader() +
                     " have contextclassloader: " + Thread.currentThread().getContextClassLoader() );
             throw e;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write( final ByteBuffer buffer, final Object obj ) {
-        _kryo.writeClassAndObject( buffer, Proxy.getInvocationHandler( obj ) );
-        _kryo.writeObjectData( buffer, obj.getClass().getInterfaces() );
+    public void write(Kryo kryo, Output output, Object obj) {
+        kryo.writeClassAndObject( output, Proxy.getInvocationHandler( obj ) );
+        kryo.writeObject( output, obj.getClass().getInterfaces() );
     }
-
 }

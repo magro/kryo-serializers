@@ -16,14 +16,14 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link Arrays#asList(Object...)}.
@@ -31,13 +31,11 @@ import com.esotericsoftware.kryo.serialize.IntSerializer;
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 @SuppressWarnings( "unchecked" )
-public class ArraysAsListSerializer extends Serializer {
+public class ArraysAsListSerializer<T> implements Serializer<T> {
 
-    private final Kryo _kryo;
     private Field _arrayField;
 
-    public ArraysAsListSerializer( final Kryo kryo ) {
-        _kryo = kryo;
+    public ArraysAsListSerializer() {
         try {
             _arrayField = Class.forName( "java.util.Arrays$ArrayList" ).getDeclaredField( "a" );
             _arrayField.setAccessible( true );
@@ -46,17 +44,13 @@ public class ArraysAsListSerializer extends Serializer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T readObjectData( final ByteBuffer buffer, final Class<T> clazz ) {
-        final int length = IntSerializer.get( buffer, true );
-        final Class<?> componentType = _kryo.readClass( buffer ).getType();
+    public T read(Kryo kryo, Input input, Class<T> type) {
+        final int length = input.readInt(true);
+        final Class<?> componentType = kryo.readClass( input ).getType();
         try {
             final Object[] items = (Object[]) Array.newInstance( componentType, length );
             for( int i = 0; i < length; i++ ) {
-                items[i] = _kryo.readClassAndObject( buffer );
+                items[i] = kryo.readClassAndObject( input );
             }
             return (T) Arrays.asList( items );
         } catch ( final Exception e ) {
@@ -64,18 +58,14 @@ public class ArraysAsListSerializer extends Serializer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void writeObjectData( final ByteBuffer buffer, final Object obj ) {
+    public void write(Kryo kryo, Output output, T obj) {
          try {
             final Object[] array = (Object[]) _arrayField.get( obj );
-            IntSerializer.put( buffer, array.length, true );
+             output.writeInt(array.length, true);
             final Class<?> componentType = array.getClass().getComponentType();
-            _kryo.writeClass( buffer, componentType );
+             kryo.writeClass( output, componentType );
             for( final Object item : array ) {
-                _kryo.writeClassAndObject( buffer, item );
+                kryo.writeClassAndObject( output, item );
             }
          } catch ( final RuntimeException e ) {
              // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
@@ -85,5 +75,4 @@ public class ArraysAsListSerializer extends Serializer {
              throw new RuntimeException( e );
          }
     }
-
 }

@@ -10,7 +10,7 @@
 
 	<groupId>de.javakaffee</groupId>
 	<artifactId>kryo-serializers</artifactId>
-	<version>0.10-SNAPSHOT</version>
+	<version>0.20-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>kryo serializers</name>
 	<description>
@@ -50,7 +50,16 @@
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
-
+   <repositories>
+     <repository>
+       <id>central</id>
+       <url>http://repo1.maven.org/maven2</url>
+     </repository>
+     <repository>
+       <id>conjars</id>
+       <url>http://conjars.org/repo/</url>
+     </repository>
+   </repositories>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -144,9 +153,9 @@
           this also required groupId com.googlecode (instead of com.esotericsoftware) due to project url
         -->
 		<dependency>
-			<groupId>com.googlecode</groupId>
+			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
-			<version>1.04</version>
+			<version>2.02</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -206,5 +215,4 @@
 		  and are now available in maven central
 		-->
 	</repositories>
-
 </project>

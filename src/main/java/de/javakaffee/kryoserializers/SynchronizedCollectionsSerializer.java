@@ -16,26 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * A kryo {@link Serializer} for synchronized {@link Collection}s and {@link Map}s
@@ -43,7 +30,7 @@ import com.esotericsoftware.kryo.serialize.IntSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class SynchronizedCollectionsSerializer extends Serializer {
+public class SynchronizedCollectionsSerializer implements Serializer {
     
     private static final Field SOURCE_COLLECTION_FIELD;
     private static final Field SOURCE_MAP_FIELD;
@@ -62,38 +49,20 @@ public class SynchronizedCollectionsSerializer extends Serializer {
                     " field in java.util.Collections$SynchronizedCollection.", e );
         }
     }
-    
-    private final Kryo _kryo;
-    
-    /**
-     * @param kryo the kryo instance
-     */
-    public SynchronizedCollectionsSerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public <T> T readObjectData( final ByteBuffer buffer, final Class<T> clazz ) {
-        final int ordinal = IntSerializer.get( buffer, true );
+    public Object read(Kryo kryo, Input input, Class clazz) {
+        final int ordinal = input.readInt( true );
         final SynchronizedCollection collection = SynchronizedCollection.values()[ordinal];
-        final Object sourceCollection = _kryo.readClassAndObject( buffer );
-        return (T) collection.create( sourceCollection );
+        final Object sourceCollection = kryo.readClassAndObject( input );
+        return collection.create( sourceCollection );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void writeObjectData( final ByteBuffer buffer, final Object object ) {
+    public void write(Kryo kryo, Output output, Object object) {
         try {
             final SynchronizedCollection collection = SynchronizedCollection.valueOfType( object.getClass() );
             // the ordinal could be replaced by s.th. else (e.g. a explicitely managed "id")
-            IntSerializer.put( buffer, collection.ordinal(), true );
-            _kryo.writeClassAndObject( buffer, collection.sourceCollectionField.get( object ) );
+            output.writeInt( collection.ordinal(), true );
+            kryo.writeClassAndObject( output, collection.sourceCollectionField.get( object ) );
         } catch ( final RuntimeException e ) {
             // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
             // handles SerializationException specifically (resizing the buffer)...
@@ -102,7 +71,7 @@ public class SynchronizedCollectionsSerializer extends Serializer {
             throw new RuntimeException( e );
         }
     }
-    
+
     private static enum SynchronizedCollection {
         COLLECTION( Collections.synchronizedCollection( Arrays.asList( "" ) ).getClass(), SOURCE_COLLECTION_FIELD ){
             @Override
@@ -188,7 +157,7 @@ public class SynchronizedCollectionsSerializer extends Serializer {
      * @see Collections#synchronizedSortedMap(SortedMap)
      */
     public static void registerSerializers( final Kryo kryo ) {
-        final SynchronizedCollectionsSerializer serializer = new SynchronizedCollectionsSerializer( kryo );
+        final SynchronizedCollectionsSerializer serializer = new SynchronizedCollectionsSerializer();
         SynchronizedCollection.values();
         for ( final SynchronizedCollection item : SynchronizedCollection.values() ) {
             kryo.register( item.type, serializer );

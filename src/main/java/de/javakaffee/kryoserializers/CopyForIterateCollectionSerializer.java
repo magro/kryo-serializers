@@ -16,13 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.CollectionSerializer;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.CollectionSerializer;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A kryo {@link Serializer} that creates a copy of the source collection for writing object data.
@@ -42,8 +42,8 @@ public class CopyForIterateCollectionSerializer extends CollectionSerializer {
     }
     
     @Override
-    public void writeObjectData( final ByteBuffer buffer, final Object object ) {
-        super.writeObjectData( buffer, new ArrayList<Object>( (Collection<?>)object ) );
+    public void write( Kryo kryo, Output output, Collection object ) {
+        super.write( kryo, output, new ArrayList<Object>((Collection<?>) object));
     }
 
 }
