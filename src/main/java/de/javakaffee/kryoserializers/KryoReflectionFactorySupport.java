@@ -38,9 +38,11 @@ public class KryoReflectionFactorySupport extends Kryo {
     
     private static final Map<Class<?>, Constructor<?>> _constructors = new ConcurrentHashMap<Class<?>, Constructor<?>>();
 
+    @SuppressWarnings("unchecked")
     public KryoReflectionFactorySupport() {
         super();
-        setDefaultSerializer((Class<Serializer>) CompatibleFieldSerializer.class);
+        Class klass = CompatibleFieldSerializer.class;
+        setDefaultSerializer((Class<Serializer>) klass.asSubclass(Serializer.class));
     }
 
     /**
@@ -49,7 +51,7 @@ public class KryoReflectionFactorySupport extends Kryo {
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> T newInstance( final Class<T> type ) {
-        if (type == null) throw new IllegalArgumentException("type cannot be null.");
+        if (type == null) { throw new IllegalArgumentException("type cannot be null."); }
         Constructor<?> constructor = _constructors.get( type );
         if ( constructor == null ) {
             constructor = getNoArgsConstructor( type );
