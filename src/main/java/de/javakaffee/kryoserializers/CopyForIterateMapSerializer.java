@@ -16,14 +16,14 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.nio.ByteBuffer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.MapSerializer;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.MapSerializer;
 
 /**
  * A kryo {@link Serializer} that creates a copy of the source map for writing object data.
@@ -43,7 +43,7 @@ public class CopyForIterateMapSerializer extends MapSerializer {
     }
     
     @Override
-    public void writeObjectData( final ByteBuffer buffer, final Object object ) {
+    public void write( Kryo kryo, Output output, Map object ) {
         final Map<?, ?> map;
         // we only need special support for linked hash map, as SortedMaps will
         // recreate correct sorting during deserialization...
@@ -53,7 +53,7 @@ public class CopyForIterateMapSerializer extends MapSerializer {
         else {
             map = new HashMap<Object, Object>( (Map<?, ?>)object );
         }
-        super.writeObjectData( buffer, map );
+        super.write( kryo, output, map );
     }
 
 }

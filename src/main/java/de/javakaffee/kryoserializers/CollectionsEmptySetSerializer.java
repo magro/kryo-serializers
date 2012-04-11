@@ -16,13 +16,14 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.nio.ByteBuffer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptySet()}
@@ -30,13 +31,13 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsEmptySetSerializer extends SimpleSerializer<Set<?>> {
+public class CollectionsEmptySetSerializer implements Serializer<Set<?>> {
 
     /**
-     * {@inheritDoc}
-     */
+    * {@inheritDoc}
+    */
     @Override
-    public Set<?> read( final ByteBuffer buffer ) {
+    public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
         return Collections.EMPTY_SET;
     }
 
@@ -44,7 +45,6 @@ public class CollectionsEmptySetSerializer extends SimpleSerializer<Set<?>> {
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final Set<?> emptyList ) {
+    public void write(Kryo kryo, Output output, Set<?> object) {
     }
-
 }

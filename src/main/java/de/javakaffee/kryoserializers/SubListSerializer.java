@@ -16,13 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.util.List;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link List#subList(int, int)}.
@@ -30,17 +30,15 @@ import com.esotericsoftware.kryo.serialize.IntSerializer;
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 @SuppressWarnings( "unchecked" )
-public class SubListSerializer extends Serializer {
+public class SubListSerializer implements Serializer {
     
     private static final Class<?> SUBLIST_CLASS = getClass( "java.util.SubList" );
 
-    private final Kryo _kryo;
     private Field _listField;
     private Field _offsetField;
     private Field _sizeField;
 
-    public SubListSerializer( final Kryo kryo ) {
-        _kryo = kryo;
+    public SubListSerializer() {
         try {
             final Class<?> clazz = Class.forName( "java.util.SubList" );
             _listField = clazz.getDeclaredField( "l" );
@@ -75,24 +73,24 @@ public class SubListSerializer extends Serializer {
      * {@inheritDoc}
      */
     @Override
-    public <T> T readObjectData( final ByteBuffer buffer, final Class<T> clazz ) {
-        final List<?> list = (List<?>) _kryo.readClassAndObject( buffer );
-        final int fromIndex = IntSerializer.get( buffer, true );
-        final int toIndex = IntSerializer.get( buffer, true );
-        return (T) list.subList( fromIndex, toIndex );
+    public Object read(Kryo kryo, Input input, Class clazz) {
+        final List<?> list = (List<?>) kryo.readClassAndObject( input );
+        final int fromIndex = input.readInt(true);
+        final int toIndex = input.readInt(true);
+        return list.subList( fromIndex, toIndex );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void writeObjectData( final ByteBuffer buffer, final Object obj ) {
+    public void write(Kryo kryo, Output output, Object obj) {
         try {
-            _kryo.writeClassAndObject( buffer, _listField.get( obj ) );
+            kryo.writeClassAndObject( output, _listField.get( obj ) );
             final int fromIndex = _offsetField.getInt( obj );
-            IntSerializer.put( buffer, fromIndex, true );
+            output.writeInt(fromIndex, true);
             final int toIndex = fromIndex + _sizeField.getInt( obj );
-            IntSerializer.put( buffer, toIndex, true );
+            output.writeInt(toIndex, true);
         } catch ( final RuntimeException e ) {
             // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
             // handles SerializationException specifically (resizing the buffer)...
@@ -100,6 +98,6 @@ public class SubListSerializer extends Serializer {
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }
+        //To change body of implemented methods use File | Settings | File Templates.
     }
-
 }

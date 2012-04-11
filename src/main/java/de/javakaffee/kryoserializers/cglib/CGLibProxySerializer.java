@@ -16,25 +16,26 @@
  */
 package de.javakaffee.kryoserializers.cglib;
 
-import java.nio.ByteBuffer;
-
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.Factory;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+import java.nio.ByteBuffer;
 
 /**
  * A kryo serializer for cglib proxies. It needs to be registered for {@link CGLibProxyMarker} class.
- * When the serializer for a certain class is requested (via {@link Kryo#newSerializer(Class)})
+ * When the serializer for a certain class is requested (via {@link Kryo#getDefaultSerializer(Class)})
  * {@link #canSerialize(Class)} has to be checked with the provided class to see if 
  * a {@link CGLibProxySerializer} should be returned.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CGLibProxySerializer extends SimpleSerializer<Object> {
-    
+public class CGLibProxySerializer implements Serializer<Object> {
+
     /**
      * This class is used as a marker class - written to the class attribute
      * on serialization and checked on deserialization (via {@link CGLibProxyFormat#canConvert(Class)}.
@@ -42,17 +43,6 @@ public class CGLibProxySerializer extends SimpleSerializer<Object> {
     public static interface CGLibProxyMarker {}
 
     private static String DEFAULT_NAMING_MARKER = "$$EnhancerByCGLIB$$";
-
-    private final Kryo _kryo;
-    
-    /**
-     * Constructor.
-     * 
-     * @param kryo the kryo instance.
-     */
-    public CGLibProxySerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
 
     public static boolean canSerialize( final Class<?> cls ) {
         return Enhancer.isEnhanced( cls ) && cls.getName().indexOf( DEFAULT_NAMING_MARKER ) > 0;
@@ -62,10 +52,10 @@ public class CGLibProxySerializer extends SimpleSerializer<Object> {
      * {@inheritDoc}
      */
     @Override
-    public Object read( final ByteBuffer buffer ) {
-        final Class<?> superclass = _kryo.readClass( buffer ).getType();
-        final Class<?>[] interfaces = _kryo.readObjectData( buffer, Class[].class );
-        final Callback[] callbacks = _kryo.readObjectData( buffer, Callback[].class );
+    public Object read(Kryo kryo, Input input, Class<Object> type) {
+        final Class<?> superclass = kryo.readClass( input ).getType();
+        final Class<?>[] interfaces = kryo.readObject(input, Class[].class);
+        final Callback[] callbacks = kryo.readObject(input, Callback[].class);
         return createProxy( superclass, interfaces, callbacks );
     }
 
@@ -73,10 +63,11 @@ public class CGLibProxySerializer extends SimpleSerializer<Object> {
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final Object obj ) {
-        _kryo.writeClass( buffer, obj.getClass().getSuperclass() );
-        _kryo.writeObjectData( buffer, obj.getClass().getInterfaces() );
-        _kryo.writeObjectData( buffer, ((Factory)obj).getCallbacks() );
+    public void write(Kryo kryo, Output output, Object obj) {
+
+        kryo.writeClass( output, obj.getClass().getSuperclass() );
+        kryo.writeObject( output, obj.getClass().getInterfaces() );
+        kryo.writeObject( output, ((Factory)obj).getCallbacks() );
     }
 
     private Object createProxy( final Class<?> targetClass, final Class<?>[] interfaces, final Callback[] callbacks ) {

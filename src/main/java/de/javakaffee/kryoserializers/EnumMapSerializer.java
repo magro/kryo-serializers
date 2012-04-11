@@ -16,25 +16,25 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
 import java.util.EnumMap;
 import java.util.Map;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.EnumSerializer;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 /**
  * A serializer for {@link EnumMap}s.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class EnumMapSerializer extends SimpleSerializer<EnumMap<? extends Enum<?>, ?>> {
+public class EnumMapSerializer implements Serializer<EnumMap<? extends Enum<?>, ?>> {
     
     private static final Field TYPE_FIELD;
     
@@ -46,37 +46,37 @@ public class EnumMapSerializer extends SimpleSerializer<EnumMap<? extends Enum<?
             throw new RuntimeException( "The EnumMap class seems to have changed, could not access expected field.", e );
         }
     }
-    
-    private final Kryo _kryo;
-
-    /**
-     * Constructor.
-     */
-    public EnumMapSerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
 
     @SuppressWarnings( "unchecked" )
     @Override
-    public EnumMap<?, ?> read( final ByteBuffer buffer ) {
-        final Class<?> keyType = _kryo.readClass( buffer ).getType();
+    public EnumMap<? extends Enum<?>, ?> read(Kryo kryo, Input input,
+        Class<EnumMap<? extends Enum<?>, ?>> type) {
+        final Class<? extends Enum> keyType = kryo.readClass( input ).getType();
         final EnumMap result = new EnumMap( keyType );
-        final int size = IntSerializer.get( buffer, true );
+        DefaultSerializers.EnumSerializer enumSerializer = new DefaultSerializers.EnumSerializer(kryo, keyType);
+
+        final int size = input.readInt(true);
         for ( int i = 0; i < size; i++ ) {
-            final Object key = EnumSerializer.get( buffer, keyType );
-            final Object value = _kryo.readClassAndObject( buffer );
+            final Enum key = enumSerializer.read(kryo, input, (Class<Enum>) keyType );
+            final Object value = kryo.readClassAndObject( input );
             result.put( key, value );
         }
         return result;
     }
 
     @Override
-    public void write( final ByteBuffer buffer, final EnumMap<? extends Enum<?>, ?> map ) {
-        _kryo.writeClass( buffer, getKeyType( map ) );
-        IntSerializer.put( buffer, map.size(), true );
+    public void write(Kryo kryo, Output output, EnumMap<? extends Enum<?>, ?> map) {
+        kryo.writeClass( output, getKeyType( map ) );
+        output.writeInt(map.size(), true);
+        DefaultSerializers.EnumSerializer serializer = null;
         for ( final Map.Entry<? extends Enum<?>,?> entry :  map.entrySet() ) {
-            EnumSerializer.put( buffer, entry.getKey() );
-            _kryo.writeClassAndObject( buffer, entry.getValue() );
+
+            // As with read, we assume that all keys have the same class.
+            if (serializer == null)
+                serializer = new DefaultSerializers.EnumSerializer(kryo, entry.getKey().getClass());
+
+            serializer.write(kryo, output, entry.getKey());
+            kryo.writeClassAndObject( output, entry.getValue() );
         }
         if ( TRACE ) trace( "kryo", "Wrote EnumMap: " + map );
     }
@@ -89,5 +89,4 @@ public class EnumMapSerializer extends SimpleSerializer<EnumMap<? extends Enum<?
             throw new RuntimeException( "Could not access keys field.", e );
         }
     }
-
 }

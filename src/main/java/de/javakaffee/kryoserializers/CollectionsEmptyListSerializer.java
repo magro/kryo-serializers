@@ -16,12 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.nio.ByteBuffer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.util.Collections;
 import java.util.List;
-
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * A kryo {@link Serializer} for {@link List}s created via {@link Collections#emptyList()}
@@ -29,13 +30,13 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsEmptyListSerializer extends SimpleSerializer<List<?>> {
+public class CollectionsEmptyListSerializer implements Serializer<List<?>> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<?> read( final ByteBuffer buffer ) {
+    public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
         return Collections.EMPTY_LIST;
     }
 
@@ -43,7 +44,6 @@ public class CollectionsEmptyListSerializer extends SimpleSerializer<List<?>> {
      * {@inheritDoc}
      */
     @Override
-    public void write( final ByteBuffer buffer, final List<?> emptyList ) {
+    public void write(Kryo kryo, Output output, List<?> object) {
     }
-
 }

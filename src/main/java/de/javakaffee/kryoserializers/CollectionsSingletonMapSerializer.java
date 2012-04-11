@@ -16,41 +16,36 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.nio.ByteBuffer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * A kryo {@link Serializer} for {@link List}s created via {@link Collections#singletonMap(Object, Object)}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsSingletonMapSerializer extends SimpleSerializer<Map<?, ?>> {
+public class CollectionsSingletonMapSerializer implements Serializer<Map<?, ?>> {
 
-    private final Kryo _kryo;
-    
-    public CollectionsSingletonMapSerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
-    
     @Override
-    public Map<?, ?> read( final ByteBuffer buffer ) {
-        final Object key = _kryo.readClassAndObject( buffer );
-        final Object value = _kryo.readClassAndObject( buffer );
+    public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
+        final Object key = kryo.readClassAndObject( input );
+        final Object value = kryo.readClassAndObject( input );
         return Collections.singletonMap( key, value );
     }
 
     @Override
-    public void write( final ByteBuffer buffer, final Map<?, ?> map ) {
+    public void write(Kryo kryo, Output output, Map<?, ?> map) {
         final Entry<?, ?> entry = map.entrySet().iterator().next();
-        _kryo.writeClassAndObject( buffer, entry.getKey() );
-        _kryo.writeClassAndObject( buffer, entry.getValue() );
+        kryo.writeClassAndObject( output, entry.getKey() );
+        kryo.writeClassAndObject( output, entry.getValue() );
     }
+
 
 }

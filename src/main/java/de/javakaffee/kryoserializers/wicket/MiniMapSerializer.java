@@ -16,26 +16,24 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
-
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.apache.wicket.util.collections.MiniMap;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+import java.lang.reflect.Field;
+import java.util.Map.Entry;
+
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 /**
  * A format for wicket's {@link MiniMap}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class MiniMapSerializer extends SimpleSerializer<MiniMap<?, ?>> {
+public class MiniMapSerializer implements Serializer<MiniMap<?, ?>> {
     
     /* To be correct we need to know the size of the internal array, otherwise
      * we might create a too small MiniMap on deserilization
@@ -50,40 +48,6 @@ public class MiniMapSerializer extends SimpleSerializer<MiniMap<?, ?>> {
             throw new RuntimeException( "The MiniMap seems to have changed, could not access expected field.", e );
         }
     }
-    
-    private final Kryo _kryo;
-
-    /**
-     * Constructor.
-     */
-    public MiniMapSerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
-
-    @Override
-    public MiniMap<?, ?> read( final ByteBuffer buffer ) {
-        final int maxEntries = IntSerializer.get( buffer, true );
-        final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );
-        final int size = IntSerializer.get( buffer, true );
-        for ( int i = 0; i < size; i++ ) {
-            final Object key = _kryo.readClassAndObject( buffer );
-            final Object value = _kryo.readClassAndObject( buffer );
-            result.put( key, value );
-        }
-        return result;
-    }
-
-    @Override
-    public void write( final ByteBuffer buffer, final MiniMap<?, ?> map ) {
-        IntSerializer.put( buffer, getMaxEntries( map ), true );
-        IntSerializer.put( buffer, map.size(), true );
-        for ( final Iterator<? extends Entry<?, ?>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
-            final Entry<?, ?> entry = iter.next();
-            _kryo.writeClassAndObject( buffer, entry.getKey() );
-            _kryo.writeClassAndObject( buffer, entry.getValue() );
-        }
-        if ( TRACE ) trace( "kryo", "Wrote map: " + map );
-    }
 
     private int getMaxEntries( final MiniMap<?, ?> map ) {
         try {
@@ -93,4 +57,29 @@ public class MiniMapSerializer extends SimpleSerializer<MiniMap<?, ?>> {
         }
     }
 
+    @Override
+    public void write(Kryo kryo, Output output, MiniMap<?, ?> map) {
+        output.writeInt(getMaxEntries( map ), true);
+        output.writeInt( map.size(), true);
+
+        for (final Entry<?, ?> entry : map.entrySet()) {
+            kryo.writeClassAndObject(output, entry.getKey());
+            kryo.writeClassAndObject(output, entry.getValue());
+        }
+
+        if ( TRACE ) trace( "kryo", "Wrote map: " + map );
+    }
+
+    @Override
+    public MiniMap<?, ?> read(Kryo kryo, Input input, Class<MiniMap<?, ?>> type) {
+        final int maxEntries = input.readInt( true );
+        final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );
+        final int size = input.readInt( true );
+        for ( int i = 0; i < size; i++ ) {
+            final Object key = kryo.readClassAndObject( input );
+            final Object value = kryo.readClassAndObject( input );
+            result.put( key, value );
+        }
+        return result;
+    }
 }

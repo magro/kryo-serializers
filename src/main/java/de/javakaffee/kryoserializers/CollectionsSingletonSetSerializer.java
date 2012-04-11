@@ -16,37 +16,30 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.nio.ByteBuffer;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * A kryo {@link Serializer} for {@link List}s created via {@link Collections#singletonList(Object)}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsSingletonSetSerializer extends SimpleSerializer<Set<?>> {
+public class CollectionsSingletonSetSerializer implements Serializer<Set<?>> {
 
-    private final Kryo _kryo;
-    
-    public CollectionsSingletonSetSerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
-    
     @Override
-    public Set<?> read( final ByteBuffer buffer ) {
-        final Object obj = _kryo.readClassAndObject( buffer );
+    public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
+        final Object obj = kryo.readClassAndObject( input );
         return Collections.singleton( obj );
     }
 
     @Override
-    public void write( final ByteBuffer buffer, final Set<?> set ) {
-        _kryo.writeClassAndObject( buffer, set.iterator().next() );
+    public void write(Kryo kryo, Output output, Set<?> set) {
+        kryo.writeClassAndObject( output, set.iterator().next() );
     }
-
 }

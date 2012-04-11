@@ -16,15 +16,14 @@
  */
 package de.javakaffee.kryoserializers;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
+import sun.reflect.ReflectionFactory;
+
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import sun.reflect.ReflectionFactory;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
 
 /**
  * A {@link Kryo} specialization that uses sun's {@link ReflectionFactory} to create
@@ -38,16 +37,10 @@ public class KryoReflectionFactorySupport extends Kryo {
     private static final Object[] INITARGS = new Object[0];
     
     private static final Map<Class<?>, Constructor<?>> _constructors = new ConcurrentHashMap<Class<?>, Constructor<?>>();
-    
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings( "unchecked" )
-    @Override
-    protected Serializer newDefaultSerializer( final Class type ) {
-        final ReferenceFieldSerializer result = new ReferenceFieldSerializer( this, type );
-        result.setIgnoreSyntheticFields( false );
-        return result;
+
+    public KryoReflectionFactorySupport() {
+        super();
+        setDefaultSerializer((Class<Serializer>) CompatibleFieldSerializer.class);
     }
 
     /**
@@ -56,6 +49,7 @@ public class KryoReflectionFactorySupport extends Kryo {
     @Override
     @SuppressWarnings( "unchecked" )
     public <T> T newInstance( final Class<T> type ) {
+        if (type == null) throw new IllegalArgumentException("type cannot be null.");
         Constructor<?> constructor = _constructors.get( type );
         if ( constructor == null ) {
             constructor = getNoArgsConstructor( type );

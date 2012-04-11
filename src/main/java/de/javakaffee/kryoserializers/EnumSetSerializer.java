@@ -16,18 +16,17 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
-import java.util.Iterator;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.EnumSerializer;
-import com.esotericsoftware.kryo.serialize.IntSerializer;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 /**
  * A serializer for {@link EnumSet}s.
@@ -35,7 +34,7 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 @SuppressWarnings( "unchecked" )
-public class EnumSetSerializer extends SimpleSerializer<EnumSet> {
+public class EnumSetSerializer implements Serializer<EnumSet> {
     
     private static final Field TYPE_FIELD;
     
@@ -47,34 +46,30 @@ public class EnumSetSerializer extends SimpleSerializer<EnumSet> {
             throw new RuntimeException( "The EnumSet class seems to have changed, could not access expected field.", e );
         }
     }
-    
-    private final Kryo _kryo;
-
-    /**
-     * Constructor.
-     */
-    public EnumSetSerializer( final Kryo kryo ) {
-        _kryo = kryo;
-    }
 
     @Override
-    public EnumSet read( final ByteBuffer buffer ) {
-        final Class elementType = _kryo.readClass( buffer ).getType();
+    public EnumSet read(Kryo kryo, Input input, Class<EnumSet> type) {
+        final Class<Enum> elementType = kryo.readClass( input ).getType();
+        DefaultSerializers.EnumSerializer enumSerializer = new DefaultSerializers.EnumSerializer(kryo, elementType);
         final EnumSet result = EnumSet.noneOf( elementType );
-        final int size = IntSerializer.get( buffer, true );
+        final int size = input.readInt(true);
         for ( int i = 0; i < size; i++ ) {
-            result.add( EnumSerializer.get( buffer, elementType ) );
+            result.add( enumSerializer.read( kryo, input, elementType ) );
         }
         return result;
     }
 
     @Override
-    public void write( final ByteBuffer buffer, final EnumSet set ) {
-        _kryo.writeClass( buffer, getElementType( set ) );
-        IntSerializer.put( buffer, set.size(), true );
-        for ( final Iterator<Enum> iter = set.iterator(); iter.hasNext(); ) {
-            EnumSerializer.put( buffer, iter.next() );
+    public void write(Kryo kryo, Output output, EnumSet set) {
+        Class<Enum> elementType = getElementType( set );
+        kryo.writeClass( output, elementType );
+        output.writeInt( set.size(), true );
+
+        DefaultSerializers.EnumSerializer enumSerializer = new DefaultSerializers.EnumSerializer(kryo, elementType);
+        for (Enum aSet : (Iterable<Enum>) set) {
+            enumSerializer.write(kryo, output, aSet);
         }
+
         if ( TRACE ) trace( "kryo", "Wrote EnumSet: " + set );
     }
 
@@ -85,5 +80,4 @@ public class EnumSetSerializer extends SimpleSerializer<EnumSet> {
             throw new RuntimeException( "Could not access keys field.", e );
         }
     }
-
 }
