@@ -47,10 +47,10 @@ public class EnumMapSerializer implements Serializer<EnumMap<? extends Enum<?>, 
         }
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     public EnumMap<? extends Enum<?>, ?> read(Kryo kryo, Input input,
         Class<EnumMap<? extends Enum<?>, ?>> type) {
-        final Class<? extends Enum> keyType = kryo.readClass( input ).getType();
+        final Class<? extends Enum<?>> keyType = kryo.readClass( input ).getType();
         final EnumMap result = new EnumMap( keyType );
         DefaultSerializers.EnumSerializer enumSerializer = new DefaultSerializers.EnumSerializer(kryo, keyType);
 
@@ -79,10 +79,9 @@ public class EnumMapSerializer implements Serializer<EnumMap<? extends Enum<?>, 
         if ( TRACE ) trace( "kryo", "Wrote EnumMap: " + map );
     }
 
-    @SuppressWarnings( "unchecked" )
-    private Class getKeyType( final EnumMap<?, ?> map ) {
+    private Class<?> getKeyType( final EnumMap<?, ?> map ) {
         try {
-            return (Class)TYPE_FIELD.get( map );
+            return (Class<?>)TYPE_FIELD.get( map );
         } catch ( final Exception e ) {
             throw new RuntimeException( "Could not access keys field.", e );
         }

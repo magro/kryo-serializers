@@ -33,7 +33,7 @@ import static com.esotericsoftware.minlog.Log.trace;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-@SuppressWarnings( "unchecked" )
+@SuppressWarnings( { "unchecked", "rawtypes" } )
 public class EnumSetSerializer implements Serializer<EnumSet> {
     
     private static final Field TYPE_FIELD;

@@ -30,7 +30,7 @@ import java.util.*;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class SynchronizedCollectionsSerializer implements Serializer {
+public class SynchronizedCollectionsSerializer implements Serializer<Object> {
     
     private static final Field SOURCE_COLLECTION_FIELD;
     private static final Field SOURCE_MAP_FIELD;
@@ -50,7 +50,7 @@ public class SynchronizedCollectionsSerializer implements Serializer {
         }
     }
 
-    public Object read(Kryo kryo, Input input, Class clazz) {
+    public Object read(Kryo kryo, Input input, Class<Object> clazz) {
         final int ordinal = input.readInt( true );
         final SynchronizedCollection collection = SynchronizedCollection.values()[ordinal];
         final Object sourceCollection = kryo.readClassAndObject( input );

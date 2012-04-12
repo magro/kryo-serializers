@@ -24,8 +24,6 @@ import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.Factory;
 
-import java.nio.ByteBuffer;
-
 /**
  * A kryo serializer for cglib proxies. It needs to be registered for {@link CGLibProxyMarker} class.
  * When the serializer for a certain class is requested (via {@link Kryo#getDefaultSerializer(Class)})

@@ -43,7 +43,7 @@ public class CopyForIterateMapSerializer extends MapSerializer {
     }
     
     @Override
-    public void write( Kryo kryo, Output output, Map object ) {
+    public void write( Kryo kryo, Output output, @SuppressWarnings("rawtypes") Map object ) {
         final Map<?, ?> map;
         // we only need special support for linked hash map, as SortedMaps will
         // recreate correct sorting during deserialization...

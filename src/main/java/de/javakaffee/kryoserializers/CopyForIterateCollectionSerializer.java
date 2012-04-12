@@ -42,7 +42,7 @@ public class CopyForIterateCollectionSerializer extends CollectionSerializer {
     }
     
     @Override
-    public void write( Kryo kryo, Output output, Collection object ) {
+    public void write( Kryo kryo, Output output, @SuppressWarnings("rawtypes") Collection object ) {
         super.write( kryo, output, new ArrayList<Object>((Collection<?>) object));
     }
 

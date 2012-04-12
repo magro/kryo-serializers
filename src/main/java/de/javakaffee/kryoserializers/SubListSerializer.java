@@ -29,8 +29,7 @@ import java.util.List;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-@SuppressWarnings( "unchecked" )
-public class SubListSerializer implements Serializer {
+public class SubListSerializer implements Serializer<List<?>> {
     
     private static final Class<?> SUBLIST_CLASS = getClass( "java.util.SubList" );
 
@@ -69,14 +68,14 @@ public class SubListSerializer implements Serializer {
         return SUBLIST_CLASS.isAssignableFrom( type );
     }
 
-    public Object read(Kryo kryo, Input input, Class clazz) {
+    public List<?> read(Kryo kryo, Input input, Class<List<?>> clazz) {
         final List<?> list = (List<?>) kryo.readClassAndObject( input );
         final int fromIndex = input.readInt(true);
         final int toIndex = input.readInt(true);
         return list.subList( fromIndex, toIndex );
     }
 
-    public void write(Kryo kryo, Output output, Object obj) {
+    public void write(Kryo kryo, Output output, List<?> obj) {
         try {
             kryo.writeClassAndObject( output, _listField.get( obj ) );
             final int fromIndex = _offsetField.getInt( obj );

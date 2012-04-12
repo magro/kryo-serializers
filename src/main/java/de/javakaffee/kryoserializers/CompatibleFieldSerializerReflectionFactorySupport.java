@@ -19,15 +19,15 @@ package de.javakaffee.kryoserializers;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
-import sun.reflect.ReflectionFactory;
 
 /**
- * A {@link CompatibleFieldSerializer} specialization that uses sun's {@link ReflectionFactory} to create
+ * A {@link CompatibleFieldSerializer} specialization that uses sun's {@link sun.reflect.ReflectionFactory} to create
  * new instances for classes without a default constructor (via reuse of
  * {@link KryoReflectionFactorySupport#newInstanceFromReflectionFactory(Class)}).
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
+@SuppressWarnings("restriction")
 public class CompatibleFieldSerializerReflectionFactorySupport extends CompatibleFieldSerializer {
 
     /**
