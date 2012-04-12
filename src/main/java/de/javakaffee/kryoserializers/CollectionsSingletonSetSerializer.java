@@ -16,28 +16,34 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 /**
  * A kryo {@link Serializer} for {@link List}s created via {@link Collections#singletonList(Object)}.
+ * <p>
+ * Note: This serializer does not support cyclic references, if a serialized object
+ * is part of a cycle this might cause an error during deserialization.
+ * </p>
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsSingletonSetSerializer implements Serializer<Set<?>> {
+public class CollectionsSingletonSetSerializer extends Serializer<Set<?>> {
 
-    public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
+    @Override
+    public Set<?> create(final Kryo kryo, final Input input, final Class<Set<?>> type) {
         final Object obj = kryo.readClassAndObject( input );
         return Collections.singleton( obj );
     }
 
-    public void write(Kryo kryo, Output output, Set<?> set) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final Set<?> set) {
         kryo.writeClassAndObject( output, set.iterator().next() );
     }
 }

@@ -28,10 +28,14 @@ import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link Arrays#asList(Object...)}.
+ * <p>
+ * Note: This serializer does not support cyclic references, so if one of the objects
+ * gets set the list as attribute this might cause an error during deserialization.
+ * </p>
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class ArraysAsListSerializer implements Serializer<List<?>> {
+public class ArraysAsListSerializer extends Serializer<List<?>> {
 
     private Field _arrayField;
 
@@ -44,7 +48,8 @@ public class ArraysAsListSerializer implements Serializer<List<?>> {
         }
     }
 
-    public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
+    @Override
+    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> type) {
         final int length = input.readInt(true);
         final Class<?> componentType = kryo.readClass( input ).getType();
         try {
@@ -58,21 +63,22 @@ public class ArraysAsListSerializer implements Serializer<List<?>> {
         }
     }
 
-    public void write(Kryo kryo, Output output, List<?> obj) {
-         try {
+    @Override
+    public void write(final Kryo kryo, final Output output, final List<?> obj) {
+        try {
             final Object[] array = (Object[]) _arrayField.get( obj );
-             output.writeInt(array.length, true);
+            output.writeInt(array.length, true);
             final Class<?> componentType = array.getClass().getComponentType();
-             kryo.writeClass( output, componentType );
+            kryo.writeClass( output, componentType );
             for( final Object item : array ) {
                 kryo.writeClassAndObject( output, item );
             }
-         } catch ( final RuntimeException e ) {
+        } catch ( final RuntimeException e ) {
              // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
              // handles SerializationException specifically (resizing the buffer)...
              throw e;
-         } catch ( final Exception e ) {
+        } catch ( final Exception e ) {
              throw new RuntimeException( e );
-         }
+        }
     }
 }

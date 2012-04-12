@@ -16,24 +16,25 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import org.apache.wicket.util.collections.MiniMap;
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 import java.lang.reflect.Field;
 import java.util.Map.Entry;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
+import org.apache.wicket.util.collections.MiniMap;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A format for wicket's {@link MiniMap}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class MiniMapSerializer implements Serializer<MiniMap<?, ?>> {
+public class MiniMapSerializer extends Serializer<MiniMap<Object, Object>> {
     
     /* To be correct we need to know the size of the internal array, otherwise
      * we might create a too small MiniMap on deserilization
@@ -57,7 +58,8 @@ public class MiniMapSerializer implements Serializer<MiniMap<?, ?>> {
         }
     }
 
-    public void write(Kryo kryo, Output output, MiniMap<?, ?> map) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final MiniMap<Object, Object> map) {
         output.writeInt(getMaxEntries( map ), true);
         output.writeInt( map.size(), true);
 
@@ -69,15 +71,20 @@ public class MiniMapSerializer implements Serializer<MiniMap<?, ?>> {
         if ( TRACE ) trace( "kryo", "Wrote map: " + map );
     }
 
-    public MiniMap<?, ?> read(Kryo kryo, Input input, Class<MiniMap<?, ?>> type) {
+    @Override
+    public MiniMap<Object, Object> create(final Kryo kryo, final Input input, final Class<MiniMap<Object, Object>> type) {
         final int maxEntries = input.readInt( true );
-        final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );
+        return new MiniMap<Object, Object>( maxEntries );
+    }
+
+    @Override
+    public void read(final Kryo kryo, final Input input, final MiniMap<Object, Object> result) {
         final int size = input.readInt( true );
         for ( int i = 0; i < size; i++ ) {
             final Object key = kryo.readClassAndObject( input );
             final Object value = kryo.readClassAndObject( input );
             result.put( key, value );
         }
-        return result;
     }
+
 }

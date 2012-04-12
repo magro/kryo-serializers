@@ -16,22 +16,23 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 
 /**
  * A serializer for jdk proxies (proxies created via <code>java.lang.reflect.Proxy.newProxyInstance</code>).
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class JdkProxySerializer implements Serializer<Object> {
+public class JdkProxySerializer extends Serializer<Object> {
 
-    public Object read(Kryo kryo, Input input, Class<Object> type) {
+    @Override
+    public Object create(final Kryo kryo, final Input input, final Class<Object> type) {
         final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
         final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
         final ClassLoader classLoader = kryo.getClass().getClassLoader(); // TODO: can we do this?
@@ -46,7 +47,8 @@ public class JdkProxySerializer implements Serializer<Object> {
         }
     }
 
-    public void write(Kryo kryo, Output output, Object obj) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final Object obj) {
         kryo.writeClassAndObject( output, Proxy.getInvocationHandler( obj ) );
         kryo.writeObject( output, obj.getClass().getInterfaces() );
     }

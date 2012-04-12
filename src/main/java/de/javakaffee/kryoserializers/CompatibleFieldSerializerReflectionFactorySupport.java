@@ -39,8 +39,9 @@ public class CompatibleFieldSerializerReflectionFactorySupport extends Compatibl
         super( kryo, type );
     }
     
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T newInstance( final Kryo kryo, final Input input, final Class<T> type ) {
+    public Object create(final Kryo kryo, final Input input, @SuppressWarnings("rawtypes") final Class type) {
         return KryoReflectionFactorySupport.newInstanceFromReflectionFactory( type );
     }
     

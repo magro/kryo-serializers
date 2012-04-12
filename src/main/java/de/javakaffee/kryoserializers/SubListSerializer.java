@@ -16,20 +16,20 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link List#subList(int, int)}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class SubListSerializer implements Serializer<List<?>> {
+public class SubListSerializer extends Serializer<List<?>> {
     
     private static final Class<?> SUBLIST_CLASS = getClass( "java.util.SubList" );
 
@@ -68,14 +68,16 @@ public class SubListSerializer implements Serializer<List<?>> {
         return SUBLIST_CLASS.isAssignableFrom( type );
     }
 
-    public List<?> read(Kryo kryo, Input input, Class<List<?>> clazz) {
+    @Override
+    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
         final List<?> list = (List<?>) kryo.readClassAndObject( input );
         final int fromIndex = input.readInt(true);
         final int toIndex = input.readInt(true);
         return list.subList( fromIndex, toIndex );
     }
 
-    public void write(Kryo kryo, Output output, List<?> obj) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final List<?> obj) {
         try {
             kryo.writeClassAndObject( output, _listField.get( obj ) );
             final int fromIndex = _offsetField.getInt( obj );

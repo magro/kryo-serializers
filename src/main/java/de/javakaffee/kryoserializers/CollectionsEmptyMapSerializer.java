@@ -16,13 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.util.Collections;
+import java.util.Map;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptyMap()}
@@ -30,12 +30,14 @@ import java.util.Map;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsEmptyMapSerializer implements Serializer<Map<?, ?>> {
+public class CollectionsEmptyMapSerializer extends Serializer<Map<?, ?>> {
 
-    public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
+    @Override
+    public Map<?, ?> create(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
         return Collections.EMPTY_MAP;
     }
 
-    public void write(Kryo kryo, Output output, Map<?, ?> object) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final Map<?, ?> object) {
     }
 }

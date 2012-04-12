@@ -16,13 +16,26 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.lang.reflect.Field;
-import java.util.*;
 
 /**
  * A kryo {@link Serializer} for unmodifiable {@link Collection}s and {@link Map}s
@@ -30,7 +43,7 @@ import java.util.*;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class UnmodifiableCollectionsSerializer implements Serializer<Object> {
+public class UnmodifiableCollectionsSerializer extends Serializer<Object> {
     
     private static final Field SOURCE_COLLECTION_FIELD;
     private static final Field SOURCE_MAP_FIELD;
@@ -51,14 +64,16 @@ public class UnmodifiableCollectionsSerializer implements Serializer<Object> {
         }
     }
 
-    public Object read(Kryo kryo, Input input, Class<Object> clazz) {
+    @Override
+    public Object create(final Kryo kryo, final Input input, final Class<Object> clazz) {
         final int ordinal = input.readInt( true );
         final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.values()[ordinal];
         final Object sourceCollection = kryo.readClassAndObject( input );
         return unmodifiableCollection.create( sourceCollection );
     }
 
-    public void write(Kryo kryo, Output output, Object object) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final Object object) {
         try {
             final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.valueOfType( object.getClass() );
             // the ordinal could be replaced by s.th. else (e.g. a explicitely managed "id")

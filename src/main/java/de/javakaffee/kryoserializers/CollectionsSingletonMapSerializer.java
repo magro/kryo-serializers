@@ -16,30 +16,36 @@
  */
 package de.javakaffee.kryoserializers;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 /**
  * A kryo {@link Serializer} for {@link List}s created via {@link Collections#singletonMap(Object, Object)}.
+ * <p>
+ * Note: This serializer does not support cyclic references, if a serialized object
+ * is part of a cycle this might cause an error during deserialization.
+ * </p>
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class CollectionsSingletonMapSerializer implements Serializer<Map<?, ?>> {
+public class CollectionsSingletonMapSerializer extends Serializer<Map<?, ?>> {
 
-    public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
+    @Override
+    public Map<?, ?> create(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
         final Object key = kryo.readClassAndObject( input );
         final Object value = kryo.readClassAndObject( input );
         return Collections.singletonMap( key, value );
     }
 
-    public void write(Kryo kryo, Output output, Map<?, ?> map) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final Map<?, ?> map) {
         final Entry<?, ?> entry = map.entrySet().iterator().next();
         kryo.writeClassAndObject( output, entry.getKey() );
         kryo.writeClassAndObject( output, entry.getValue() );

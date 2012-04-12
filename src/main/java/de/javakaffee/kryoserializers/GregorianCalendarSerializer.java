@@ -16,15 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A more efficient kryo {@link Serializer} for {@link GregorianCalendar} instances (which
@@ -38,7 +38,7 @@ import java.util.TimeZone;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class GregorianCalendarSerializer implements Serializer<GregorianCalendar> {
+public class GregorianCalendarSerializer extends Serializer<GregorianCalendar> {
 
     private final Field _zoneField;
 
@@ -51,7 +51,8 @@ public class GregorianCalendarSerializer implements Serializer<GregorianCalendar
         }
     }
 
-    public GregorianCalendar read(Kryo kryo, Input input, Class<GregorianCalendar> type) {
+    @Override
+    public GregorianCalendar create(final Kryo kryo, final Input input, final Class<GregorianCalendar> type) {
         final Calendar result = GregorianCalendar.getInstance();
         
         result.setTimeInMillis( input.readLong( true ) );
@@ -70,7 +71,8 @@ public class GregorianCalendarSerializer implements Serializer<GregorianCalendar
         return (GregorianCalendar) result;
     }
 
-    public void write(Kryo kryo, Output output, GregorianCalendar calendar) {
+    @Override
+    public void write(final Kryo kryo, final Output output, final GregorianCalendar calendar) {
         output.writeLong( calendar.getTimeInMillis(), true );
         output.writeBoolean( calendar.isLenient() );
         output.writeInt( calendar.getFirstDayOfWeek(), true );
