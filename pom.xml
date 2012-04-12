@@ -50,16 +50,6 @@
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
-   <repositories>
-     <repository>
-       <id>central</id>
-       <url>http://repo1.maven.org/maven2</url>
-     </repository>
-     <repository>
-       <id>conjars</id>
-       <url>http://conjars.org/repo/</url>
-     </repository>
-   </repositories>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -155,7 +145,7 @@
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
-			<version>2.02</version>
+			<version>2.01</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
