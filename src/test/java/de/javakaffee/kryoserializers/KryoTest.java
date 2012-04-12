@@ -19,6 +19,8 @@ package de.javakaffee.kryoserializers;
 import static de.javakaffee.kryoserializers.TestClasses.createPerson;
 import static org.testng.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
@@ -53,10 +55,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.BigDecimalSerializer;
-import com.esotericsoftware.kryo.serialize.BigIntegerSerializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerializer;
 
 import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
 import de.javakaffee.kryoserializers.TestClasses.Container;
@@ -69,8 +72,8 @@ import de.javakaffee.kryoserializers.TestClasses.HolderArray;
 import de.javakaffee.kryoserializers.TestClasses.HolderList;
 import de.javakaffee.kryoserializers.TestClasses.MyContainer;
 import de.javakaffee.kryoserializers.TestClasses.Person;
-import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
+import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
 
 /**
  * Test for {@link Kryo} serialization.
@@ -84,14 +87,15 @@ public class KryoTest {
     @BeforeTest
     protected void beforeTest() {
         _kryo = new KryoReflectionFactorySupport() {
+
             @Override
-            @SuppressWarnings( "unchecked" )
-            public Serializer newSerializer( final Class type ) {
+            @SuppressWarnings( { "rawtypes" } )
+            public Serializer getDefaultSerializer( final Class type ) {
                 if ( EnumSet.class.isAssignableFrom( type ) ) {
-                    return new EnumSetSerializer( this );
+                    return new EnumSetSerializer();
                 }
                 if ( EnumMap.class.isAssignableFrom( type ) ) {
-                    return new EnumMapSerializer( this );
+                    return new EnumMapSerializer();
                 }
                 if ( Collection.class.isAssignableFrom( type ) ) {
                     return new CopyForIterateCollectionSerializer( this );
@@ -99,25 +103,21 @@ public class KryoTest {
                 if ( Map.class.isAssignableFrom( type ) ) {
                     return new CopyForIterateMapSerializer( this );
                 }
-                return super.newSerializer( type );
+                return super.getDefaultSerializer( type );
             }
         };
-        _kryo.setRegistrationOptional( true );
-        _kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer( _kryo ) );
-        _kryo.register( Currency.class, new CurrencySerializer( _kryo ) );
-        _kryo.register( StringBuffer.class, new StringBufferSerializer( _kryo ) );
-        _kryo.register( StringBuilder.class, new StringBuilderSerializer( _kryo ) );
+        _kryo.setRegistrationRequired(false);
+        _kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer() );
         _kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
         _kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
         _kryo.register( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
-        _kryo.register( Collections.singletonList( "" ).getClass(), new CollectionsSingletonListSerializer( _kryo ) );
-        _kryo.register( Collections.singleton( "" ).getClass(), new CollectionsSingletonSetSerializer( _kryo ) );
-        _kryo.register( Collections.singletonMap( "", "" ).getClass(), new CollectionsSingletonMapSerializer( _kryo ) );
-        _kryo.register( Class.class, new ClassSerializer( _kryo ) );
+        _kryo.register( Collections.singletonList( "" ).getClass(), new CollectionsSingletonListSerializer() );
+        _kryo.register( Collections.singleton( "" ).getClass(), new CollectionsSingletonSetSerializer() );
+        _kryo.register( Collections.singletonMap( "", "" ).getClass(), new CollectionsSingletonMapSerializer() );
         _kryo.register( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.register( BigInteger.class, new BigIntegerSerializer() );
         _kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );
-        _kryo.register( InvocationHandler.class, new JdkProxySerializer( _kryo ) );
+        _kryo.register( InvocationHandler.class, new JdkProxySerializer() );
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
         SynchronizedCollectionsSerializer.registerSerializers( _kryo );
     }
@@ -305,7 +305,7 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilArraysAsListEmpty() throws Exception {
-        final Holder<List<String>> asListHolder = new Holder( Arrays.asList() );
+        final Holder<List<String>> asListHolder = new Holder<List<String>>( Arrays.<String> asList() );
         final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
     }
@@ -314,6 +314,7 @@ public class KryoTest {
     @Test( enabled = true )
     public void testJavaUtilArraysAsListPrimitiveArrayElement() throws Exception {
         final int[] values = { 1, 2 };
+        @SuppressWarnings("rawtypes")
         final Holder<List<String>> asListHolder = new Holder( Arrays.asList( values ) );
         final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
@@ -322,7 +323,7 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilArraysAsListString() throws Exception {
-        final Holder<List<String>> asListHolder = new Holder( Arrays.asList( "foo", "bar" ) );
+        final Holder<List<String>> asListHolder = new Holder<List<String>>( Arrays.<String> asList( "foo", "bar" ) );
         final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
     }
@@ -330,7 +331,7 @@ public class KryoTest {
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilArraysAsListEmail() throws Exception {
-        final Holder<List<Email>> asListHolder = new Holder( Arrays.asList( new Email( "foo", "foo@example.org" ) ) );
+        final Holder<List<Email>> asListHolder = new Holder<List<Email>>( Arrays.asList( new Email( "foo", "foo@example.org" ) ) );
         final Holder<List<Email>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
     }
@@ -618,12 +619,17 @@ public class KryoTest {
         if ( o == null ) {
             throw new NullPointerException( "Can't serialize null" );
         }
-        return new ObjectBuffer(_kryo).writeObject( o );
-        
+
+        final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        final Output output = new Output(outStream, 4096);
+        _kryo.writeObject(output, o);
+        output.flush();
+        return outStream.toByteArray();
     }
 
     protected <T> T deserialize( final byte[] in, final Class<T> clazz ) {
-        return new ObjectBuffer( _kryo ).readObject( in, clazz );
+        final Input input = new Input(new ByteArrayInputStream(in), in.length);
+        return _kryo.readObject(input, clazz);
     }
 
 }
