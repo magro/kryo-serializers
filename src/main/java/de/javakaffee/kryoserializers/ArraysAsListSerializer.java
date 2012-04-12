@@ -16,22 +16,22 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.Arrays;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link Arrays#asList(Object...)}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-@SuppressWarnings( "unchecked" )
-public class ArraysAsListSerializer<T> implements Serializer<T> {
+public class ArraysAsListSerializer implements Serializer<List<?>> {
 
     private Field _arrayField;
 
@@ -44,7 +44,7 @@ public class ArraysAsListSerializer<T> implements Serializer<T> {
         }
     }
 
-    public T read(Kryo kryo, Input input, Class<T> type) {
+    public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
         final int length = input.readInt(true);
         final Class<?> componentType = kryo.readClass( input ).getType();
         try {
@@ -52,13 +52,13 @@ public class ArraysAsListSerializer<T> implements Serializer<T> {
             for( int i = 0; i < length; i++ ) {
                 items[i] = kryo.readClassAndObject( input );
             }
-            return (T) Arrays.asList( items );
+            return Arrays.asList( items );
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }
     }
 
-    public void write(Kryo kryo, Output output, T obj) {
+    public void write(Kryo kryo, Output output, List<?> obj) {
          try {
             final Object[] array = (Object[]) _arrayField.get( obj );
              output.writeInt(array.length, true);
