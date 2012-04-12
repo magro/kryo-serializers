@@ -55,7 +55,7 @@ public class GregorianCalendarSerializer implements Serializer<GregorianCalendar
         final Calendar result = GregorianCalendar.getInstance();
         
         result.setTimeInMillis( input.readLong( true ) );
-        result.setLenient( fromInt( input.readInt( true ) ) );
+        result.setLenient( input.readBoolean() );
         result.setFirstDayOfWeek( input.readInt( true ) );
         result.setMinimalDaysInFirstWeek( input.readInt( true ) );
         
@@ -72,23 +72,10 @@ public class GregorianCalendarSerializer implements Serializer<GregorianCalendar
 
     public void write(Kryo kryo, Output output, GregorianCalendar calendar) {
         output.writeLong( calendar.getTimeInMillis(), true );
-        output.writeLong( calendar.getTimeInMillis(), true );
-        output.writeInt( toInt( calendar.isLenient() ), true );
+        output.writeBoolean( calendar.isLenient() );
         output.writeInt( calendar.getFirstDayOfWeek(), true );
         output.writeInt( calendar.getMinimalDaysInFirstWeek(), true );
         output.writeString( getTimeZone( calendar ).getID() );
-    }
-    
-    private int toInt( final boolean b ) {
-        return b ? 1 : 0;
-    }
-    
-    private boolean fromInt( final int value ) {
-        if ( value == 0 )
-            return false;
-        if ( value == 1 )
-            return true;
-        throw new IllegalArgumentException( "The value " + value + " cannot be translated into a boolean value, only 0 or 1 are considered valid." );
     }
 
     private TimeZone getTimeZone( final Calendar obj ) {
