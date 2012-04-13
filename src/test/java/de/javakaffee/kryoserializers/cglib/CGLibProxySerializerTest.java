@@ -16,8 +16,17 @@
  */
 package de.javakaffee.kryoserializers.cglib;
 
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,9 +42,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.minlog.Log;
 
-import de.javakaffee.kryoserializers.ClassSerializer;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 
 /**
@@ -55,56 +66,64 @@ public class CGLibProxySerializerTest {
     private Kryo createKryo() {
         final Kryo kryo = new KryoReflectionFactorySupport() {
 
-            @SuppressWarnings( "unchecked" )
             @Override
-            protected void handleUnregisteredClass( final Class type ) {
+            @SuppressWarnings("rawtypes")
+            public Serializer getDefaultSerializer(final Class type) {
                 if ( CGLibProxySerializer.canSerialize( type ) ) {
-                    register( type, getRegisteredClass( CGLibProxySerializer.CGLibProxyMarker.class ) );
+                    return getSerializer(CGLibProxySerializer.CGLibProxyMarker.class);
                 }
-                else {
-                    super.handleUnregisteredClass( type );
-                }
+                return super.getDefaultSerializer(type);
             }
             
         };
-        kryo.setRegistrationOptional( true );
-        kryo.register( Class.class, new ClassSerializer( kryo ) );
-        kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( kryo ) );
+        kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer() );
         return kryo;
     }
 
-//    @Test( enabled = false )
-//    public void testContainerWithCGLibProxyWrite() throws Exception {
-//        Log.TRACE = true;
-//        final MyService proxy = createProxy( new MyServiceImpl() );
-//        final MySpecialContainer myContainer = new MySpecialContainer( proxy );
-//        final OutputStream out = new FileOutputStream( new File( "/tmp/kryotest.ser" ) );
-//        new ObjectBuffer( _kryo ).writeObject( out, myContainer );
-//        out.close();
-//    }
-//
-//    @Test( enabled = false )
-//    public void testContainerWithCGLibProxyRead() throws Exception {
-//        Log.TRACE = true;
-//        final InputStream in = new FileInputStream( new File( "/tmp/kryotest.ser" ) );
-//        new ObjectBuffer( _kryo ).readObject( in, MySpecialContainer.class );
-//        // Assert.assertEquals( deserialized.getMyService().sayHello(), myContainer.getMyService().sayHello() );
-//        in.close();
-//    }
+    @Test( enabled = true )
+    public void testContainerWithCGLibProxyWrite() throws Exception {
+        Log.TRACE = true;
+        final MyService proxy = createProxy( new MyServiceImpl() );
+        final MySpecialContainer myContainer = new MySpecialContainer( proxy );
+        final OutputStream out = new FileOutputStream( new File( "/tmp/kryotest.ser" ) );
+        final Output output = new Output(out);
+        _kryo.writeObject(output, myContainer);
+        output.close();
+    }
+
+    @Test( enabled = true )
+    public void testContainerWithCGLibProxyRead() throws Exception {
+        Log.TRACE = true;
+        final InputStream in = new FileInputStream( new File( "/tmp/kryotest.ser" ) );
+        final Input input = new Input(in);
+        final MySpecialContainer myContainer = _kryo.readObject(input, MySpecialContainer.class);
+        System.out.println(myContainer.getMyService().sayHello());
+        // Assert.assertEquals( deserialized.getMyService().sayHello(), myContainer.getMyService().sayHello() );
+        in.close();
+    }
 
     @Test( enabled = true )
     public void testContainerWithCGLibProxy() throws Exception {
+
         final CustomClassLoader loader = new CustomClassLoader( getClass().getClassLoader() );
+        // _kryo.setClassLoader(loader);
         
         final Class<?> myServiceClass = loader.loadClass( MyServiceImpl.class.getName() );
         final Object proxy = createProxy( myServiceClass.newInstance() );
         
         final Class<?> myContainerClass = loader.loadClass( MyContainer.class.getName() );
         final Object myContainer = myContainerClass.getConstructors()[0].newInstance( proxy );
+
+        System.out.println("---------------- test ------------------");
+        System.out.println(proxy.getClass());
+        System.out.println(Arrays.asList(proxy.getClass().getInterfaces()));
+        System.out.println(proxy.getClass().getSuperclass());
+        System.out.println(Arrays.asList(proxy.getClass().getSuperclass().getInterfaces()));
+        System.out.println("---------------- END test ------------------");
         
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( myContainer );
+        final byte[] serialized = serialize(_kryo, myContainer);
         
-        new ObjectBuffer( _kryo ).readObject( serialized, MyContainer.class );
+        deserialize(_kryo, serialized, MyContainer.class);
         // If we reached this kryo was able to deserialize the proxy, so we're fine
     }
 
@@ -113,8 +132,8 @@ public class CGLibProxySerializerTest {
         final ClassToProxy proxy = createProxy( new ClassToProxy() );
         proxy.setValue( "foo" );
         
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( proxy );
-        final ClassToProxy deserialized = new ObjectBuffer( _kryo ).readObject( serialized, proxy.getClass() );
+        final byte[] serialized = serialize(_kryo, proxy);
+        final ClassToProxy deserialized = deserialize(_kryo, serialized, proxy.getClass() );
         Assert.assertEquals( deserialized.getValue(), proxy.getValue() );
     }
 
@@ -127,9 +146,9 @@ public class CGLibProxySerializerTest {
         proxy.put( "foo", "bar" );
         Assert.assertEquals( proxy.get( "foo" ), "bar" );
         
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( proxy );
+        final byte[] serialized = serialize(_kryo, proxy);
         @SuppressWarnings( "unchecked" )
-        final Map<String, String> deserialized = new ObjectBuffer( _kryo ).readObject( serialized, proxy.getClass() );
+        final Map<String, String> deserialized = deserialize(_kryo, serialized, proxy.getClass() );
         Assert.assertEquals( deserialized.get( "foo" ), proxy.get( "foo" ) );
     }
 

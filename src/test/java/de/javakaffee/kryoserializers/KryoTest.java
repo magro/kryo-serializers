@@ -616,20 +616,28 @@ public class KryoTest {
     }
 
     protected byte[] serialize( final Object o ) {
+        return serialize(_kryo, o);
+    }
+
+    public static byte[] serialize(final Kryo kryo, final Object o) {
         if ( o == null ) {
             throw new NullPointerException( "Can't serialize null" );
         }
 
         final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         final Output output = new Output(outStream, 4096);
-        _kryo.writeObject(output, o);
+        kryo.writeObject(output, o);
         output.flush();
         return outStream.toByteArray();
     }
 
     protected <T> T deserialize( final byte[] in, final Class<T> clazz ) {
+        return deserialize(_kryo, in, clazz);
+    }
+
+    public static <T> T deserialize(final Kryo kryo, final byte[] in, final Class<T> clazz) {
         final Input input = new Input(new ByteArrayInputStream(in), in.length);
-        return _kryo.readObject(input, clazz);
+        return kryo.readObject(input, clazz);
     }
 
 }
