@@ -16,12 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
-import com.esotericsoftware.kryo.Kryo;
-import sun.reflect.ReflectionFactory;
-
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import sun.reflect.ReflectionFactory;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
  * A {@link Kryo} specialization that uses sun's {@link ReflectionFactory} to create
@@ -36,6 +39,16 @@ public class KryoReflectionFactorySupport extends Kryo {
     private static final Object[] INITARGS = new Object[0];
     
     private static final Map<Class<?>, Constructor<?>> _constructors = new ConcurrentHashMap<Class<?>, Constructor<?>>();
+
+    @Override
+    public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class type) {
+        final Serializer<?> result = super.getDefaultSerializer(type);
+        if(result instanceof FieldSerializer) {
+            // don't ignore synthetic fields so that inner classes work (see KryoTest.testInnerClass)
+            ((FieldSerializer) result).setIgnoreSyntheticFields(false);
+        }
+        return result;
+    }
 
     /**
      * {@inheritDoc}
