@@ -13,6 +13,7 @@ A project that provides [kryo](http://code.google.com/p/kryo) serializers for so
 * CopyForIterateCollectionSerializer - creates a copy of the source collection for writing object data.
 * CopyForIterateMapSerializer - creates a copy of the source map for writing object data.
 * CurrencySerializer - serializer for Currency
+* DateSerializer - serializer for java.util.Date and subclasses
 * EnumMapSerializer - serializer for EnumMap
 * EnumSetSerializer - serializer for EnumSet
 * GregorianCalendarSerializer - optimized serializer for (Gregorian)Calendar (24 bytes vs. 1323 bytes with FieldSerializer)

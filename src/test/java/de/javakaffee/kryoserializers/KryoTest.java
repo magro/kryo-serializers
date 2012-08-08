@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -98,6 +99,9 @@ public class KryoTest {
                 }
                 if ( Map.class.isAssignableFrom( type ) ) {
                     return new CopyForIterateMapSerializer( this );
+                }
+                if ( Date.class.isAssignableFrom( type ) ) {
+                    return new DateSerializer( type );
                 }
                 return super.newSerializer( type );
             }
@@ -189,6 +193,33 @@ public class KryoTest {
         assertEquals( deserialized.item.getMinimalDaysInFirstWeek(), cal.item.getMinimalDaysInFirstWeek() );
         assertEquals( deserialized.item.getFirstDayOfWeek(), cal.item.getFirstDayOfWeek() );
         assertEquals( deserialized.item.isLenient(), cal.item.isLenient() );
+    }
+
+    @Test( enabled = true )
+    public void testJavaSqlTimestamp() throws Exception {
+        final Holder<Timestamp> cal = new Holder<Timestamp>( new Timestamp(System.currentTimeMillis()) );
+        @SuppressWarnings( "unchecked" )
+        final Holder<Timestamp> deserialized = deserialize( serialize( cal ), Holder.class );
+        assertDeepEquals( deserialized, cal );
+        assertEquals( deserialized.item.getTime(), cal.item.getTime() );
+    }
+
+    @Test( enabled = true )
+    public void testJavaSqlDate() throws Exception {
+        final Holder<java.sql.Date> cal = new Holder<java.sql.Date>( new java.sql.Date(System.currentTimeMillis()) );
+        @SuppressWarnings( "unchecked" )
+        final Holder<java.sql.Date> deserialized = deserialize( serialize( cal ), Holder.class );
+        assertDeepEquals( deserialized, cal );
+        assertEquals( deserialized.item.getTime(), cal.item.getTime() );
+    }
+
+    @Test( enabled = true )
+    public void testJavaUtilDate() throws Exception {
+        final Holder<Date> cal = new Holder<Date>( new Date(System.currentTimeMillis()) );
+        @SuppressWarnings( "unchecked" )
+        final Holder<Date> deserialized = deserialize( serialize( cal ), Holder.class );
+        assertDeepEquals( deserialized, cal );
+        assertEquals( deserialized.item.getTime(), cal.item.getTime() );
     }
 
     @Test( enabled = true )
