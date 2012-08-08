@@ -19,8 +19,6 @@ package de.javakaffee.kryoserializers;
 import static de.javakaffee.kryoserializers.TestClasses.createPerson;
 import static org.testng.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
@@ -624,11 +622,10 @@ public class KryoTest {
             throw new NullPointerException( "Can't serialize null" );
         }
 
-        final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        final Output output = new Output(outStream, 4096);
+        final Output output = new Output(4096);
         kryo.writeObject(output, o);
         output.flush();
-        return outStream.toByteArray();
+        return output.getBuffer();
     }
 
     protected <T> T deserialize( final byte[] in, final Class<T> clazz ) {
@@ -636,7 +633,7 @@ public class KryoTest {
     }
 
     public static <T> T deserialize(final Kryo kryo, final byte[] in, final Class<T> clazz) {
-        final Input input = new Input(new ByteArrayInputStream(in), in.length);
+        final Input input = new Input(in);
         return kryo.readObject(input, clazz);
     }
 
