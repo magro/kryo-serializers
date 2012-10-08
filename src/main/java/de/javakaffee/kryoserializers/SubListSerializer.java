@@ -69,7 +69,7 @@ public class SubListSerializer extends Serializer<List<?>> {
     }
 
     @Override
-    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
+    public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
         final List<?> list = (List<?>) kryo.readClassAndObject( input );
         final int fromIndex = input.readInt(true);
         final int toIndex = input.readInt(true);

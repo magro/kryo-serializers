@@ -16,6 +16,8 @@
  */
 package de.javakaffee.kryoserializers;
 
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
 import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
 import com.esotericsoftware.kryo.Serializer;
 
 /**
@@ -40,20 +41,19 @@ public class SubListSerializerTest {
         final Kryo kryo = new KryoReflectionFactorySupport() {
             
             @Override
-            @SuppressWarnings( "unchecked" )
-            public Serializer newSerializer( final Class type ) {
+            @SuppressWarnings("rawtypes")
+            public Serializer newSerializer(final Class<? extends Serializer> serializerClass, final Class type) {
                 if ( SubListSerializer.canSerialize( type ) ) {
-                    return new SubListSerializer( this );
+                    return new SubListSerializer();
                 }
-                return super.newSerializer( type );
+                return super.newSerializer( serializerClass, type );
             }
         };
-        kryo.setRegistrationOptional( true );
         
         final List<TestEnum> subList = new ArrayList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 2 );
-        final byte[] serialized = new ObjectBuffer( kryo, 1024 * 1024 ).writeObject( subList );
+        final byte[] serialized = serialize( kryo, subList );
         @SuppressWarnings( "unchecked" )
-        final List<TestEnum> deserialized = new ObjectBuffer( kryo, 1024 * 1024 ).readObject( serialized, subList.getClass() );
+        final List<TestEnum> deserialized = deserialize(kryo, serialized, subList.getClass() );
 
         assertEquals( deserialized, subList );
         assertEquals( deserialized.remove( 0 ), subList.remove( 0 ) );
