@@ -16,6 +16,9 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
@@ -29,10 +32,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
-import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import de.javakaffee.kryoserializers.KryoTest;
@@ -55,23 +56,17 @@ public class WicketTest {
     protected void beforeTest() {
         _kryo = new KryoReflectionFactorySupport() {
             
+            @SuppressWarnings("rawtypes")
             @Override
-            public Serializer newSerializer( final Class type ) {
+            public Serializer getDefaultSerializer( final Class type ) {
                 if ( SERIALIZED_CLASS_NAME.equals( type.getName() ) ) {
-                    return new FieldSerializer( this, type );
+                    return new FieldSerializer<Object>( this, type );
                 }
-                return super.newSerializer( type );
-            }
-            
-            @Override
-            protected Serializer newDefaultSerializer( final Class type ) {
-                final ReferenceFieldSerializer result = new ReferenceFieldSerializer( this, type );
-                result.setIgnoreSyntheticFields( false );
-                return result;
+                return super.getDefaultSerializer(type);
             }
             
         };
-        _kryo.setRegistrationOptional( true );
+        _kryo.setRegistrationRequired( false );
         
         final WebApplication application = new WebApplication() {
             
@@ -103,8 +98,8 @@ public class WicketTest {
         final MarkupContainer markupContainer = new WebMarkupContainer("foo");
         markupContainer.add( new Label( "label1", "foo" ) );
         markupContainer.add( new Label( "label", "hello" ) );
-        final byte[] serialized = new ObjectBuffer( _kryo, 1024 * 1024 ).writeObject( markupContainer );
-        final MarkupContainer deserialized = new ObjectBuffer( _kryo, 1024 * 1024 ).readObject( serialized, markupContainer.getClass() );
+        final byte[] serialized = serialize( _kryo, markupContainer );
+        final MarkupContainer deserialized = deserialize( _kryo, serialized, markupContainer.getClass() );
         KryoTest.assertDeepEquals( deserialized, markupContainer );
     }
 
@@ -114,8 +109,8 @@ public class WicketTest {
         //markupContainer.info( "foo" );
         final Component child = markupContainer.get( 0 );
         child.isVisible();
-        final byte[] serialized = new ObjectBuffer( _kryo, 1024 * 1024 ).writeObject( markupContainer );
-        final MarkupContainer deserialized = new ObjectBuffer( _kryo, 1024 * 1024 ).readObject( serialized, markupContainer.getClass() );
+        final byte[] serialized = serialize( _kryo, markupContainer );
+        final MarkupContainer deserialized = deserialize( _kryo, serialized, markupContainer.getClass() );
 
         final Component deserializedChild = deserialized.get( 0 );
         deserializedChild.isVisible();

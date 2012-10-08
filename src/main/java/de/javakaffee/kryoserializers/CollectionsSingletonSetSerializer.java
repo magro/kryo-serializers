@@ -37,7 +37,7 @@ import com.esotericsoftware.kryo.io.Output;
 public class CollectionsSingletonSetSerializer extends Serializer<Set<?>> {
 
     @Override
-    public Set<?> create(final Kryo kryo, final Input input, final Class<Set<?>> type) {
+    public Set<?> read(final Kryo kryo, final Input input, final Class<Set<?>> type) {
         final Object obj = kryo.readClassAndObject( input );
         return Collections.singleton( obj );
     }

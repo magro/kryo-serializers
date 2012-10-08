@@ -33,7 +33,7 @@ import com.esotericsoftware.kryo.io.Output;
 public class CollectionsEmptyListSerializer extends Serializer<List<?>> {
 
     @Override
-    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> type) {
+    public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
         return Collections.EMPTY_LIST;
     }
 

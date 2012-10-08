@@ -47,7 +47,7 @@ public class EnumSetSerializer extends Serializer<EnumSet<? extends Enum<?>>> {
     }
 
     @Override
-    public EnumSet create(final Kryo kryo, final Input input, final Class<EnumSet<? extends Enum<?>>> type) {
+    public EnumSet read(final Kryo kryo, final Input input, final Class<EnumSet<? extends Enum<?>>> type) {
         final Class<Enum> elementType = kryo.readClass( input ).getType();
         final EnumSet result = EnumSet.noneOf( elementType );
         final int size = input.readInt(true);

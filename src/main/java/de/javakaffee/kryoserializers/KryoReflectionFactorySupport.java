@@ -45,7 +45,7 @@ public class KryoReflectionFactorySupport extends Kryo {
         final Serializer<?> result = super.getDefaultSerializer(type);
         if(result instanceof FieldSerializer) {
             // don't ignore synthetic fields so that inner classes work (see KryoTest.testInnerClass)
-            ((FieldSerializer) result).setIgnoreSyntheticFields(false);
+            ((FieldSerializer<?>) result).setIgnoreSyntheticFields(false);
         }
         return result;
     }

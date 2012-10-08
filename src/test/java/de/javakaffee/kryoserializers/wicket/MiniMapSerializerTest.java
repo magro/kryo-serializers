@@ -16,6 +16,9 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+
 import java.util.Map.Entry;
 
 import org.apache.wicket.util.collections.MiniMap;
@@ -24,7 +27,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
 
 import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
 
@@ -40,14 +42,14 @@ public class MiniMapSerializerTest {
     @BeforeTest
     protected void beforeTest() {
         _kryo = new Kryo();
-        _kryo.register( MiniMap.class, new MiniMapSerializer( _kryo ) );
+        _kryo.register( MiniMap.class, new MiniMapSerializer() );
     }
 
     @Test( enabled = true )
     public void testMiniMapEmpty() {
         final MiniMap<?, ?> obj = new MiniMap<Object, Object>( 0 );
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( obj );
-        final MiniMap<?, ?> deserialized = new ObjectBuffer( _kryo ).readObject( serialized, MiniMap.class );
+        final byte[] serialized = serialize( _kryo, obj );
+        final MiniMap<?, ?> deserialized = deserialize( _kryo, serialized, MiniMap.class );
         Assert.assertEquals( deserialized.size(), obj.size() );
     }
 
@@ -55,8 +57,8 @@ public class MiniMapSerializerTest {
     public void testMiniMapExactNumberOfEntries() {
         final MiniMap<String, String> obj = new MiniMap<String, String>( 1 );
         obj.put( "foo", "bar" );
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( obj );
-        final MiniMap<?, ?> deserialized = new ObjectBuffer( _kryo ).readObject( serialized, MiniMap.class );
+        final byte[] serialized = serialize( _kryo, obj );
+        final MiniMap<?, ?> deserialized = deserialize( _kryo, serialized, MiniMap.class );
         Assert.assertEquals( deserialized.size(), obj.size() );
         final Entry<?, ?> deserializedNext = deserialized.entrySet().iterator().next();
         final Entry<?, ?> origNext = obj.entrySet().iterator().next();
@@ -68,18 +70,18 @@ public class MiniMapSerializerTest {
     public void testMiniMapLessThanMaxEntries() {
         final MiniMap<String, String> obj = new MiniMap<String, String>( 2 );
         obj.put( "foo", "bar" );
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( obj );
-        final MiniMap<?, ?> deserialized = new ObjectBuffer( _kryo ).readObject( serialized, MiniMap.class );
+        final byte[] serialized = serialize( _kryo, obj );
+        final MiniMap<?, ?> deserialized = deserialize( _kryo, serialized, MiniMap.class );
         Assert.assertEquals( deserialized.size(), obj.size() );
     }
 
+    @SuppressWarnings("unchecked")
     @Test( enabled = true )
     public void testMiniMapAddEntriesAfterDeserialization() {
         final MiniMap<String, String> obj = new MiniMap<String, String>( 2 );
         obj.put( "foo", "bar" );
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( obj );
-        @SuppressWarnings( "unchecked" )
-        final MiniMap<String, String> deserialized = new ObjectBuffer( _kryo ).readObject( serialized, obj.getClass() );
+        final byte[] serialized = serialize( _kryo, obj );
+        final MiniMap<String, String> deserialized = deserialize( _kryo, serialized, MiniMap.class );
         Assert.assertEquals( deserialized.size(), obj.size() );
         
         deserialized.put( "bar", "baz" );

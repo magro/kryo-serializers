@@ -64,7 +64,7 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
     }
 
     @Override
-    public Object create(final Kryo kryo, final Input input, final Class<Object> clazz) {
+    public Object read(final Kryo kryo, final Input input, final Class<Object> clazz) {
         final int ordinal = input.readInt( true );
         final SynchronizedCollection collection = SynchronizedCollection.values()[ordinal];
         final Object sourceCollection = kryo.readClassAndObject( input );

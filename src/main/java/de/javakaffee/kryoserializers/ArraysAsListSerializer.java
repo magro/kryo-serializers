@@ -49,7 +49,7 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
     }
 
     @Override
-    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> type) {
+    public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
         final int length = input.readInt(true);
         final Class<?> componentType = kryo.readClass( input ).getType();
         try {

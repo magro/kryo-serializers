@@ -65,7 +65,7 @@ public class UnmodifiableCollectionsSerializer extends Serializer<Object> {
     }
 
     @Override
-    public Object create(final Kryo kryo, final Input input, final Class<Object> clazz) {
+    public Object read(final Kryo kryo, final Input input, final Class<Object> clazz) {
         final int ordinal = input.readInt( true );
         final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.values()[ordinal];
         final Object sourceCollection = kryo.readClassAndObject( input );

@@ -72,19 +72,16 @@ public class MiniMapSerializer extends Serializer<MiniMap<Object, Object>> {
     }
 
     @Override
-    public MiniMap<Object, Object> create(final Kryo kryo, final Input input, final Class<MiniMap<Object, Object>> type) {
+    public MiniMap<Object, Object> read(final Kryo kryo, final Input input, final Class<MiniMap<Object, Object>> type) {
         final int maxEntries = input.readInt( true );
-        return new MiniMap<Object, Object>( maxEntries );
-    }
-
-    @Override
-    public void read(final Kryo kryo, final Input input, final MiniMap<Object, Object> result) {
+        final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );
         final int size = input.readInt( true );
         for ( int i = 0; i < size; i++ ) {
             final Object key = kryo.readClassAndObject( input );
             final Object value = kryo.readClassAndObject( input );
             result.put( key, value );
         }
+        return result;
     }
 
 }
