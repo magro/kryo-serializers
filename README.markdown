@@ -61,7 +61,7 @@ After that's done you can register the custom serializers at the kryo instance. 
     // wicket
     kryo.register( MiniMap.class, new MiniMapSerializer( kryo ) );
     
-The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `newSerializer` method. If you don't want to use the `KryoReflectionFactorySupport` you can override the `newSerializer` method for your `new Kryo()` instance.
+The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
 
     final Kryo kryo = new KryoReflectionFactorySupport() {
         
