@@ -16,14 +16,14 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.MapSerializer;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * A kryo {@link Serializer} that creates a copy of the source map for writing object data.
@@ -38,9 +38,10 @@ import java.util.Map;
  */
 public class CopyForIterateMapSerializer extends MapSerializer {
 
-    public CopyForIterateMapSerializer( final Kryo kryo ) {
-        super( kryo );
+    public CopyForIterateMapSerializer() {
+        super();
     }
+    
     
     @Override
     public void write( Kryo kryo, Output output, @SuppressWarnings("rawtypes") Map object ) {

@@ -16,6 +16,8 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
+import java.io.ByteArrayOutputStream;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
@@ -24,15 +26,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.WicketTester;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
-import com.esotericsoftware.kryo.serialize.ReferenceFieldSerializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import de.javakaffee.kryoserializers.KryoTest;
@@ -51,33 +54,36 @@ public class WicketTest {
     private WicketTester _wicketTester;
 
     @BeforeTest
-    @SuppressWarnings( "unchecked" )
     protected void beforeTest() {
         _kryo = new KryoReflectionFactorySupport() {
             
-            @Override
-            public Serializer newSerializer( final Class type ) {
-                if ( SERIALIZED_CLASS_NAME.equals( type.getName() ) ) {
+            
+            @SuppressWarnings("rawtypes")
+			@Override
+            public Serializer<?> newSerializer(
+            		Class<? extends Serializer> serializerClass, Class type) {
+            	if ( SERIALIZED_CLASS_NAME.equals( type.getName() ) ) {
                     return new FieldSerializer( this, type );
                 }
-                return super.newSerializer( type );
+            	return super.newSerializer(serializerClass, type);
             }
             
-            @Override
-            protected Serializer newDefaultSerializer( final Class type ) {
-                final ReferenceFieldSerializer result = new ReferenceFieldSerializer( this, type );
+            @SuppressWarnings("rawtypes")
+			@Override
+            protected Serializer<?> newDefaultSerializer( final Class type ) {
+                final FieldSerializer<?> result = new FieldSerializer( this, type );
                 result.setIgnoreSyntheticFields( false );
                 return result;
             }
             
         };
-        _kryo.setRegistrationOptional( true );
+        _kryo.setRegistrationRequired( false);
         
-        final WebApplication application = new WebApplication() {
+        final WebApplication application = new WebApplication() {			
             
             @Override
             public Class<? extends Page> getHomePage() {
-                return null;
+                return TestPage.class;
             }
             
         };
@@ -103,8 +109,14 @@ public class WicketTest {
         final MarkupContainer markupContainer = new WebMarkupContainer("foo");
         markupContainer.add( new Label( "label1", "foo" ) );
         markupContainer.add( new Label( "label", "hello" ) );
-        final byte[] serialized = new ObjectBuffer( _kryo, 1024 * 1024 ).writeObject( markupContainer );
-        final MarkupContainer deserialized = new ObjectBuffer( _kryo, 1024 * 1024 ).readObject( serialized, markupContainer.getClass() );
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Output output = new Output(outputStream);        
+        _kryo.writeObject(output, markupContainer);
+        output.close();
+        final byte[] serialized = outputStream.toByteArray();
+        Input input = new Input(serialized);      
+        final MarkupContainer deserialized = _kryo.readObject(input, markupContainer.getClass() );
+        input.close();
         KryoTest.assertDeepEquals( deserialized, markupContainer );
     }
 
@@ -114,13 +126,73 @@ public class WicketTest {
         //markupContainer.info( "foo" );
         final Component child = markupContainer.get( 0 );
         child.isVisible();
-        final byte[] serialized = new ObjectBuffer( _kryo, 1024 * 1024 ).writeObject( markupContainer );
-        final MarkupContainer deserialized = new ObjectBuffer( _kryo, 1024 * 1024 ).readObject( serialized, markupContainer.getClass() );
-
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Output output = new Output(outputStream);        
+        _kryo.writeObject(output, markupContainer);
+        output.close();
+        final byte[] serialized = outputStream.toByteArray();
+        Input input = new Input(serialized);
+  
+        final MarkupContainer deserialized = _kryo.readObject(input, markupContainer.getClass() );
+        input.close();
         final Component deserializedChild = deserialized.get( 0 );
         deserializedChild.isVisible();
         
         KryoTest.assertDeepEquals( deserialized, markupContainer );
     }
+    
+    @Test( enabled = true )
+    public void testTestPanel() throws Exception {
+        TestPage markupContainer = new TestPage();
+        //markupContainer.info( "foo" );
+        Component child = markupContainer.get( 0 );
+        child.isVisible();
+     
+        markupContainer = (TestPage)_wicketTester.startPage(markupContainer);
+        byte[] serialized = KryoUtils.serialize(_kryo, markupContainer);
+        TestPage deserialized = KryoUtils.deserialize(_kryo, serialized, markupContainer.getClass() );
+        Component deserializedChild = deserialized.get( 0 );
+        deserializedChild.isVisible();
+        
+        KryoTest.assertDeepEquals( deserialized, markupContainer );
+        
+        Assert.assertEquals(markupContainer.getPanel().getTestEnum(), TestEnum.A);        
+        Assert.assertEquals(markupContainer.getPanel().getDefaultModelObject(), "test");
+        
+        _wicketTester.executeAjaxEvent(markupContainer.getPanel().getAjaxLink(), "onclick");
+        
+        serialized = KryoUtils.serialize(_kryo, markupContainer);
+        deserialized = KryoUtils.deserialize(_kryo, serialized, markupContainer.getClass() );
+        
+        Assert.assertEquals(markupContainer.getPanel().getTestEnum(), TestEnum.b);        
+        Assert.assertEquals(markupContainer.getPanel().getDefaultModelObject(), "test");
+        
+
+    }
+    
+    
+    @Test( enabled = true )
+    public void testTestFormPanel() throws Exception {
+        TestFormPage markupContainer = new TestFormPage();
+        //markupContainer.info( "foo" );
+        Component child = markupContainer.get( 0 );
+        child.isVisible();
+     
+        markupContainer = (TestFormPage)_wicketTester.startPage(markupContainer);
+        byte[] serialized = KryoUtils.serialize(_kryo, markupContainer);
+        TestFormPage deserialized = KryoUtils.deserialize(_kryo, serialized, markupContainer.getClass() );
+        Component deserializedChild = deserialized.get( 0 );
+        deserializedChild.isVisible();
+        
+        KryoTest.assertDeepEquals( deserialized, markupContainer );
+        
+        _wicketTester.executeListener(markupContainer.getPanel().getForm());
+        
+        serialized = KryoUtils.serialize(_kryo, markupContainer);
+        deserialized = KryoUtils.deserialize(_kryo, serialized, markupContainer.getClass() );
+        
+        KryoTest.assertDeepEquals( deserialized, markupContainer );       
+    }
+    
 
 }

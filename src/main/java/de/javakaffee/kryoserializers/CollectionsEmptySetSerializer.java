@@ -33,9 +33,10 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class CollectionsEmptySetSerializer extends Serializer<Set<?>> {
 
+   
     @Override
-    public Set<?> create(final Kryo kryo, final Input input, final Class<Set<?>> type) {
-        return Collections.EMPTY_SET;
+    public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
+    	return Collections.EMPTY_SET;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class CGLibProxySerializerTest {
 
             @Override
             @SuppressWarnings("rawtypes")
-            public Serializer getDefaultSerializer(final Class type) {
+            public Serializer<?> getDefaultSerializer(final Class type) {
                 if ( CGLibProxySerializer.canSerialize( type ) ) {
                     return getSerializer(CGLibProxySerializer.CGLibProxyMarker.class);
                 }
@@ -106,7 +106,7 @@ public class CGLibProxySerializerTest {
     public void testContainerWithCGLibProxy() throws Exception {
 
         final CustomClassLoader loader = new CustomClassLoader( getClass().getClassLoader() );
-        // _kryo.setClassLoader(loader);
+        _kryo.setClassLoader(loader);
         
         final Class<?> myServiceClass = loader.loadClass( MyServiceImpl.class.getName() );
         final Object proxy = createProxy( myServiceClass.newInstance() );

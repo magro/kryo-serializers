@@ -67,13 +67,13 @@ public class SubListSerializer extends Serializer<List<?>> {
     public static boolean canSerialize( final Class<?> type ) {
         return SUBLIST_CLASS.isAssignableFrom( type );
     }
-
+    
     @Override
-    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
-        final List<?> list = (List<?>) kryo.readClassAndObject( input );
-        final int fromIndex = input.readInt(true);
-        final int toIndex = input.readInt(true);
-        return list.subList( fromIndex, toIndex );
+    public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
+    	   final List<?> list = (List<?>) kryo.readClassAndObject( input );
+           final int fromIndex = input.readInt(true);
+           final int toIndex = input.readInt(true);
+           return list.subList( fromIndex, toIndex );
     }
 
     @Override

@@ -49,18 +49,18 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
     }
 
     @Override
-    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> type) {
-        final int length = input.readInt(true);
-        final Class<?> componentType = kryo.readClass( input ).getType();
-        try {
-            final Object[] items = (Object[]) Array.newInstance( componentType, length );
-            for( int i = 0; i < length; i++ ) {
-                items[i] = kryo.readClassAndObject( input );
-            }
-            return Arrays.asList( items );
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        }
+    public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
+    	 final int length = input.readInt(true);
+         final Class<?> componentType = kryo.readClass( input ).getType();
+         try {
+             final Object[] items = (Object[]) Array.newInstance( componentType, length );
+             for( int i = 0; i < length; i++ ) {
+                 items[i] = kryo.readClassAndObject( input );
+             }
+             return Arrays.asList( items );
+         } catch ( final Exception e ) {
+             throw new RuntimeException( e );
+         }
     }
 
     @Override

@@ -33,8 +33,8 @@ import com.esotericsoftware.kryo.io.Output;
 public class CollectionsEmptyMapSerializer extends Serializer<Map<?, ?>> {
 
     @Override
-    public Map<?, ?> create(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
-        return Collections.EMPTY_MAP;
+    public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
+    	return Collections.EMPTY_MAP;
     }
 
     @Override

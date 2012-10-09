@@ -36,11 +36,13 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class CollectionsSingletonSetSerializer extends Serializer<Set<?>> {
 
+    
     @Override
-    public Set<?> create(final Kryo kryo, final Input input, final Class<Set<?>> type) {
-        final Object obj = kryo.readClassAndObject( input );
+    public Set<?> read(Kryo kryo, Input input, Class<Set<?>> type) {
+    	final Object obj = kryo.readClassAndObject( input );
         return Collections.singleton( obj );
     }
+        
 
     @Override
     public void write(final Kryo kryo, final Output output, final Set<?> set) {

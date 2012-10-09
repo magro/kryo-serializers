@@ -22,7 +22,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.ObjectBuffer;
+
+import de.javakaffee.kryoserializers.wicket.KryoUtils;
 
 /**
  * Test for {@link JodaDateTimeSerializer}.
@@ -42,8 +43,8 @@ public class JodaDateTimeSerializerTest {
     @Test( enabled = true )
     public void testJodaDateTime() {
         final DateTime obj = new DateTime().withDayOfYear( 42 );
-        final byte[] serialized = new ObjectBuffer( _kryo ).writeObject( obj );
-        final DateTime deserialized = new ObjectBuffer( _kryo ).readObject( serialized, DateTime.class );
+        final byte[] serialized = KryoUtils.serialize(_kryo, obj );
+        final DateTime deserialized = KryoUtils.deserialize(_kryo , serialized, DateTime.class );
         Assert.assertEquals( deserialized, obj );
     }
 

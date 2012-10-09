@@ -16,13 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.CollectionSerializer;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * A kryo {@link Serializer} that creates a copy of the source collection for writing object data.
@@ -37,8 +37,8 @@ import java.util.Collection;
  */
 public class CopyForIterateCollectionSerializer extends CollectionSerializer {
 
-    public CopyForIterateCollectionSerializer( final Kryo kryo ) {
-        super( kryo );
+    public CopyForIterateCollectionSerializer() {
+        super();
     }
     
     @Override

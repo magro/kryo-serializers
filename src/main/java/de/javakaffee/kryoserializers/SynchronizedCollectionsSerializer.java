@@ -62,13 +62,13 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
                     " field in java.util.Collections$SynchronizedCollection.", e );
         }
     }
-
+    
     @Override
-    public Object create(final Kryo kryo, final Input input, final Class<Object> clazz) {
+    public Object read(Kryo kryo, Input input, Class<Object> type) {
         final int ordinal = input.readInt( true );
         final SynchronizedCollection collection = SynchronizedCollection.values()[ordinal];
         final Object sourceCollection = kryo.readClassAndObject( input );
-        return collection.create( sourceCollection );
+        return collection.create( sourceCollection ); 
     }
 
     @Override

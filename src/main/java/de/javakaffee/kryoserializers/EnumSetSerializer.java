@@ -45,10 +45,11 @@ public class EnumSetSerializer extends Serializer<EnumSet<? extends Enum<?>>> {
             throw new RuntimeException( "The EnumSet class seems to have changed, could not access expected field.", e );
         }
     }
-
+    
     @Override
-    public EnumSet create(final Kryo kryo, final Input input, final Class<EnumSet<? extends Enum<?>>> type) {
-        final Class<Enum> elementType = kryo.readClass( input ).getType();
+    public EnumSet<? extends Enum<?>> read(Kryo kryo, Input input,
+    		Class<EnumSet<? extends Enum<?>>> type) {
+    	final Class<Enum> elementType = kryo.readClass( input ).getType();
         final EnumSet result = EnumSet.noneOf( elementType );
         final int size = input.readInt(true);
         final Enum<?>[] enumConstants = elementType.getEnumConstants();

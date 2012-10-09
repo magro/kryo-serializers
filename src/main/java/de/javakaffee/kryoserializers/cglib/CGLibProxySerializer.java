@@ -46,14 +46,16 @@ public class CGLibProxySerializer extends Serializer<Object> {
     public static boolean canSerialize( final Class<?> cls ) {
         return Enhancer.isEnhanced( cls ) && cls.getName().indexOf( DEFAULT_NAMING_MARKER ) > 0;
     }
-    
+        
     @Override
-    public Object create(final Kryo kryo, final Input input, final Class<Object> type) {
-        final Class<?> superclass = kryo.readClass( input ).getType();
-        final Class<?>[] interfaces = kryo.readObject(input, Class[].class);
-        final Callback[] callbacks = kryo.readObject(input, Callback[].class);
-        return createProxy( superclass, interfaces, callbacks );
+    public Object read(Kryo kryo, Input input, Class<Object> type) {
+    	   final Class<?> superclass = kryo.readClass( input ).getType();
+           final Class<?>[] interfaces = kryo.readObject(input, Class[].class);
+           final Callback[] callbacks = kryo.readObject(input, Callback[].class);
+           return createProxy( superclass, interfaces, callbacks );
     }
+    
+    
 
     @Override
     public void write(final Kryo kryo, final Output output, final Object obj) {

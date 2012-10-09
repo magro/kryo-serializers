@@ -51,26 +51,28 @@ public class GregorianCalendarSerializer extends Serializer<GregorianCalendar> {
         }
     }
 
-    @Override
-    public GregorianCalendar create(final Kryo kryo, final Input input, final Class<GregorianCalendar> type) {
-        final Calendar result = GregorianCalendar.getInstance();
-        
-        result.setTimeInMillis( input.readLong( true ) );
-        result.setLenient( input.readBoolean() );
-        result.setFirstDayOfWeek( input.readInt( true ) );
-        result.setMinimalDaysInFirstWeek( input.readInt( true ) );
-        
-        /* check if we actually need to set the timezone, as
-         * TimeZone.getTimeZone is synchronized, so we might prevent this
-         */
-        final String timeZoneId = input.readString();
-        if ( !getTimeZone( result ).getID().equals( timeZoneId ) ) {
-            result.setTimeZone( TimeZone.getTimeZone( timeZoneId ) );
-        }
-        
-        return (GregorianCalendar) result;
-    }
 
+    @Override
+    public GregorianCalendar read(Kryo kryo, Input input,
+    		Class<GregorianCalendar> type) {
+    	 final Calendar result = GregorianCalendar.getInstance();
+         
+         result.setTimeInMillis( input.readLong( true ) );
+         result.setLenient( input.readBoolean() );
+         result.setFirstDayOfWeek( input.readInt( true ) );
+         result.setMinimalDaysInFirstWeek( input.readInt( true ) );
+         
+         /* check if we actually need to set the timezone, as
+          * TimeZone.getTimeZone is synchronized, so we might prevent this
+          */
+         final String timeZoneId = input.readString();
+         if ( !getTimeZone( result ).getID().equals( timeZoneId ) ) {
+             result.setTimeZone( TimeZone.getTimeZone( timeZoneId ) );
+         }
+         
+         return (GregorianCalendar) result;
+    }
+    
     @Override
     public void write(final Kryo kryo, final Output output, final GregorianCalendar calendar) {
         output.writeLong( calendar.getTimeInMillis(), true );

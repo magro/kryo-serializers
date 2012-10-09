@@ -34,11 +34,11 @@ import com.esotericsoftware.kryo.io.Output;
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CollectionsSingletonListSerializer extends Serializer<List<?>> {
-
+    
     @Override
-    public List<?> create(final Kryo kryo, final Input input, final Class<List<?>> type) {
-        final Object obj = kryo.readClassAndObject( input );
-        return Collections.singletonList( obj );
+    public List<?> read(Kryo kryo, Input input, Class<List<?>> type) {
+    	   final Object obj = kryo.readClassAndObject( input );
+           return Collections.singletonList( obj );
     }
 
     @Override

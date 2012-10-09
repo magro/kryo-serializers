@@ -63,14 +63,18 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
     static final String CHRONOLOGY = "ch";
     static final String TIME_ZONE = "tz";
 
+    
+   
     @Override
-    public DateTime create(final Kryo kryo, final Input input, final Class<DateTime> type) {
-        final long millis = input.readLong(true);
+    public DateTime read(Kryo kryo,
+    		Input input,
+    		Class<DateTime> type) {
+    	final long millis = input.readLong(true);
         final Chronology chronology = readChronology( input );
         final DateTimeZone tz = readTimeZone( input );
         return new DateTime( millis, chronology.withZone( tz ) );
     }
-
+    
     @Override
     public void write(final Kryo kryo, final Output output, final DateTime obj) {
         output.writeLong(obj.getMillis(), true);

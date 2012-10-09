@@ -31,20 +31,21 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class JdkProxySerializer extends Serializer<Object> {
 
+    
     @Override
-    public Object create(final Kryo kryo, final Input input, final Class<Object> type) {
-        final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
-        final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
-        final ClassLoader classLoader = kryo.getClass().getClassLoader(); // TODO: can we do this?
-        try {
-            return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
-        } catch( final RuntimeException e ) {
-            System.err.println( getClass().getName()+ ".read:\n" +
-            		"Could not create proxy using classLoader " + classLoader + "," +
-                    " have invocationhandler.classloader: " + invocationHandler.getClass().getClassLoader() +
-                    " have contextclassloader: " + Thread.currentThread().getContextClassLoader() );
-            throw e;
-        }
+    public Object read(Kryo kryo, Input input, Class<Object> type) {
+    	  final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
+          final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
+          final ClassLoader classLoader = kryo.getClass().getClassLoader(); // TODO: can we do this?
+          try {
+              return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
+          } catch( final RuntimeException e ) {
+              System.err.println( getClass().getName()+ ".read:\n" +
+              		"Could not create proxy using classLoader " + classLoader + "," +
+                      " have invocationhandler.classloader: " + invocationHandler.getClass().getClassLoader() +
+                      " have contextclassloader: " + Thread.currentThread().getContextClassLoader() );
+              throw e;
+          }
     }
 
     @Override

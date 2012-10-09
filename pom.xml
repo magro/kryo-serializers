@@ -10,11 +10,11 @@
 
 	<groupId>de.javakaffee</groupId>
 	<artifactId>kryo-serializers</artifactId>
-	<version>0.20-SNAPSHOT</version>
+	<version>0.21-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>kryo serializers</name>
 	<description>
-    Additional kryo (http://kryo.googlecode.com) serializers for standard jdk types (e.g. currency, jdk proxies) and some for external libs (e.g. joda time, cglib proxies, wicket).
+    	Additional kryo (http://kryo.googlecode.com) serializers for standard jdk types (e.g. currency, jdk proxies) and some for external libs (e.g. joda time, cglib proxies, wicket).
     </description>
 	<url>https://github.com/magro/kryo-serializers</url>
 
@@ -145,20 +145,11 @@
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
-			<version>2.14</version>
-			<classifier>shaded</classifier>
+			<version>2.20</version>
 			<exclusions>
 				<exclusion>
-					<groupId>com.esotericsoftware.reflectasm</groupId>
-					<artifactId>reflectasm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.esotericsoftware.minlog</groupId>
-					<artifactId>minlog</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.objenesis</groupId>
-					<artifactId>objenesis</artifactId>
+					<artifactId>asm</artifactId>
+					<groupId>org.ow2.asm</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -166,27 +157,25 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>1.6.2</version>
-			<optional>true</optional>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
-			<version>2.2</version>
-			<optional>true</optional>
+			<version>2.2.2</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket</artifactId>
-			<version>1.4.17</version>
-			<optional>true</optional>
+			<version>1.4.18</version>
 		</dependency>
 
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>5.10</version>
-			<classifier>jdk15</classifier>
+			<version>6.1.1</version>
 			<scope>test</scope>
 		</dependency>
 

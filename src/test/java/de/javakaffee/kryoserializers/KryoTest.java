@@ -88,7 +88,7 @@ public class KryoTest {
 
             @Override
             @SuppressWarnings( { "rawtypes" } )
-            public Serializer getDefaultSerializer( final Class type ) {
+            public Serializer<?> getDefaultSerializer( final Class type ) {
                 if ( EnumSet.class.isAssignableFrom( type ) ) {
                     return new EnumSetSerializer();
                 }
@@ -96,10 +96,10 @@ public class KryoTest {
                     return new EnumMapSerializer();
                 }
                 if ( Collection.class.isAssignableFrom( type ) ) {
-                    return new CopyForIterateCollectionSerializer( this );
+                    return new CopyForIterateCollectionSerializer( );
                 }
                 if ( Map.class.isAssignableFrom( type ) ) {
-                    return new CopyForIterateMapSerializer( this );
+                    return new CopyForIterateMapSerializer();
                 }
                 return super.getDefaultSerializer( type );
             }

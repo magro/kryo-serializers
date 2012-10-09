@@ -27,7 +27,7 @@ import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "restriction", "rawtypes" })
 public class CompatibleFieldSerializerReflectionFactorySupport extends CompatibleFieldSerializer {
 
     /**
@@ -41,7 +41,7 @@ public class CompatibleFieldSerializerReflectionFactorySupport extends Compatibl
     
     @SuppressWarnings("unchecked")
     @Override
-    public Object create(final Kryo kryo, final Input input, @SuppressWarnings("rawtypes") final Class type) {
+    public Object create(final Kryo kryo, final Input input,  final Class type) {
         return KryoReflectionFactorySupport.newInstanceFromReflectionFactory( type );
     }
     

@@ -40,8 +40,9 @@ public class KryoReflectionFactorySupport extends Kryo {
     
     private static final Map<Class<?>, Constructor<?>> _constructors = new ConcurrentHashMap<Class<?>, Constructor<?>>();
 
-    @Override
-    public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class type) {
+    @SuppressWarnings("rawtypes")
+	@Override
+    public Serializer<?> getDefaultSerializer(final Class type) {
         final Serializer<?> result = super.getDefaultSerializer(type);
         if(result instanceof FieldSerializer) {
             // don't ignore synthetic fields so that inner classes work (see KryoTest.testInnerClass)

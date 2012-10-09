@@ -37,9 +37,10 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class CollectionsSingletonMapSerializer extends Serializer<Map<?, ?>> {
 
+    
     @Override
-    public Map<?, ?> create(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
-        final Object key = kryo.readClassAndObject( input );
+    public Map<?, ?> read(Kryo kryo, Input input, Class<Map<?, ?>> type) {
+    	final Object key = kryo.readClassAndObject( input );
         final Object value = kryo.readClassAndObject( input );
         return Collections.singletonMap( key, value );
     }
