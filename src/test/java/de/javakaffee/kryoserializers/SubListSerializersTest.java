@@ -88,6 +88,24 @@ public class SubListSerializersTest {
         final List<TestEnum> subList = new ArrayList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 3 ).subList(1, 2);
         doTest(subList);
     }
+
+    @Test( enabled = true )
+    public void testArrayListSubListWithSharedItems () throws Exception {
+        final ArrayList<String> mylist = new ArrayList<String>();
+        mylist.add("1");
+        mylist.add("1");
+        final List<String> subList = mylist.subList(0, 5);
+
+        final byte[] serialized = serialize( _kryo, subList );
+        @SuppressWarnings( "unchecked" )
+        final List<String> deserialized = deserialize( _kryo, serialized, subList.getClass() );
+        
+        System.out.println(subList);
+        System.out.println(deserialized);
+
+        assertEquals( deserialized, subList );
+        assertEquals( deserialized, mylist );
+    }
     
     static enum TestEnum {
         ITEM1, ITEM2, ITEM3;

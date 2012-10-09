@@ -44,6 +44,14 @@ public class SubListSerializers {
         }
     }
 
+    static Class<?> getClassOrNull(final String className) {
+        try {
+            return Class.forName(className);
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+
     /**
      * Obtain a serializer for the given sublist type. If the type is not supported
      * <code>null</code> is returned.
@@ -65,7 +73,7 @@ public class SubListSerializers {
      */
     public static class ArrayListSubListSerializer extends Serializer<List<?>> {
 
-        private static final Class<?> SUBLIST_CLASS = SubListSerializers.getClass("java.util.ArrayList$SubList");
+        private static final Class<?> SUBLIST_CLASS = SubListSerializers.getClassOrNull("java.util.ArrayList$SubList");
 
         private Field _parentField;
         private Field _parentOffsetField;
@@ -93,7 +101,7 @@ public class SubListSerializers {
          * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
          */
         public static boolean canSerialize(final Class<?> type) {
-            return SUBLIST_CLASS.isAssignableFrom(type);
+            return SUBLIST_CLASS != null && SUBLIST_CLASS.isAssignableFrom(type);
         }
 
         @Override
@@ -129,7 +137,7 @@ public class SubListSerializers {
      */
     public static class JavaUtilSubListSerializer extends Serializer<List<?>> {
 
-        private static final Class<?> SUBLIST_CLASS = SubListSerializers.getClass("java.util.SubList");
+        private static final Class<?> SUBLIST_CLASS = SubListSerializers.getClassOrNull("java.util.SubList");
 
         private Field _listField;
         private Field _offsetField;
@@ -157,7 +165,7 @@ public class SubListSerializers {
          * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
          */
         public static boolean canSerialize(final Class<?> type) {
-            return SUBLIST_CLASS.isAssignableFrom(type);
+            return SUBLIST_CLASS != null && SUBLIST_CLASS.isAssignableFrom(type);
         }
 
         @Override
