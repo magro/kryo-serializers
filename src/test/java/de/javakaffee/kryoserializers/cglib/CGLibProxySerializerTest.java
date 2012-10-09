@@ -80,7 +80,7 @@ public class CGLibProxySerializerTest {
         return kryo;
     }
 
-    @Test( enabled = true )
+    @Test( enabled = false )
     public void testContainerWithCGLibProxyWrite() throws Exception {
         Log.TRACE = true;
         final MyService proxy = createProxy( new MyServiceImpl() );
@@ -91,7 +91,7 @@ public class CGLibProxySerializerTest {
         output.close();
     }
 
-    @Test( enabled = true )
+    @Test( enabled = false )
     public void testContainerWithCGLibProxyRead() throws Exception {
         Log.TRACE = true;
         final InputStream in = new FileInputStream( new File( "/tmp/kryotest.ser" ) );
@@ -102,7 +102,7 @@ public class CGLibProxySerializerTest {
         in.close();
     }
 
-    @Test( enabled = true )
+    @Test( enabled = false )
     public void testContainerWithCGLibProxy() throws Exception {
 
         final CustomClassLoader loader = new CustomClassLoader( getClass().getClassLoader() );
@@ -127,7 +127,7 @@ public class CGLibProxySerializerTest {
         // If we reached this kryo was able to deserialize the proxy, so we're fine
     }
 
-    @Test( enabled = true )
+    @Test( enabled = false )
     public void testCGLibProxy() {
         final ClassToProxy proxy = createProxy( new ClassToProxy() );
         proxy.setValue( "foo" );
@@ -140,7 +140,7 @@ public class CGLibProxySerializerTest {
     /**
      * Test that a cglib proxy is handled correctly.
      */
-    @Test( enabled = true )
+    @Test( enabled = false )
     public void testCGLibProxyForExistingFormat() throws XMLStreamException {
         final Map<String, String> proxy = createProxy( new HashMap<String, String>() );
         proxy.put( "foo", "bar" );
