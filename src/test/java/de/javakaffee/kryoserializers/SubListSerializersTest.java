@@ -89,7 +89,7 @@ public class SubListSerializersTest {
         doTest(subList);
     }
 
-    @Test( enabled = false )
+    @Test( enabled = true )
     public void testArrayListSubListWithSharedItems () throws Exception {
         final ArrayList<String> mylist = new ArrayList<String>();
         mylist.add("1");
@@ -102,9 +102,6 @@ public class SubListSerializersTest {
         final byte[] serialized = serialize( _kryo, subList );
         @SuppressWarnings( "unchecked" )
         final List<String> deserialized = deserialize( _kryo, serialized, subList.getClass() );
-        
-        System.out.println(subList);
-        System.out.println(deserialized);
 
         assertEquals( deserialized, subList );
         assertEquals( deserialized, mylist );
