@@ -10,7 +10,7 @@
 
 	<groupId>de.javakaffee</groupId>
 	<artifactId>kryo-serializers</artifactId>
-	<version>0.21</version>
+	<version>0.22-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>kryo serializers</name>
 	<description>
