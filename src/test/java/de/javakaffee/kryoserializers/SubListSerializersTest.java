@@ -91,12 +91,7 @@ public class SubListSerializersTest {
 
     @Test( enabled = true )
     public void testArrayListSubListWithSharedItems () throws Exception {
-        final ArrayList<String> mylist = new ArrayList<String>();
-        mylist.add("1");
-        mylist.add("1");
-        mylist.add("2");
-        mylist.add("1");
-        mylist.add("1");
+        final List<String> mylist = arrayList("1", "1", "2", "1", "1");
         final List<String> subList = mylist.subList(0, 5);
 
         final byte[] serialized = serialize( _kryo, subList );
@@ -106,9 +101,51 @@ public class SubListSerializersTest {
         assertEquals( deserialized, subList );
         assertEquals( deserialized, mylist );
     }
+
+    @Test( enabled = true )
+    @SuppressWarnings( "unchecked" )
+    public void testNestedArrayListSubListWithSharedItems_1() throws Exception {
+        final List<String> l1 = arrayList("1", "1", "2");
+        final List<String> l1s1 = l1.subList(0, 3);
+        
+        final List<String> l1s2 = l1.subList(1, 3);
+
+        final List<String> l2 = arrayList("1", "2", "3");
+        final List<String> l2s1 = l2.subList(0, 3);
+        
+        final List<List<String>> lists = new ArrayList<List<String>>(Arrays.asList(l1s1, l1s2, l2s1, l1, l2));
+
+        final byte[] serialized = serialize( _kryo, lists );
+        final List<List<String>> deserialized = deserialize( _kryo, serialized, lists.getClass() );
+
+        assertEquals( deserialized, lists );
+    }
+
+    @Test( enabled = true )
+    @SuppressWarnings( "unchecked" )
+    public void testNestedArrayListSubListWithSharedItems_2() throws Exception {
+        final List<String> l1 = arrayList("1", "1", "2");
+        final List<String> l1s1 = l1.subList(0, 3);
+        
+        final List<String> l1s2 = l1.subList(1, 3);
+
+        final List<String> l2 = arrayList("1", "2", "3");
+        final List<String> l2s1 = l2.subList(0, 3);
+        
+        final List<List<String>> lists = new ArrayList<List<String>>(Arrays.asList(l1, l2, l1s1, l1s2, l2s1));
+
+        final byte[] serialized = serialize( _kryo, lists );
+        final List<List<String>> deserialized = deserialize( _kryo, serialized, lists.getClass() );
+
+        assertEquals( deserialized, lists );
+    }
     
     static enum TestEnum {
         ITEM1, ITEM2, ITEM3;
+    }
+    
+    private static <T> ArrayList<T> arrayList(final T ... items) {
+        return new ArrayList<T>(Arrays.asList(items));
     }
 
 }
