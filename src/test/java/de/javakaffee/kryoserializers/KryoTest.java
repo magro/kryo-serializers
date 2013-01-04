@@ -155,7 +155,10 @@ public class KryoTest {
     @Test( enabled = true )
     public void testEnumMap() throws Exception {
         final EnumMap<Gender, String> map = new EnumMap<Gender, String>( Gender.class );
-        map.put( Gender.FEMALE, "female" );
+        final String value = "foo";
+        map.put( Gender.FEMALE, value );
+        // Another entry with the same value - to check reference handling
+        map.put( Gender.MALE, value );
         @SuppressWarnings( "unchecked" )
         final EnumMap<Gender, String> deserialized = deserialize( serialize( map ), map.getClass() );
         assertDeepEquals( deserialized, map );

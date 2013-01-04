@@ -46,6 +46,10 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
         }
     }
 
+    // Workaround reference reading, this should be removed sometimes. See also
+    // https://groups.google.com/d/msg/kryo-users/Eu5V4bxCfws/k-8UQ22y59AJ
+    private static final Object FAKE_REFERENCE = new Object();
+
     @SuppressWarnings( { "unchecked", "rawtypes" } )
     private EnumMap<? extends Enum<?>, ?> create(final Kryo kryo, final Input input,
         final Class<EnumMap<? extends Enum<?>, ?>> type) {
@@ -57,6 +61,7 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public EnumMap<? extends Enum<?>, ?> read(final Kryo kryo, final Input input,
             final Class<EnumMap<? extends Enum<?>, ?>> type) {
+        kryo.reference(FAKE_REFERENCE);
         final EnumMap<? extends Enum<?>, ?> result = create(kryo, input, type);
         final Class<Enum<?>> keyType = getKeyType( result );
         final Enum<?>[] enumConstants = keyType.getEnumConstants();
