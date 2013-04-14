@@ -12,6 +12,12 @@ A project that provides [kryo](http://code.google.com/p/kryo) (v2) serializers f
 * CopyForIterateCollectionSerializer - creates a copy of the source collection for writing object data.
 * CopyForIterateMapSerializer - creates a copy of the source map for writing object data.
 * DateSerializer - serializer for java.util.Date and subclasses
+* BitSetSerializer - serializer for java.util.BitSet
+* RegexSerializer - serializer for java.util.regex.Pattern
+* SqlDateSerializer - serializer for java.sql.Date
+* SqlTimeSerializer - serializer for java.sql.Time
+* URISerializer - serializer for java.net.URI
+* UUIDSerializer - serializer for java.util.UUID
 * EnumMapSerializer - serializer for EnumMap
 * EnumSetSerializer - serializer for EnumSet
 * GregorianCalendarSerializer - optimized serializer for (Gregorian)Calendar (24 bytes vs. 1323 bytes with FieldSerializer)
@@ -34,7 +40,7 @@ To be able to use the serializers you have to add the jar to your classpath. If 
         <artifactId>kryo-serializers</artifactId>
         <version>0.20</version>
     </dependency>
-    
+
 It's available in maven central, so you don't need an additional repository definition.
 If you're managing the classpath differently you can get the jar from the downloads section or [download from maven central](http://repo1.maven.org/maven2/de/javakaffee/kryo-serializers/).
 
@@ -51,20 +57,20 @@ After that's done you can register the custom serializers at the kryo instance. 
     kryo.register( InvocationHandler.class, new JdkProxySerializer( kryo ) );
     UnmodifiableCollectionsSerializer.registerSerializers( kryo );
     SynchronizedCollectionsSerializer.registerSerializers( kryo );
-    
+
     // custom serializers for non-jdk libs
-    
+
     // register CGLibProxySerializer, works in combination with the appropriate action in handleUnregisteredClass (see below)
     kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( kryo ) );
     // joda datetime
     kryo.register( DateTime.class, new JodaDateTimeSerializer() );
     // wicket
     kryo.register( MiniMap.class, new MiniMapSerializer( kryo ) );
-    
+
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
 
     final Kryo kryo = new KryoReflectionFactorySupport() {
-        
+
         @Override
         public Serializer<?> getDefaultSerializer(final Class clazz) {
             if ( EnumSet.class.isAssignableFrom( clazz ) ) {
@@ -94,9 +100,9 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
             }
             return super.getDefaultSerializer( clazz );
         }
-        
+
     };
-    
+
 
 # Where to get help
 You can [contact me via github](https://github.com/inbox/new/magro) or [submit an issue](https://github.com/magro/kryo-serializers/issues).
