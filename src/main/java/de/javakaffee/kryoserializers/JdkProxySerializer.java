@@ -35,7 +35,7 @@ public class JdkProxySerializer extends Serializer<Object> {
     public Object read(final Kryo kryo, final Input input, final Class<Object> type) {
         final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
         final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
-        final ClassLoader classLoader = kryo.getClass().getClassLoader(); // TODO: can we do this?
+        final ClassLoader classLoader = kryo.getClassLoader();
         try {
             return Proxy.newProxyInstance( classLoader, interfaces, invocationHandler );
         } catch( final RuntimeException e ) {
