@@ -16,17 +16,16 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static de.javakaffee.kryoserializers.TestClasses.createPerson;
-import static org.testng.Assert.assertEquals;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,14 +43,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.commons.lang.mutable.MutableInt;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import java.util.regex.Pattern;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -59,6 +54,12 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerializer;
+
+import org.apache.commons.lang.mutable.MutableInt;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
 import de.javakaffee.kryoserializers.TestClasses.Container;
@@ -73,6 +74,10 @@ import de.javakaffee.kryoserializers.TestClasses.MyContainer;
 import de.javakaffee.kryoserializers.TestClasses.Person;
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
+
+
+import static de.javakaffee.kryoserializers.TestClasses.createPerson;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test for {@link Kryo} serialization.
@@ -118,6 +123,13 @@ public class KryoTest {
         _kryo.register( Collections.singletonMap( "", "" ).getClass(), new CollectionsSingletonMapSerializer() );
         _kryo.register( BigDecimal.class, new BigDecimalSerializer() );
         _kryo.register( BigInteger.class, new BigIntegerSerializer() );
+        _kryo.register( Pattern.class, new RegexSerializer() );
+        _kryo.register( BitSet.class, new BitSetSerializer() );
+        _kryo.register( java.sql.Date.class, new SqlDateSerializer() );
+        _kryo.register( java.sql.Time.class, new SqlTimeSerializer() );
+        _kryo.register( Timestamp.class, new TimestampSerializer() );
+        _kryo.register( URI.class, new URISerializer() );
+        _kryo.register( UUID.class, new UUIDSerializer() );
         _kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );
         _kryo.register( InvocationHandler.class, new JdkProxySerializer() );
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
@@ -205,14 +217,59 @@ public class KryoTest {
         assertEquals( deserialized.item.getTime(), cal.item.getTime() );
     }
 
+  @Test( enabled = true )
+  public void testJavaSqlDate() throws Exception {
+    final Holder<java.sql.Date> date = new Holder<java.sql.Date>(
+        new java.sql.Date(System.currentTimeMillis()) );
+    @SuppressWarnings( "unchecked" )
+    final Holder<java.sql.Date> deserialized = deserialize( serialize( date ), Holder.class );
+    assertDeepEquals( deserialized, date );
+    assertEquals( deserialized.item.getTime(), date.item.getTime() );
+  }
+
+  @Test( enabled = true )
+  public void testJavaSqlTime() throws Exception {
+    final Holder<java.sql.Time> time = new Holder<java.sql.Time>(
+        new java.sql.Time(System.currentTimeMillis()) );
+    @SuppressWarnings( "unchecked" )
+    final Holder<java.sql.Time> deserialized = deserialize( serialize( time ), Holder.class );
+    assertDeepEquals( deserialized, time );
+    assertEquals( deserialized.item.getTime(), time.item.getTime() );
+  }
+
+  @Test( enabled = true )
+  public void testBitSet() throws Exception {
+    BitSet bitSet = new BitSet(10);
+    bitSet.flip(2);
+    bitSet.flip(4);
+    final Holder<BitSet> holder = new Holder<BitSet>( bitSet );
+    @SuppressWarnings( "unchecked" )
+    final Holder<BitSet> deserialized = deserialize( serialize( holder ), Holder.class );
+    assertDeepEquals( deserialized, holder );
+  }
+
     @Test( enabled = true )
-    public void testJavaSqlDate() throws Exception {
-        final Holder<java.sql.Date> cal = new Holder<java.sql.Date>( new java.sql.Date(System.currentTimeMillis()) );
+    public void testURI() throws Exception {
+        final Holder<URI> uri = new Holder<URI>( new URI("http://www.google.com") );
         @SuppressWarnings( "unchecked" )
-        final Holder<java.sql.Date> deserialized = deserialize( serialize( cal ), Holder.class );
-        assertDeepEquals( deserialized, cal );
-        assertEquals( deserialized.item.getTime(), cal.item.getTime() );
+        final Holder<URI> deserialized = deserialize( serialize( uri ), Holder.class );
+        assertDeepEquals(deserialized, uri);
     }
+
+  @Test( enabled = true )
+  public void testUUID() throws Exception {
+    final Holder<UUID> uuid = new Holder<UUID>( UUID.randomUUID() );
+    @SuppressWarnings( "unchecked" )
+    final Holder<UUID> deserialized = deserialize( serialize( uuid ), Holder.class );
+    assertDeepEquals( deserialized, uuid );
+  }
+  @Test( enabled = true )
+  public void testRegex() throws Exception {
+    final Holder<Pattern> pattern = new Holder<Pattern>( Pattern.compile("regex") );
+    @SuppressWarnings( "unchecked" )
+    final Holder<Pattern> deserialized = deserialize( serialize( pattern ), Holder.class );
+    assertDeepEquals( deserialized, pattern );
+  }
 
     @Test( enabled = true )
     public void testJavaUtilDate() throws Exception {
@@ -220,7 +277,7 @@ public class KryoTest {
         @SuppressWarnings( "unchecked" )
         final Holder<Date> deserialized = deserialize( serialize( cal ), Holder.class );
         assertDeepEquals( deserialized, cal );
-        assertEquals( deserialized.item.getTime(), cal.item.getTime() );
+        assertEquals(deserialized.item.getTime(), cal.item.getTime());
     }
 
     @Test( enabled = true )
