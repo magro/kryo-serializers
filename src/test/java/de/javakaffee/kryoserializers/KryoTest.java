@@ -124,9 +124,6 @@ public class KryoTest {
         _kryo.register( BigInteger.class, new BigIntegerSerializer() );
         _kryo.register( Pattern.class, new RegexSerializer() );
         _kryo.register( BitSet.class, new BitSetSerializer() );
-        _kryo.register( java.sql.Date.class, new SqlDateSerializer() );
-        _kryo.register( java.sql.Time.class, new SqlTimeSerializer() );
-        _kryo.register( Timestamp.class, new TimestampSerializer() );
         _kryo.register( URI.class, new URISerializer() );
         _kryo.register( UUID.class, new UUIDSerializer() );
         _kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );

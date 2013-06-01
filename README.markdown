@@ -11,11 +11,9 @@ A project that provides [kryo](http://code.google.com/p/kryo) (v2) serializers f
 * CollectionsSingletonSetSerializer - for sets created via Collections#singleton(Object)
 * CopyForIterateCollectionSerializer - creates a copy of the source collection for writing object data.
 * CopyForIterateMapSerializer - creates a copy of the source map for writing object data.
-* DateSerializer - serializer for java.util.Date and subclasses
+* DateSerializer - serializer for java.util.Date and subclasses (e.g. java.sql.Date, java.sql.Time, java.sql.Timestamp)
 * BitSetSerializer - serializer for java.util.BitSet
 * RegexSerializer - serializer for java.util.regex.Pattern
-* SqlDateSerializer - serializer for java.sql.Date
-* SqlTimeSerializer - serializer for java.sql.Time
 * URISerializer - serializer for java.net.URI
 * UUIDSerializer - serializer for java.util.UUID
 * EnumMapSerializer - serializer for EnumMap
@@ -38,7 +36,7 @@ To be able to use the serializers you have to add the jar to your classpath. If 
     <dependency>
         <groupId>de.javakaffee</groupId>
         <artifactId>kryo-serializers</artifactId>
-        <version>0.20</version>
+        <version>0.23</version>
     </dependency>
 
 It's available in maven central, so you don't need an additional repository definition.
