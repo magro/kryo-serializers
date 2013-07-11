@@ -163,7 +163,7 @@
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
-			<version>2.21</version>
+			<version>2.22-SNAPSHOT</version>
 			<classifier>shaded</classifier>
 			<exclusions>
 				<exclusion>
@@ -237,5 +237,10 @@
 		  https://docs.sonatype.org/display/Repository/Uploading+3rd-party+Artifacts+to+Maven+Central
 		  and are now available in maven central
 		-->
+        <repository>
+            <id>sonatype-snapshot</id>
+            <name>Sonatype snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
 	</repositories>
 </project>
