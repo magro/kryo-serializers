@@ -1,79 +1,105 @@
 package de.javakaffee.kryoserializers.annotation;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
  * A Kryo {@link com.esotericsoftware.kryo.Serializer} that allows to treat fields by custom annotations that
  * have to be specified by a user.
  *
  * @author <a href="mailto:rafael.wth@web.de">Rafael Winterhalter</a>
+ * 
+ * A kryo {@link com.esotericsoftware.kryo.Serializer} that allows to exclusively include fields
+ * that are attributed with a specific annotation. For example calling
+ * {@code FieldAnnotationRegardingSerializer.getMarks().add(NonTransient.class)}
+ * with {@code NonTransient} being an inversion to some persistence framework's {@code Transient} class, would allow
+ * a serialization of only fields that are annotated with this custom annotation.
+ * <p/>
+ * <b>Important:</b> The relevant annotations must be contained in the collection retreivable via {@code getMarks} before
+ * the instance is created. If some fields should not longer be serialized after the construction, remove such
+ * annotations from the collection and call {@code refresh}. No fields can be added to the serializer once they
+ * are removed. This is a tribute to the behavior of the super class implementation
+ * {@link com.esotericsoftware.kryo.serializers.FieldSerializer}. If you need new fields to be contained you
+ * have to create a new instance of this serializer.
+ *
  */
-public abstract class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
-
-    public FieldAnnotationAwareSerializer(Kryo kryo, Class<?> type) {
-        super(kryo, type);
-    }
-
-    @Override
-    protected void initializeCachedFields() {
-
-        CachedField[] cachedFields = getFields();
-
-        for (CachedField cachedField : cachedFields) {
-            Field field = cachedField.getField();
-            if (isRemove(field)) {
-                if (TRACE) {
-                    trace("kryo", String.format("Ignoring field %s tag: %s", isInverted() ? "without" : "with", cachedField));
-                }
-                super.removeField(field.getName());
-            }
-        }
-    }
-
-    private boolean isRemove(Field field) {
-        return !isMarked(field) ^ isInverted();
-    }
-
-    private boolean isMarked(Field field) {
-        for (Annotation annotation : field.getAnnotations()) {
-            if (getCurrentlyMarkedAnnotations().contains(annotation.annotationType())) {
-                return true;
-            }
-        }
-        return false;
-    }
+public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 
     /**
-     * Determines whether annotated fields should be excluded from serialization.
-     *
-     * @return {@code true} if annotated fields should be excluded from serialization,
-     *         {@code false} if only annotated fields should be included from serialization.
-     */
-    protected abstract boolean isInverted();
-
-    /**
-     * Returns a collection of annotations to be analyzed for serialization.
+     * A collection of annotations to be analyzed for serialization.
      * <p/>
      * <b>Important:</b> This method must never return {@code null}, even within the call
      * of the <i>super</i> constructor of the {@link FieldSerializer} class. Overriding classes will
      * therefore most likely host a static collection of such annotation types. See the
      * {@link FieldAnnotationRegardingSerializer} and {@link FieldAnnotationDisregardingSerializer}
      * classes for examples of such implementations.
-     *
-     * @return A collection containing all relevant annotations.
      */
-    protected abstract Collection<Class<? extends Annotation>> getCurrentlyMarkedAnnotations();
+    private Set<Class<? extends Annotation>> marked;
+
+    /**
+     * Determines whether annotated fields should be excluded from serialization.
+     *
+     * {@code true} if annotated fields should be excluded from serialization,
+     * {@code false} if only annotated fields should be included from serialization.
+     */
+	private final boolean inverted;
+
+    public FieldAnnotationAwareSerializer(final Kryo kryo, final Class<?> type, final boolean inverted) {
+        super(kryo, type);
+        this.inverted = inverted;
+    }
+    
+    @Override
+    protected void rebuildCachedFields() {
+    	
+    	// Called from rebuildCachedFields which is invoked by super constructor.
+    	if(marked == null) {
+    		marked = new HashSet<Class<? extends Annotation>>();
+    	}
+    	
+    	super.rebuildCachedFields();
+    }
 
     @Override
-    public void removeField(String fieldName) {
+    protected void initializeCachedFields() {
+
+		final CachedField<?>[] cachedFields = getFields();
+
+        for (final CachedField<?> cachedField : cachedFields) {
+            final Field field = cachedField.getField();
+            if (isRemove(field)) {
+                if (TRACE) {
+                    trace("kryo", String.format("Ignoring field %s tag: %s", inverted ? "without" : "with", cachedField));
+                }
+                super.removeField(field.getName());
+            }
+        }
+    }
+
+    private boolean isRemove(final Field field) {
+        return !isMarked(field) ^ inverted;
+    }
+
+    private boolean isMarked(final Field field) {
+        for (final Annotation annotation : field.getAnnotations()) {
+            final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if (marked.contains(annotationType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void removeField(final String fieldName) {
         super.removeField(fieldName);
         initializeCachedFields();
     }
@@ -87,4 +113,10 @@ public abstract class FieldAnnotationAwareSerializer<T> extends FieldSerializer<
     public void refresh() {
         initializeCachedFields();
     }
+
+	public void addAnnotation(final Class<? extends Annotation> clazz) {
+		marked.add(clazz);
+		rebuildCachedFields();
+	}
+
 }
