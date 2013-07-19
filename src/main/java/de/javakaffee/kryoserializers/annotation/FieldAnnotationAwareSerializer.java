@@ -11,13 +11,8 @@ import static com.esotericsoftware.minlog.Log.TRACE;
 import static com.esotericsoftware.minlog.Log.trace;
 
 /**
- * A kryo {@link com.esotericsoftware.kryo.Serializer} that allows to ignore
- * ({@link de.javakaffee.kryoserializers.annotation.FieldAnnotationDisregardingSerializer})
- * or to exclusively include ({@link de.javakaffee.kryoserializers.annotation.FieldAnnotationRegardingSerializer})
- * fields that are attributed with a specific annotation.
- *
- * <p>This serializer can for example be used to serialize objects that carry non-serializable Spring injections. By
- * overriding the read object method, the injections can be reattached whenever an object is deserialized.</p>
+ * A Kryo {@link com.esotericsoftware.kryo.Serializer} that allows to treat fields by custom annotations that
+ * have to be specified by a user.
  *
  * @author <a href="mailto:rafael.wth@web.de">Rafael Winterhalter</a>
  */
@@ -27,35 +22,69 @@ public abstract class FieldAnnotationAwareSerializer<T> extends FieldSerializer<
         super(kryo, type);
     }
 
+    @Override
     protected void initializeCachedFields() {
 
         CachedField[] cachedFields = getFields();
 
         for (CachedField cachedField : cachedFields) {
             Field field = cachedField.getField();
-            if (isInverted() ^ isMarked(field)) {
-                if (TRACE) trace("kryo", String.format("Ignoring field %s tag: %s", isInverted() ? "without" : "with", cachedField));
+            if (isRemove(field)) {
+                if (TRACE) {
+                    trace("kryo", String.format("Ignoring field %s tag: %s", isInverted() ? "without" : "with", cachedField));
+                }
                 super.removeField(field.getName());
             }
         }
     }
 
+    private boolean isRemove(Field field) {
+        return !isMarked(field) ^ isInverted();
+    }
+
     private boolean isMarked(Field field) {
-        boolean markFound = false;
         for (Annotation annotation : field.getAnnotations()) {
-            if (getMarkedAnnotations().contains(annotation.annotationType())) {
+            if (getCurrentlyMarkedAnnotations().contains(annotation.annotationType())) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Determines whether annotated fields should be excluded from serialization.
+     *
+     * @return {@code true} if annotated fields should be excluded from serialization,
+     *         {@code false} if only annotated fields should be included from serialization.
+     */
     protected abstract boolean isInverted();
 
-    protected abstract Collection<Class<? extends Annotation>> getMarkedAnnotations();
+    /**
+     * Returns a collection of annotations to be analyzed for serialization.
+     * <p/>
+     * <b>Important:</b> This method must never return {@code null}, even within the call
+     * of the <i>super</i> constructor of the {@link FieldSerializer} class. Overriding classes will
+     * therefore most likely host a static collection of such annotation types. See the
+     * {@link FieldAnnotationRegardingSerializer} and {@link FieldAnnotationDisregardingSerializer}
+     * classes for examples of such implementations.
+     *
+     * @return A collection containing all relevant annotations.
+     */
+    protected abstract Collection<Class<? extends Annotation>> getCurrentlyMarkedAnnotations();
 
+    @Override
     public void removeField(String fieldName) {
         super.removeField(fieldName);
+        initializeCachedFields();
+    }
+
+    /**
+     * Removes fields from serialization that were not longer relevant. Be aware that no new fields
+     * can be added to serialization once they were removed. This is the same behavior as observed with
+     * the {@link FieldSerializer} class. If you need to add fields to serialization, you have to construct
+     * a new instance of this serializer type.
+     */
+    public void refresh() {
         initializeCachedFields();
     }
 }
