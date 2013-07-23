@@ -87,6 +87,20 @@ public class UnmodifiableCollectionsSerializer extends Serializer<Object> {
             throw new RuntimeException( e );
         }
     }
+    
+    @Override
+    public Object copy(Kryo kryo, Object original) {
+      try {
+          final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection.valueOfType( original.getClass() );
+          Object sourceCollectionCopy = kryo.copy(unmodifiableCollection.sourceCollectionField.get(original));
+          return unmodifiableCollection.create( sourceCollectionCopy );
+      } catch ( final RuntimeException e ) {
+          // Don't eat and wrap RuntimeExceptions
+          throw e;
+      } catch ( final Exception e ) {
+          throw new RuntimeException( e );
+      }
+    }
 
     private static enum UnmodifiableCollection {
         COLLECTION( Collections.unmodifiableCollection( Arrays.asList( "" ) ).getClass(), SOURCE_COLLECTION_FIELD ){

@@ -86,6 +86,20 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
             throw new RuntimeException( e );
         }
     }
+    
+    @Override
+    public Object copy(Kryo kryo, Object original) {
+      try {
+          final SynchronizedCollection collection = SynchronizedCollection.valueOfType( original.getClass() );
+          Object sourceCollectionCopy = kryo.copy(collection.sourceCollectionField.get(original));
+          return collection.create( sourceCollectionCopy );
+      } catch ( final RuntimeException e ) {
+          // Don't eat and wrap RuntimeExceptions
+          throw e;
+      } catch ( final Exception e ) {
+          throw new RuntimeException( e );
+      }
+    }
 
     private static enum SynchronizedCollection {
         COLLECTION( Collections.synchronizedCollection( Arrays.asList( "" ) ).getClass(), SOURCE_COLLECTION_FIELD ){
