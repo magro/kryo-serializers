@@ -336,6 +336,24 @@ public class KryoTest {
         assertDeepEquals( deserialized, unmodifiableMap );
     }
     
+    @Test( enabled = true , dataProvider = "unmodifiableCollections" )
+    public void testCopyJavaUtilCollectionsUnmodifiable( Object collection ) throws Exception {
+        final Holder<Object> unmodifiableCollection = new Holder<Object>( collection );
+        final Holder<Object> copy = _kryo.copy( unmodifiableCollection );
+        assertDeepEquals( copy, unmodifiableCollection );
+    }
+    
+    @DataProvider
+    public Object[][] unmodifiableCollections() {
+        final HashMap<String, String> m = new HashMap<String, String>();
+        m.put( "foo", "bar" );
+        return new Object[][] {
+            { Collections.unmodifiableList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) ) },
+            { Collections.unmodifiableSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) ) },
+            { Collections.unmodifiableMap( m ) },
+        };
+    }
+    
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
     public void testJavaUtilCollectionsSynchronizedList() throws Exception {
@@ -360,6 +378,24 @@ public class KryoTest {
         final Map<String, String> map = Collections.synchronizedMap( m );
         final Map<String, String> deserialized = deserialize( serialize( map ), map.getClass() );
         assertDeepEquals( deserialized, map );
+    }
+    
+    @Test( enabled = true , dataProvider = "synchronizedCollections" )
+    public void testCopyJavaUtilCollectionsSynchronizedList( Object collection ) throws Exception {
+        final Holder<Object> synchronizedCollection = new Holder<Object>( collection );
+        final Holder<Object> copy = _kryo.copy( synchronizedCollection );
+        assertDeepEquals( copy, synchronizedCollection );
+    }
+    
+    @DataProvider
+    public Object[][] synchronizedCollections() {
+        final HashMap<String, String> m = new HashMap<String, String>();
+        m.put( "foo", "bar" );
+        return new Object[][] {
+            { Collections.synchronizedList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) ) },
+            { Collections.synchronizedSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) ) },
+            { Collections.synchronizedMap( m ) },
+        };
     }
     
     @SuppressWarnings( "unchecked" )
