@@ -310,39 +310,6 @@ public class KryoTest {
         Assert.assertEquals( deserialized.getDefaultFractionDigits(), currency.getDefaultFractionDigits() );
     }
     
-    @SuppressWarnings( "unchecked" )
-    @Test( enabled = true )
-    public void testJavaUtilCollectionsUnmodifiableList() throws Exception {
-        final Holder<List<String>> unmodifiableList = new Holder<List<String>>( Collections.unmodifiableList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) ) );
-        final Holder<List<String>> deserialized = deserialize( serialize( unmodifiableList ), Holder.class );
-        assertDeepEquals( deserialized, unmodifiableList );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    @Test( enabled = true )
-    public void testJavaUtilCollectionsUnmodifiableSet() throws Exception {
-        final Set<String> set = Collections.unmodifiableSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) );
-        final Set<String> deserialized = deserialize( serialize( set ), set.getClass() );
-        assertDeepEquals( deserialized, set );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    @Test( enabled = true )
-    public void testJavaUtilCollectionsUnmodifiableMap() throws Exception {
-        final HashMap<String, String> m = new HashMap<String, String>();
-        m.put( "foo", "bar" );
-        final Holder<Map<String, String>> unmodifiableMap = new Holder<Map<String, String>>( Collections.unmodifiableMap( m ) );
-        final Holder<Map<String, String>> deserialized = deserialize( serialize( unmodifiableMap ), Holder.class );
-        assertDeepEquals( deserialized, unmodifiableMap );
-    }
-    
-    @Test( enabled = true, dataProvider = "unmodifiableCollections" )
-    public void testCopyUnmodifiableCollections( final Object collection ) throws Exception {
-        final Holder<Object> unmodifiableCollection = new Holder<Object>( collection );
-        final Holder<Object> copy = _kryo.copy( unmodifiableCollection );
-        assertDeepEquals( copy, unmodifiableCollection );
-    }
-    
     @DataProvider
     public Object[][] unmodifiableCollections() {
         final HashMap<String, String> m = new HashMap<String, String>();
@@ -355,36 +322,18 @@ public class KryoTest {
     }
     
     @SuppressWarnings( "unchecked" )
-    @Test( enabled = true )
-    public void testJavaUtilCollectionsSynchronizedList() throws Exception {
-        final List<String> list = Collections.synchronizedList( new ArrayList<String>( Arrays.asList( "foo", "bar" ) ) );
-        final List<String> deserialized = deserialize( serialize( list ), list.getClass() );
-        assertDeepEquals( deserialized, list );
+    @Test( enabled = true, dataProvider = "unmodifiableCollections" )
+    public void testUnmodifiableCollections( final Object collection ) throws Exception {
+        final Holder<Object> holder = new Holder<Object>( collection );
+        final Holder<Object> deserialized = deserialize( serialize( holder ), Holder.class );
+        assertDeepEquals( deserialized, holder );
     }
     
-    @SuppressWarnings( "unchecked" )
-    @Test( enabled = true )
-    public void testJavaUtilCollectionsSynchronizedSet() throws Exception {
-        final Set<String> set = Collections.synchronizedSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) );
-        final Set<String> deserialized = deserialize( serialize( set ), set.getClass() );
-        assertDeepEquals( deserialized, set );
-    }
-    
-    @SuppressWarnings( "unchecked" )
-    @Test( enabled = true )
-    public void testJavaUtilCollectionsSynchronizedMap() throws Exception {
-        final HashMap<String, String> m = new HashMap<String, String>();
-        m.put( "foo", "bar" );
-        final Map<String, String> map = Collections.synchronizedMap( m );
-        final Map<String, String> deserialized = deserialize( serialize( map ), map.getClass() );
-        assertDeepEquals( deserialized, map );
-    }
-    
-    @Test( enabled = true, dataProvider = "synchronizedCollections" )
-    public void testCopySynchronizedCollections( final Object collection ) throws Exception {
-        final Holder<Object> synchronizedCollection = new Holder<Object>( collection );
-        final Holder<Object> copy = _kryo.copy( synchronizedCollection );
-        assertDeepEquals( copy, synchronizedCollection );
+    @Test( enabled = true, dataProvider = "unmodifiableCollections" )
+    public void testCopyUnmodifiableCollections( final Object collection ) throws Exception {
+        final Holder<Object> unmodifiableCollection = new Holder<Object>( collection );
+        final Holder<Object> copy = _kryo.copy( unmodifiableCollection );
+        assertDeepEquals( copy, unmodifiableCollection );
     }
     
     @DataProvider
@@ -396,6 +345,21 @@ public class KryoTest {
             { Collections.synchronizedSet( new HashSet<String>( Arrays.asList( "foo", "bar" ) ) ) },
             { Collections.synchronizedMap( m ) },
         };
+    }
+    
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true, dataProvider = "synchronizedCollections" )
+    public void testSynchronizedCollections( final Object collection ) throws Exception {
+        final Holder<Object> holder = new Holder<Object>( collection );
+        final Holder<Object> deserialized = deserialize( serialize( holder ), Holder.class );
+        assertDeepEquals( deserialized, holder );
+    }
+    
+    @Test( enabled = true, dataProvider = "synchronizedCollections" )
+    public void testCopySynchronizedCollections( final Object collection ) throws Exception {
+        final Holder<Object> synchronizedCollection = new Holder<Object>( collection );
+        final Holder<Object> copy = _kryo.copy( synchronizedCollection );
+        assertDeepEquals( copy, synchronizedCollection );
     }
     
     @SuppressWarnings( "unchecked" )
