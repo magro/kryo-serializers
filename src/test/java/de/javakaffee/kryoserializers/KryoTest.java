@@ -336,8 +336,8 @@ public class KryoTest {
         assertDeepEquals( deserialized, unmodifiableMap );
     }
     
-    @Test( enabled = true , dataProvider = "unmodifiableCollections" )
-    public void testCopyJavaUtilCollectionsUnmodifiable( Object collection ) throws Exception {
+    @Test( enabled = true, dataProvider = "unmodifiableCollections" )
+    public void testCopyUnmodifiableCollections( final Object collection ) throws Exception {
         final Holder<Object> unmodifiableCollection = new Holder<Object>( collection );
         final Holder<Object> copy = _kryo.copy( unmodifiableCollection );
         assertDeepEquals( copy, unmodifiableCollection );
@@ -380,8 +380,8 @@ public class KryoTest {
         assertDeepEquals( deserialized, map );
     }
     
-    @Test( enabled = true , dataProvider = "synchronizedCollections" )
-    public void testCopyJavaUtilCollectionsSynchronizedList( Object collection ) throws Exception {
+    @Test( enabled = true, dataProvider = "synchronizedCollections" )
+    public void testCopySynchronizedCollections( final Object collection ) throws Exception {
         final Holder<Object> synchronizedCollection = new Holder<Object>( collection );
         final Holder<Object> copy = _kryo.copy( synchronizedCollection );
         assertDeepEquals( copy, synchronizedCollection );
