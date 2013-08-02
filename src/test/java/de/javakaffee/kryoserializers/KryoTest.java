@@ -16,54 +16,12 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static de.javakaffee.kryoserializers.TestClasses.createPerson;
-import static org.testng.Assert.assertEquals;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.mutable.MutableInt;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerializer;
-
 import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
 import de.javakaffee.kryoserializers.TestClasses.Container;
 import de.javakaffee.kryoserializers.TestClasses.CounterHolder;
@@ -77,6 +35,26 @@ import de.javakaffee.kryoserializers.TestClasses.MyContainer;
 import de.javakaffee.kryoserializers.TestClasses.Person;
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
+import org.apache.commons.lang.mutable.MutableInt;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
+
+import static de.javakaffee.kryoserializers.TestClasses.createPerson;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test for {@link Kryo} serialization.
@@ -400,6 +378,17 @@ public class KryoTest {
         final int[] values = { 1, 2 };
         @SuppressWarnings("rawtypes")
         final Holder<List<String>> asListHolder = new Holder( Arrays.asList( values ) );
+        final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
+        assertDeepEquals( deserialized, asListHolder );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilArraysAsListBoxedPrimitives() throws Exception {
+        final Integer[] values = { 1, 2 };
+        final List<Integer> list = Arrays.asList(values);
+        @SuppressWarnings("rawtypes")
+        final Holder<List<String>> asListHolder = new Holder(list);
         final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
     }
