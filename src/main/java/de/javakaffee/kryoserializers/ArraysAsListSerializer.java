@@ -16,15 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link Arrays#asList(Object...)}.
@@ -53,7 +53,10 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
     @Override
     public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
         final int length = input.readInt(true);
-        final Class<?> componentType = kryo.readClass( input ).getType();
+        Class<?> componentType = kryo.readClass( input ).getType();
+        if (componentType.isPrimitive()) {
+            componentType = getPrimitiveWrapperClass(componentType);
+        }
         try {
             final Object[] items = (Object[]) Array.newInstance( componentType, length );
             for( int i = 0; i < length; i++ ) {
@@ -82,5 +85,28 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
         } catch ( final Exception e ) {
              throw new RuntimeException( e );
         }
+    }
+
+    private static Class getPrimitiveWrapperClass(Class<?> c) {
+        if (c.isPrimitive()) {
+            if (c.equals(Long.TYPE)) {
+                return Long.class;
+            } else if (c.equals(Integer.TYPE)) {
+                return Integer.class;
+            } else if (c.equals(Double.TYPE)) {
+                return Double.class;
+            } else if (c.equals(Float.TYPE)) {
+                return Float.class;
+            } else if (c.equals(Boolean.TYPE)) {
+                return Boolean.class;
+            } else if (c.equals(Character.TYPE)) {
+                return Character.class;
+            } else if (c.equals(Short.TYPE)) {
+                return Short.class;
+            } else if (c.equals(Byte.TYPE)) {
+                return Byte.class;
+            }
+        }
+        return c;
     }
 }
