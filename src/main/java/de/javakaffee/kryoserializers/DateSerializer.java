@@ -71,4 +71,9 @@ public class DateSerializer extends Serializer<Date> {
         output.writeLong(obj.getTime(), true);
     }
 
+    @Override
+    public Date copy(final Kryo kryo, final Date original) {
+        return (Date) original.clone();
+    }
+
 }

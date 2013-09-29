@@ -49,4 +49,11 @@ public class JodaDateTimeSerializerTest {
         Assert.assertEquals( deserialized, obj );
     }
 
+    @Test( enabled = true )
+    public void testCopyJodaDateTime() {
+        final DateTime obj = new DateTime().withDayOfYear( 42 );
+        final DateTime copy = _kryo.copy(obj);
+        Assert.assertEquals( copy, obj );
+    }
+
 }

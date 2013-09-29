@@ -50,6 +50,12 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
     // https://groups.google.com/d/msg/kryo-users/Eu5V4bxCfws/k-8UQ22y59AJ
     private static final Object FAKE_REFERENCE = new Object();
 
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public EnumMap<? extends Enum<?>, ?> copy (final Kryo kryo, final EnumMap<? extends Enum<?>, ?> original) {
+        return new EnumMap(original);
+    }
+
     @SuppressWarnings( { "unchecked", "rawtypes" } )
     private EnumMap<? extends Enum<?>, ?> create(final Kryo kryo, final Input input,
         final Class<EnumMap<? extends Enum<?>, ?>> type) {

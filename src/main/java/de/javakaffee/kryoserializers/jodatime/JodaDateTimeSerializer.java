@@ -63,6 +63,10 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
     static final String CHRONOLOGY = "ch";
     static final String TIME_ZONE = "tz";
 
+    public JodaDateTimeSerializer() {
+        setImmutable(true);
+    }
+
     @Override
     public DateTime read(final Kryo kryo, final Input input, final Class<DateTime> type) {
         final long millis = input.readLong(true);

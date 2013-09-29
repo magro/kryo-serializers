@@ -65,10 +65,23 @@ public class SubListSerializersTest {
         assertEquals( deserialized.remove( 0 ), subList.remove( 0 ) );
     }
 
+    private void doTestCopy(final List<TestEnum> subList) {
+        final List<TestEnum> copy = _kryo.copy( subList );
+
+        assertEquals( copy, subList );
+        assertEquals( copy.remove( 0 ), subList.remove( 0 ) );
+    }
+
     @Test( enabled = true )
     public void testSubList () throws Exception {
         final List<TestEnum> subList = new LinkedList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 2 );
         doTest(subList);
+    }
+
+    @Test( enabled = true )
+    public void testCopySubList () throws Exception {
+        final List<TestEnum> subList = new LinkedList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 2 );
+        doTestCopy(subList);
     }
 
     @Test( enabled = true )
@@ -78,15 +91,33 @@ public class SubListSerializersTest {
     }
 
     @Test( enabled = true )
+    public void testCopySubListSubList () throws Exception {
+        final List<TestEnum> subList = new LinkedList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 3 ).subList(1, 2);
+        doTestCopy(subList);
+    }
+
+    @Test( enabled = true )
     public void testArrayListSubList () throws Exception {
         final List<TestEnum> subList = new ArrayList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 2 );
         doTest(subList);
     }
 
     @Test( enabled = true )
+    public void testCopyArrayListSubList () throws Exception {
+        final List<TestEnum> subList = new ArrayList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 2 );
+        doTestCopy(subList);
+    }
+
+    @Test( enabled = true )
     public void testArrayListSubListSubList () throws Exception {
         final List<TestEnum> subList = new ArrayList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 3 ).subList(1, 2);
         doTest(subList);
+    }
+
+    @Test( enabled = true )
+    public void testCopyArrayListSubListSubList () throws Exception {
+        final List<TestEnum> subList = new ArrayList<TestEnum>( Arrays.asList( TestEnum.values() ) ).subList( 1, 3 ).subList(1, 2);
+        doTestCopy(subList);
     }
 
     @Test( enabled = true )

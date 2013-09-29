@@ -32,6 +32,10 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class CollectionsEmptyMapSerializer extends Serializer<Map<?, ?>> {
 
+    public CollectionsEmptyMapSerializer() {
+        setImmutable(true);
+    }
+
     @Override
     public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
         return Collections.EMPTY_MAP;

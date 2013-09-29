@@ -134,6 +134,20 @@ public class SubListSerializers {
                 throw new RuntimeException(e);
             }
         }
+
+        @Override
+        public List<?> copy(final Kryo kryo, final List<?> original) {
+            kryo.reference(FAKE_REFERENCE);
+            try {
+                final List<?> list = (List<?>) _parentField.get(original);
+                final int parentOffset = _parentOffsetField.getInt( original );
+                final int fromIndex = parentOffset;
+                final int toIndex = fromIndex + _sizeField.getInt( original );
+                return kryo.copy(list).subList(fromIndex, toIndex);
+            } catch(final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
@@ -195,6 +209,19 @@ public class SubListSerializers {
                 // handles SerializationException specifically (resizing the buffer)...
                 throw e;
             } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public List<?> copy(final Kryo kryo, final List<?> obj) {
+            kryo.reference(FAKE_REFERENCE);
+            try {
+                final List<?> list = (List<?>) _listField.get(obj);
+                final int fromIndex = _offsetField.getInt(obj);
+                final int toIndex = fromIndex + _sizeField.getInt(obj);
+                return kryo.copy(list).subList(fromIndex, toIndex);
+            } catch(final Exception e) {
                 throw new RuntimeException(e);
             }
         }

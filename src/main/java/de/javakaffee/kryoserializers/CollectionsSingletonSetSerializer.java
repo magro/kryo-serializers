@@ -36,6 +36,10 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class CollectionsSingletonSetSerializer extends Serializer<Set<?>> {
 
+    public CollectionsSingletonSetSerializer() {
+        setImmutable(true);
+    }
+
     @Override
     public Set<?> read(final Kryo kryo, final Input input, final Class<Set<?>> type) {
         final Object obj = kryo.readClassAndObject( input );

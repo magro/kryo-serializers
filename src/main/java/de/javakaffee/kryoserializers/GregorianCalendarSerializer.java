@@ -79,6 +79,11 @@ public class GregorianCalendarSerializer extends Serializer<GregorianCalendar> {
         output.writeInt( calendar.getMinimalDaysInFirstWeek(), true );
         output.writeString( getTimeZone( calendar ).getID() );
     }
+    
+    @Override
+    public GregorianCalendar copy(final Kryo kryo, final GregorianCalendar original) {
+        return (GregorianCalendar) original.clone();
+    }
 
     private TimeZone getTimeZone( final Calendar obj ) {
         /* access the timezone via the field, to prevent cloning of the tz */

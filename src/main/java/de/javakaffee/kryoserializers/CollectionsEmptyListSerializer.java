@@ -32,6 +32,10 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class CollectionsEmptyListSerializer extends Serializer<List<?>> {
 
+    public CollectionsEmptyListSerializer() {
+        setImmutable(true);
+    }
+
     @Override
     public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
         return Collections.EMPTY_LIST;

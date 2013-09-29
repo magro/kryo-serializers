@@ -47,6 +47,11 @@ public class EnumSetSerializer extends Serializer<EnumSet<? extends Enum<?>>> {
     }
 
     @Override
+    public EnumSet<? extends Enum<?>> copy (final Kryo kryo, final EnumSet<? extends Enum<?>> original) {
+        return original.clone();
+    }
+
+    @Override
     public EnumSet read(final Kryo kryo, final Input input, final Class<EnumSet<? extends Enum<?>>> type) {
         final Class<Enum> elementType = kryo.readClass( input ).getType();
         final EnumSet result = EnumSet.noneOf( elementType );

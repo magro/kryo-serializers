@@ -10,8 +10,18 @@ import com.esotericsoftware.kryo.io.Output;
 public class BitSetSerializer extends Serializer<BitSet> {
 
     @Override
-    public void write(Kryo kryo, Output output, BitSet bitSet) {
-        int len = bitSet.length();
+    public BitSet copy(final Kryo kryo, final BitSet original) {
+        final BitSet result = new BitSet();
+        final int length = original.length();
+        for(int i = 0; i < length; i++) {
+            result.set(i, original.get(i));
+        }
+        return result;
+    }
+
+    @Override
+    public void write(final Kryo kryo, final Output output, final BitSet bitSet) {
+        final int len = bitSet.length();
 
         output.writeInt(len, true);
 
@@ -21,9 +31,9 @@ public class BitSetSerializer extends Serializer<BitSet> {
     }
 
     @Override
-    public BitSet read(Kryo kryo, Input input, Class<BitSet> bitSetClass) {
-        int len = input.readInt(true);
-        BitSet ret = new BitSet(len);
+    public BitSet read(final Kryo kryo, final Input input, final Class<BitSet> bitSetClass) {
+        final int len = input.readInt(true);
+        final BitSet ret = new BitSet(len);
 
         for(int i = 0; i < len; i++) {
             ret.set(i, input.readBoolean());
