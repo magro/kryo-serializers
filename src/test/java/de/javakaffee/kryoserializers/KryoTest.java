@@ -535,6 +535,17 @@ public class KryoTest {
         final Holder<List<String>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
         assertDeepEquals( deserialized, asListHolder );
     }
+
+    @SuppressWarnings( "unchecked" )
+    @Test( enabled = true )
+    public void testJavaUtilArraysAsListBoxedPrimitives() throws Exception {
+        final Integer[] values = { 1, 2 };
+        final List<Integer> list = Arrays.asList(values);
+        @SuppressWarnings("rawtypes")
+        final Holder<List<Integer>> asListHolder = new Holder(list);
+        final Holder<List<Integer>> deserialized = deserialize( serialize( asListHolder ), Holder.class );
+        assertDeepEquals( deserialized, asListHolder );
+    }
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
