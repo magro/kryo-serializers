@@ -134,12 +134,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>asm</groupId>
-				<artifactId>asm</artifactId>
-				<version>3.2</version>
-				<optional>true</optional>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
@@ -163,22 +157,7 @@
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
-			<version>2.21</version>
-			<classifier>shaded</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>com.esotericsoftware.reflectasm</groupId>
-					<artifactId>reflectasm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.esotericsoftware.minlog</groupId>
-					<artifactId>minlog</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.objenesis</groupId>
-					<artifactId>objenesis</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>2.22</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>

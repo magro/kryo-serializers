@@ -43,16 +43,17 @@ public class SubListSerializersTest {
     @BeforeClass
     public void beforeClass() {
         _kryo = new KryoReflectionFactorySupport() {
-            
+
             @Override
             @SuppressWarnings("rawtypes")
-            public Serializer newSerializer(final Class<? extends Serializer> serializerClass, final Class type) {
+            public Serializer<?> getDefaultSerializer(final Class type) {
                 final Serializer<List<?>> subListSerializer = SubListSerializers.createFor(type);
                 if ( subListSerializer != null ) {
                     return subListSerializer;
                 }
-                return super.newSerializer( serializerClass, type );
+                return super.getDefaultSerializer(type);
             }
+
         };
     }
 
