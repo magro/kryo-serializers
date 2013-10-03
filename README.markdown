@@ -29,6 +29,9 @@ A project that provides [kryo](http://code.google.com/p/kryo) (v2) serializers f
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
 
+* annotation/FieldAnnotationDisregardingSerializer - field serializer that ignores fields annotated with registered annotations
+* annotation/FieldAnnotationRegardingSerializer - field serializer that only serializes fields annotated with registered annotations
+* annotation/FieldAnnotationAwareSerializer - abstract field serializer that allows a more custom annotation treatment
 
 # Usage
 To be able to use the serializers you have to add the jar to your classpath. If your build tool support maven repositories you can use this dependency:
@@ -100,7 +103,6 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
         }
 
     };
-
 
 # Where to get help
 You can [contact me via github](https://github.com/inbox/new/magro) or [submit an issue](https://github.com/magro/kryo-serializers/issues).
