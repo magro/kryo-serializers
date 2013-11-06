@@ -1,5 +1,7 @@
 A project that provides [kryo](http://code.google.com/p/kryo) (v2) serializers for some jdk types and some external libs like e.g. joda time.
 
+[![Build Status](https://travis-ci.org/magro/kryo-serializers.png?branch=master)](https://travis-ci.org/magro/kryo-serializers)
+
 # Provided serializers / supporting classes:
 
 * ArraysAsListSerializer - serializer for lists created via Arrays#asList(Object...)
