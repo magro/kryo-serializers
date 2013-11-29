@@ -1,15 +1,23 @@
 package de.javakaffee.kryoserializers;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Arrays;
+
+import org.testng.annotations.Test;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.factories.SerializerFactory;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.testng.annotations.Test;
-
-import java.lang.annotation.*;
-import java.util.Arrays;
-
-import static org.testng.Assert.*;
 
 /**
  * A test case for the {@link FieldAnnotationAwareSerializer}.
@@ -42,7 +50,7 @@ public class FieldAnnotationAwareSerializerTest {
 
         final Kryo kryo = new Kryo();
         @SuppressWarnings("unchecked")
-        SerializerFactory disregardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
+		final SerializerFactory disregardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
                 Arrays.<Class<? extends Annotation>>asList(CustomMark.class), true);
         kryo.addDefaultSerializer(CustomBean.class, disregardingSerializerFactory);
 
@@ -66,7 +74,7 @@ public class FieldAnnotationAwareSerializerTest {
 
         final Kryo kryo = new Kryo();
         @SuppressWarnings("unchecked")
-        SerializerFactory regardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
+		final SerializerFactory regardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
                 Arrays.<Class<? extends Annotation>>asList(CustomMark.class), false);
         kryo.addDefaultSerializer(CustomBean.class, regardingSerializerFactory);
 

@@ -1,9 +1,7 @@
 package de.javakaffee.kryoserializers;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.factories.SerializerFactory;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -11,8 +9,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.factories.SerializerFactory;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
  * A kryo {@link com.esotericsoftware.kryo.Serializer} that allows to exclusively include or exclude fields that
@@ -57,18 +57,18 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
          * @param disregarding If {@code true}, the serializer will ignore all annotated fields,
          *                     if set to {@code false} it will exclusively look at annotated fields.
          */
-        public Factory(Collection<Class<? extends Annotation>> marked, boolean disregarding) {
+        public Factory(final Collection<Class<? extends Annotation>> marked, final boolean disregarding) {
             this.marked = marked;
             this.disregarding = disregarding;
         }
 
         @Override
-        public Serializer<?> makeSerializer(Kryo kryo, Class<?> type) {
+        public Serializer<?> makeSerializer(final Kryo kryo, final Class<?> type) {
             return new FieldAnnotationAwareSerializer<Object>(kryo, type, marked, disregarding);
         }
     }
 
-    private Set<Class<? extends Annotation>> marked;
+    private final Set<Class<? extends Annotation>> marked;
 
     /**
      * Determines whether annotated fields should be excluded from serialization.
