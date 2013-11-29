@@ -15,21 +15,21 @@ import com.esotericsoftware.kryo.factories.SerializerFactory;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
- * A kryo {@link com.esotericsoftware.kryo.Serializer} that allows to exclusively include or exclude fields that
+ * A kryo {@link FieldSerializer} that allows to exclusively include or exclude fields that
  * are attributed with user-specific annotations. This can be for example useful when serializing beans that carry
  * references to a dependency injection framework. As an example for Spring:
  * <p/>
  * <pre>
  * {@code
  * Set<Class<? extends Annotation>> marks = new HashSet<>();
- * marks.add(org.springframework.beans.factory.annotation.Autowired.class);
- * SerializerFactory factory = new FieldAnnotationAwareSerializer.Factory(marks, true);
+ * marks.add(Autowired.class);
+ * SerializerFactory disregardingFactory = new FieldAnnotationAwareSerializer.Factory(marks, true);
  * Kryo kryo = new Kryo();
  * kryo.setDefaultSerializer(factory);
  * }
  * </pre>
  * <p/>
- * the resulting {@link Kryo} instance would ignore all fields that are annotated with Spring's {@code @Autowired}
+ * The resulting {@link Kryo} instance would ignore all fields that are annotated with Spring's {@code @Autowired}
  * annotation.
  * <p/>
  * Similarly, it is possible to created a serializer which does the opposite such that the resulting serializer
