@@ -63,9 +63,8 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
-        public Serializer makeSerializer(Kryo kryo, Class<?> type) {
-            return new FieldAnnotationAwareSerializer(kryo, type, marked, disregarding);
+        public Serializer<?> makeSerializer(Kryo kryo, Class<?> type) {
+            return new FieldAnnotationAwareSerializer<Object>(kryo, type, marked, disregarding);
         }
     }
 
