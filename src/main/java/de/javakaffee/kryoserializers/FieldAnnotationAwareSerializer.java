@@ -111,10 +111,10 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
             return;
         }
         super.rebuildCachedFields();
+        removeFields();
     }
 
-    @Override
-    protected void initializeCachedFields() {
+    private void removeFields() {
         final CachedField<?>[] cachedFields = getFields();
         for (final CachedField<?> cachedField : cachedFields) {
             final Field field = cachedField.getField();
