@@ -70,8 +70,8 @@ import de.javakaffee.kryoserializers.TestClasses.HolderArray;
 import de.javakaffee.kryoserializers.TestClasses.HolderList;
 import de.javakaffee.kryoserializers.TestClasses.MyContainer;
 import de.javakaffee.kryoserializers.TestClasses.Person;
-import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
+import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
 
 /**
  * Test for {@link Kryo} serialization.
@@ -256,6 +256,25 @@ public class KryoTest {
         Assert.assertEquals( deserialized.getCurrencyCode(), currency.getCurrencyCode() );
         Assert.assertEquals( deserialized.getDefaultFractionDigits(), currency.getDefaultFractionDigits() );
     }
+    
+    @Test( enabled = true )
+    public void testLocaleUsingConstructor() throws Exception {
+    	doTestLocale(false);
+    }
+    
+    @Test( enabled = true )
+    public void testLocaleUsingReflection() throws Exception {
+    	doTestLocale(true);
+    }
+
+	private void doTestLocale(final boolean useReflection) throws Exception {
+		final Kryo kryo = new Kryo();
+		kryo.register(Locale.class, new LocaleSerializer(useReflection));
+
+        final Locale obj = Locale.ENGLISH;
+        final Locale deserialized = deserialize( kryo, serialize(kryo, obj ), Locale.class );
+        assertDeepEquals( deserialized, obj );
+	}
     
     @SuppressWarnings( "unchecked" )
     @Test( enabled = true )
@@ -646,15 +665,24 @@ public class KryoTest {
     }
 
     protected byte[] serialize( final Object o ) {
+        return serialize(_kryo, o);
+        
+    }
+
+    protected static byte[] serialize( final Kryo kryo, final Object o ) {
         if ( o == null ) {
             throw new NullPointerException( "Can't serialize null" );
         }
-        return new ObjectBuffer(_kryo).writeObject( o );
+        return new ObjectBuffer( kryo ).writeObject( o );
         
     }
 
     protected <T> T deserialize( final byte[] in, final Class<T> clazz ) {
-        return new ObjectBuffer( _kryo ).readObject( in, clazz );
+        return deserialize( _kryo, in, clazz );
+    }
+
+    protected static <T> T deserialize( final Kryo kryo, final byte[] in, final Class<T> clazz ) {
+        return new ObjectBuffer( kryo ).readObject( in, clazz );
     }
 
 }
