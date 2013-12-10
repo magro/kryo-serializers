@@ -861,11 +861,14 @@ public class KryoTest {
     }
 
     public static byte[] serialize(final Kryo kryo, final Object o) {
+        return serialize(kryo, new Output(4096), o);
+    }
+
+    public static byte[] serialize(final Kryo kryo, final Output output, final Object o) {
         if ( o == null ) {
             throw new NullPointerException( "Can't serialize null" );
         }
 
-        final Output output = new Output(4096);
         kryo.writeObject(output, o);
         output.flush();
         return output.getBuffer();
