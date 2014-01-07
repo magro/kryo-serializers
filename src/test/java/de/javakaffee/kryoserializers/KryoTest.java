@@ -377,13 +377,22 @@ public class KryoTest {
         @SuppressWarnings( "unchecked" )
         final Holder<Pattern> deserialized = deserialize( serialize( pattern ), Holder.class );
         assertDeepEquals( deserialized, pattern );
-    }
+
+        final Holder<Pattern> patternWithFlags = new Holder<Pattern>( Pattern.compile("\n", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE) );
+        @SuppressWarnings( "unchecked" )
+        final Holder<Pattern> deserializedWithFlags = deserialize( serialize( patternWithFlags ), Holder.class );
+        assertDeepEquals( deserializedWithFlags, patternWithFlags );
+	}
 
     @Test( enabled = true )
     public void testCopyRegex() throws Exception {
         final Holder<Pattern> pattern = new Holder<Pattern>( Pattern.compile("regex") );
         final Holder<Pattern> copy = _kryo.copy( pattern );
         assertDeepEquals( copy, pattern );
+
+		final Holder<Pattern> patternWithFlags = new Holder<Pattern>( Pattern.compile("\n", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE) );
+        final Holder<Pattern> copyWithFlags = _kryo.copy( patternWithFlags );
+        assertDeepEquals( copyWithFlags, patternWithFlags );
     }
 
     @Test( enabled = true )
