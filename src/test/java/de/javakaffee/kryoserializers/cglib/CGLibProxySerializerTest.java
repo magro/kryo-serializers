@@ -119,7 +119,7 @@ public class CGLibProxySerializerTest {
 	@Test( enabled = true )
     public void testProxiesFromFileRead() throws Exception {
         Log.TRACE = true;
-        final InputStream in = new FileInputStream( new File( getClass().getResource("/cglib-data-1.ser").getPath() ) );
+        final InputStream in = new FileInputStream( new File( getClass().getResource("/cglib-data-1.ser").toURI() ) );
         final Input input = new Input(in);
         final List<ClassToProxy> proxies = (List<ClassToProxy>) _kryo.readClassAndObject(input);
         in.close();
