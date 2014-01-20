@@ -41,7 +41,7 @@ public class CGLibProxySerializer extends Serializer<Object> {
      */
     public static interface CGLibProxyMarker {}
 
-    private static String DEFAULT_NAMING_MARKER = "$$EnhancerByCGLIB$$";
+    static String DEFAULT_NAMING_MARKER = "$$EnhancerByCGLIB$$";
 
     public static boolean canSerialize( final Class<?> cls ) {
         return Enhancer.isEnhanced( cls ) && cls.getName().indexOf( DEFAULT_NAMING_MARKER ) > 0;
