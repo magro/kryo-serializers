@@ -70,7 +70,7 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
     @Override
     public DateTime read(final Kryo kryo, final Input input, final Class<DateTime> type) {
         final long millis = input.readLong(true);
-        final Chronology chronology = readChronology( input );
+        final Chronology chronology = IdentifiableChronology.readChronology( input );
         final DateTimeZone tz = readTimeZone( input );
         return new DateTime( millis, chronology.withZone( tz ) );
     }
@@ -78,7 +78,7 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
     @Override
     public void write(final Kryo kryo, final Output output, final DateTime obj) {
         output.writeLong(obj.getMillis(), true);
-        final String chronologyId = getChronologyId( obj.getChronology() );
+        final String chronologyId = IdentifiableChronology.getChronologyId( obj.getChronology() );
         output.writeString(chronologyId == null ? "" : chronologyId);
 
         if ( obj.getZone() != null && obj.getZone() != DateTimeZone.getDefault() )
@@ -87,18 +87,13 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
             output.writeString( "" );
     }
 
-    private Chronology readChronology( final Input input ) {
-        final String chronologyId = input.readString();
-        return IdentifiableChronology.valueOfId( "".equals( chronologyId ) ? null : chronologyId );
-    }
+    
 
     private DateTimeZone readTimeZone( final Input input ) {
         final String tz = input.readString();
         return "".equals( tz ) ? DateTimeZone.getDefault() : DateTimeZone.forID( tz );
     }
 
-    private String getChronologyId( final Chronology chronology ) {
-        return IdentifiableChronology.getIdByChronology( chronology.getClass() );
-    }
+    
 
 }

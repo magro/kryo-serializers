@@ -10,6 +10,8 @@ import org.joda.time.chrono.ISOChronology;
 import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
 
+import com.esotericsoftware.kryo.io.Input;
+
 /**
  * An enumeration that provides a String id for subclasses of {@link Chronology}.
  * For {@link ISOChronology}, <code>null</code> is used as id, as {@link ISOChronology}
@@ -76,6 +78,15 @@ enum IdentifiableChronology {
             }
         }
         throw new IllegalArgumentException( "No chronology found for id " + id );
+    }
+    
+    static Chronology readChronology( final Input input ) {
+        final String chronologyId = input.readString();
+        return IdentifiableChronology.valueOfId( "".equals( chronologyId ) ? null : chronologyId );
+    }
+    
+    static String getChronologyId( final Chronology chronology ) {
+        return IdentifiableChronology.getIdByChronology( chronology.getClass() );
     }
     
 }
