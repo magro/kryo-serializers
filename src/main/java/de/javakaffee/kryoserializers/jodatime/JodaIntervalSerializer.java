@@ -1,6 +1,4 @@
 /*
- * Copyright 2010 Martin Grotzke
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +15,7 @@
 package de.javakaffee.kryoserializers.jodatime;
 
 import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.joda.time.Interval;
 import org.joda.time.chrono.BuddhistChronology;
 import org.joda.time.chrono.CopticChronology;
 import org.joda.time.chrono.EthiopicChronology;
@@ -34,12 +31,9 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 /**
- * A format for joda {@link DateTime}, that stores the millis, chronology and
- * time zone as separate attributes. If the chronlogy is {@link ISOChronology},
- * the attribute is omitted, thus {@link ISOChronology} is seen as default. If
- * the time zone is the default time zone ({@link DateTimeZone#getDefault()}),
- * the time zone attribute is omitted. This requires different machines to
- * have the same time zone settings.
+ * A format for Joda {@link Interval}, that stores the start and end millis, and chronology 
+ * as separate attributes. If the chronology is {@link ISOChronology},
+ * the attribute is omitted, thus {@link ISOChronology} is seen as default.
  * <p>
  * The following chronologies are supported:
  * <ul>
@@ -54,46 +48,34 @@ import com.esotericsoftware.kryo.io.Output;
  * </ul>
  * </p>
  * 
- * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class JodaDateTimeSerializer extends Serializer<DateTime> {
+public class JodaIntervalSerializer extends Serializer<Interval> {
 
-    static final String MILLIS = "millis";
-    static final String DATE_TIME = "dt";
-    static final String CHRONOLOGY = "ch";
-    static final String TIME_ZONE = "tz";
-
-    public JodaDateTimeSerializer() {
+    public JodaIntervalSerializer() {
         setImmutable(true);
     }
 
     @Override
-    public DateTime read(final Kryo kryo, final Input input, final Class<DateTime> type) {
-        final long millis = input.readLong(true);
+    public Interval read(final Kryo kryo, final Input input, final Class<Interval> type) {
+        
+        long startMillis = input.readLong(true);
+        long endMillis = input.readLong(true);
+        
         final Chronology chronology = IdentifiableChronology.readChronology( input );
-        final DateTimeZone tz = readTimeZone( input );
-        return new DateTime( millis, chronology.withZone( tz ) );
+        
+        return new Interval(startMillis, endMillis, chronology);
     }
 
     @Override
-    public void write(final Kryo kryo, final Output output, final DateTime obj) {
-        output.writeLong(obj.getMillis(), true);
+    public void write(final Kryo kryo, final Output output, final Interval obj) {
+        final long startMillis = obj.getStartMillis();
+        final long endMillis = obj.getEndMillis();
         final String chronologyId = IdentifiableChronology.getChronologyId( obj.getChronology() );
+        
+        output.writeLong(startMillis, true);
+        output.writeLong(endMillis, true);
         output.writeString(chronologyId == null ? "" : chronologyId);
-
-        if ( obj.getZone() != null && obj.getZone() != DateTimeZone.getDefault() )
-            output.writeString(obj.getZone().getID() );
-        else
-            output.writeString( "" );
     }
-
-    
-
-    private DateTimeZone readTimeZone( final Input input ) {
-        final String tz = input.readString();
-        return "".equals( tz ) ? DateTimeZone.getDefault() : DateTimeZone.forID( tz );
-    }
-
     
 
 }
