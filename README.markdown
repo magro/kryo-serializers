@@ -30,6 +30,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2) se
 
 * cglib/CGLibProxySerializer - serializer for CGLib proxies
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
+* jodatime/JodaIntervalSerializer - serializer for joda's Interval  
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
 
 
