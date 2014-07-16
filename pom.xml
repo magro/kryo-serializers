@@ -75,7 +75,7 @@
 					<instructions>
 						<Import-Package><![CDATA[
 						com.esotericsoftware.kryo*;version="[2.20,3.0)",
-						com.esotericsoftware.minlog*;version="[2.20,3.0)",
+						com.esotericsoftware.minlog*;version="[1.2,2.0)",
 						sun.reflect;resolution:=optional,
 						*
 						]]>
