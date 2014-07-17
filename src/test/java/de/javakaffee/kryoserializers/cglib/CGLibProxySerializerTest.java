@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamException;
-
 import net.sf.cglib.core.DefaultNamingPolicy;
 import net.sf.cglib.core.Predicate;
 import net.sf.cglib.proxy.Enhancer;
@@ -45,6 +43,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Kryo.DefaultInstantiatorStrategy;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -90,7 +89,12 @@ public class CGLibProxySerializerTest {
             }
 
         };
-        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+        // The default strategy is needed so that HashMap is created via the constructor,
+        // the StdInstantiatorStrategy (fallback) is needed for classes without default
+        // constructor (e.g. DelegatingHandler).
+        final DefaultInstantiatorStrategy instantiatorStrategy = new DefaultInstantiatorStrategy();
+        instantiatorStrategy.setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+        kryo.setInstantiatorStrategy(instantiatorStrategy);
         kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer() );
         kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer() );
         return kryo;
@@ -116,7 +120,7 @@ public class CGLibProxySerializerTest {
      * that might cache some proxy class.
      */
     @SuppressWarnings("unchecked")
-	@Test( enabled = true )
+    @Test( enabled = true )
     public void testProxiesFromFileRead() throws Exception {
         Log.TRACE = true;
         final InputStream in = new FileInputStream( new File( getClass().getResource("/cglib-data-1.ser").toURI() ) );
@@ -174,7 +178,7 @@ public class CGLibProxySerializerTest {
      * Test that a cglib proxy is handled correctly.
      */
     @Test( enabled = true )
-    public void testCGLibProxyForExistingFormat() throws XMLStreamException {
+    public void testCGLibProxyForExistingFormat() {
         final Map<String, String> proxy = createProxy( new HashMap<String, String>() );
         proxy.put( "foo", "bar" );
         Assert.assertEquals( proxy.get( "foo" ), "bar" );
