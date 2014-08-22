@@ -29,6 +29,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2) se
 * UnmodifiableCollectionsSerializer - for unmodifiable Collections and Maps created via Collections.unmodifiable*.
 
 * cglib/CGLibProxySerializer - serializer for CGLib proxies
+* guava/ImmutableListSerializer - serializer for guava-libraries' ImmutableList
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
 * jodatime/JodaIntervalSerializer - serializer for joda's Interval  
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
@@ -68,6 +69,8 @@ After that's done you can register the custom serializers at the kryo instance. 
     kryo.register( DateTime.class, new JodaDateTimeSerializer() );
     // wicket
     kryo.register( MiniMap.class, new MiniMapSerializer( kryo ) );
+    // guava ImmutableList
+    ImmutableListSerializer.registerSerializers( kryo );
 
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
 
