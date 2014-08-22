@@ -43,7 +43,7 @@ public class ImmutableListSerializerTest {
         final ImmutableList<?> obj = ImmutableList.of(3);
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
-        assertEquals(deserialized.size(), obj.size());
+        assertEquals(deserialized, obj);
     }
 
     @Test( enabled = true )
@@ -51,7 +51,7 @@ public class ImmutableListSerializerTest {
         final ImmutableList<?> obj = ImmutableList.of(3, 4, 5, 6);
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
-        assertEquals(deserialized.size(), obj.size());
+        assertEquals(deserialized, obj);
     }
 
     @Test( enabled = true )
@@ -59,7 +59,7 @@ public class ImmutableListSerializerTest {
         final ImmutableList<?> obj = ImmutableList.of(3, 4, 5, 6).subList(1, 2);
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
-        assertEquals(deserialized.size(), obj.size());
+        assertEquals(deserialized, obj);
     }
 
     @Test( enabled = true )
@@ -67,7 +67,7 @@ public class ImmutableListSerializerTest {
         final ImmutableList<?> obj = ImmutableList.of(3,4,5).reverse();
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
-        assertEquals(deserialized.size(), obj.size());
+        assertEquals(deserialized, obj);
     }
 
     @Test( enabled = true )
@@ -75,7 +75,7 @@ public class ImmutableListSerializerTest {
         final ImmutableList<?> obj = Lists.charactersOf("KryoRocks");
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
-        assertEquals(deserialized.size(), obj.size());
+        assertEquals(deserialized, obj);
     }
 
     @Test( enabled = true )
@@ -87,7 +87,7 @@ public class ImmutableListSerializerTest {
         final ImmutableList<?> obj = (ImmutableList<?>) table.values();
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
-        assertEquals(deserialized.size(), obj.size());
+        assertEquals(deserialized, obj);
     }
 
     // Kryo#copy tests
