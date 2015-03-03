@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Martin Grotzke
+ * Copyright 2010 Martin Grotzke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package de.javakaffee.kryoserializers.jodatime;
 
 import org.joda.time.Chronology;
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.chrono.BuddhistChronology;
 import org.joda.time.chrono.CopticChronology;
 import org.joda.time.chrono.EthiopicChronology;
@@ -28,21 +28,16 @@ import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.Serializer;
 
 /**
- * A Kryo serializer for joda {@link LocalDate}. The LocalDate object is read or written as year,
- * month-of-year, day-of-month and chronology as separate attributes. No time zone is involved. If
- * the chronology is {@link org.joda.time.chrono.ISOChronology} the attribute is serialized as an
- * empty string, thus {@link org.joda.time.chrono.ISOChronology} is considered to be default.
- *
- * Note that internally the LocalDate object makes use of an iLocalMillis value, but that field is
- * not accessible for reading here because the getLocalMillis() method is protected. There could
- * conceivably be cases where a user has created a derived version of LocalDate, and is using the
- * iLocalMillis value in some way that this serialization/deserialization will break. (Alternative
- * implementation: access the field using Java reflection?)
+ * A Kryo serializer for joda {@link LocalDateTime}. The LocalDateTime object is read or written as
+ * year, month-of-year, day-of-month, hour-of-day, minute-of-hour, second-of-minute,
+ * millis-of-second and chronology as separate attributes. No time zone is involved. If the
+ * chronology is {@link ISOChronology} the attribute is serialized as an empty string, thus
+ * {@link ISOChronology} is considered to be default.
  * <p>
  * The following chronologies are supported:
  * <ul>
@@ -59,27 +54,35 @@ import com.esotericsoftware.kryo.io.Output;
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-public class JodaLocalDateSerializer extends Serializer<LocalDate> {
+public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
 
-   public JodaLocalDateSerializer() {
-      setImmutable(true);
-   }
+   public JodaLocalDateTimeSerializer() { setImmutable(true); }
 
    @Override
-   public LocalDate read(final Kryo kryo, final Input input, final Class<LocalDate> type) {
+   public LocalDateTime read(Kryo kryo, Input input, Class<LocalDateTime> type) {
       final int year = input.readInt();
       final int monthOfYear = input.readInt();
       final int dayOfMonth = input.readInt();
+      final int hourOfDay = input.readInt();
+      final int minuteOfHour = input.readInt();
+      final int secondOfMinute = input.readInt();
+      final int millisOfSecond = input.readInt();
       final Chronology chronology = IdentifiableChronology.readChronology(input);
-      return new LocalDate( year, monthOfYear, dayOfMonth, chronology );
+      return new LocalDateTime( year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour,
+                                secondOfMinute, millisOfSecond, chronology );
    }
 
    @Override
-   public void write(final Kryo kryo, final Output output, final LocalDate localDate) {
-      output.writeInt(localDate.getYear());
-      output.writeInt(localDate.getMonthOfYear());
-      output.writeInt(localDate.getDayOfMonth());
-      final String chronologyId = IdentifiableChronology.getChronologyId(localDate.getChronology());
+   public void write(Kryo kryo, Output output, LocalDateTime localDateTime) {
+      output.writeInt(localDateTime.getYear());
+      output.writeInt(localDateTime.getMonthOfYear());
+      output.writeInt(localDateTime.getDayOfMonth());
+      output.writeInt(localDateTime.getHourOfDay());
+      output.writeInt(localDateTime.getMinuteOfHour());
+      output.writeInt(localDateTime.getSecondOfMinute());
+      output.writeInt(localDateTime.getMillisOfSecond());
+      final String chronologyId =
+                           IdentifiableChronology.getChronologyId(localDateTime.getChronology());
       output.writeString(chronologyId == null ? "" : chronologyId);
    }
 }
