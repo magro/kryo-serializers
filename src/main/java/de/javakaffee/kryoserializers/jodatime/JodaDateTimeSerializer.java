@@ -35,7 +35,7 @@ import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A format for joda {@link DateTime}, that stores the millis, chronology and
- * time zone as separate attributes. If the chronlogy is {@link ISOChronology},
+ * time zone as separate attributes. If the chronology is {@link ISOChronology},
  * the attribute is omitted, thus {@link ISOChronology} is seen as default. If
  * the time zone is the default time zone ({@link DateTimeZone#getDefault()}),
  * the time zone attribute is omitted. This requires different machines to
