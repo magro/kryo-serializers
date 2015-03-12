@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Martin Grotzke
+ * Copyright 2015 Rennie Petersen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,14 @@ import com.esotericsoftware.kryo.Serializer;
 
 /**
  * A Kryo serializer for joda {@link LocalDateTime}. The LocalDateTime object is read or written as
- * year, month-of-year, day-of-month, hour-of-day, minute-of-hour, second-of-minute,
- * millis-of-second and chronology as separate attributes. No time zone is involved. If the
- * chronology is {@link ISOChronology} the attribute is serialized as an empty string, thus
- * {@link ISOChronology} is considered to be default.
+ * year, month-of-year, day-of-month, hour-of-day, minute-of-hour, second-of-minute and
+ * millis-of-second packed into a long integer, and chronology as a separate attribute. No time zone
+ * is involved. If the chronology is {@link ISOChronology} the attribute is serialized as an empty
+ * string, thus {@link ISOChronology} is considered to be default.
+ *
+ * Warning: The method used to pack the date and time into a long integer will break down if/when we
+ * get to the year 214,748, in whichever chronology is being used. If this is considered to be a
+ * limitation you are advised to use a different serialization/deserialization routine.
  * <p>
  * The following chronologies are supported:
  * <ul>
@@ -52,7 +56,7 @@ import com.esotericsoftware.kryo.Serializer;
  * </ul>
  * </p>
  *
- * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
+ * @author <a href="mailto:rp@merlinia.com">Rennie Petersen</a>
  */
 public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
 
@@ -60,27 +64,26 @@ public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
 
    @Override
    public LocalDateTime read(Kryo kryo, Input input, Class<LocalDateTime> type) {
-      final int year = input.readInt();
-      final int monthOfYear = input.readInt();
-      final int dayOfMonth = input.readInt();
-      final int hourOfDay = input.readInt();
-      final int minuteOfHour = input.readInt();
-      final int secondOfMinute = input.readInt();
-      final int millisOfSecond = input.readInt();
+      final long packedLocalDateTime = input.readLong(true);
+      final int packedYearMonthDay = (int)(packedLocalDateTime >> 32);
+      final int millisOfDay = (int)packedLocalDateTime;
       final Chronology chronology = IdentifiableChronology.readChronology(input);
-      return new LocalDateTime( year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour,
-                                secondOfMinute, millisOfSecond, chronology );
+      return new LocalDateTime(packedYearMonthDay / 10000,
+                               (packedYearMonthDay % 10000) / 100,
+                               packedYearMonthDay % 100,
+                               millisOfDay / 3600000,
+                               (millisOfDay % 3600000) / 60000,
+                               (millisOfDay % 60000) / 1000,
+                               millisOfDay % 1000,
+                               chronology );
    }
 
    @Override
    public void write(Kryo kryo, Output output, LocalDateTime localDateTime) {
-      output.writeInt(localDateTime.getYear());
-      output.writeInt(localDateTime.getMonthOfYear());
-      output.writeInt(localDateTime.getDayOfMonth());
-      output.writeInt(localDateTime.getHourOfDay());
-      output.writeInt(localDateTime.getMinuteOfHour());
-      output.writeInt(localDateTime.getSecondOfMinute());
-      output.writeInt(localDateTime.getMillisOfSecond());
+      final int packedYearMonthDay = localDateTime.getYear() * 10000 +
+                                     localDateTime.getMonthOfYear() * 100 +
+                                     localDateTime.getDayOfMonth();
+      output.writeLong(((long)packedYearMonthDay << 32) + localDateTime.getMillisOfDay(), true);
       final String chronologyId =
                            IdentifiableChronology.getChronologyId(localDateTime.getChronology());
       output.writeString(chronologyId == null ? "" : chronologyId);
