@@ -39,10 +39,6 @@ import com.esotericsoftware.kryo.io.Output;
  * attribute is serialized as an empty string, thus {@link org.joda.time.chrono.ISOChronology} is
  * considered to be default.
  *
- * Warning: The method used to pack the date into an integer will break down if/when we get to the
- * year 214,748, in whichever chronology is being used. If this is considered to be a limitation you
- * are advised to use a different serialization/deserialization routine.
- *
  * Note that internally the LocalDate object makes use of an iLocalMillis value, but that field is
  * not accessible for reading here because the getLocalMillis() method is protected. There could
  * conceivably be cases where a user has created a derived version of LocalDate, and is using the
@@ -74,16 +70,16 @@ public class JodaLocalDateSerializer extends Serializer<LocalDate> {
    public LocalDate read(final Kryo kryo, final Input input, final Class<LocalDate> type) {
       final int packedYearMonthDay = input.readInt(true);
       final Chronology chronology = IdentifiableChronology.readChronology(input);
-      return new LocalDate(packedYearMonthDay / 10000,
-                           (packedYearMonthDay % 10000) / 100,
-                           packedYearMonthDay % 100,
-                           chronology );
+      return new LocalDate(packedYearMonthDay / (13 * 32),
+                           (packedYearMonthDay % (13 * 32)) / 32,
+                           packedYearMonthDay % 32,
+                           chronology);
    }
 
    @Override
    public void write(final Kryo kryo, final Output output, final LocalDate localDate) {
-      final int packedYearMonthDay = localDate.getYear() * 10000 +
-                                     localDate.getMonthOfYear() * 100 +
+      final int packedYearMonthDay = localDate.getYear() * 13 * 32 +
+                                     localDate.getMonthOfYear() * 32 +
                                      localDate.getDayOfMonth();
       output.writeInt(packedYearMonthDay, true);
       final String chronologyId = IdentifiableChronology.getChronologyId(localDate.getChronology());

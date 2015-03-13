@@ -34,14 +34,10 @@ import com.esotericsoftware.kryo.Serializer;
 
 /**
  * A Kryo serializer for joda {@link LocalDateTime}. The LocalDateTime object is read or written as
- * year, month-of-year, day-of-month, hour-of-day, minute-of-hour, second-of-minute and
- * millis-of-second packed into a long integer, and chronology as a separate attribute. No time zone
- * is involved. If the chronology is {@link ISOChronology} the attribute is serialized as an empty
- * string, thus {@link ISOChronology} is considered to be default.
- *
- * Warning: The method used to pack the date and time into a long integer will break down if/when we
- * get to the year 214,748, in whichever chronology is being used. If this is considered to be a
- * limitation you are advised to use a different serialization/deserialization routine.
+ * year, month-of-year, day-of-month and millis-of-day packed into a long integer, and chronology as
+ * a separate attribute. No time zone is involved. If the chronology is {@link ISOChronology} the
+ * attribute is serialized as an empty string, thus {@link ISOChronology} is considered to be
+ * default.
  * <p>
  * The following chronologies are supported:
  * <ul>
@@ -65,12 +61,12 @@ public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
    @Override
    public LocalDateTime read(Kryo kryo, Input input, Class<LocalDateTime> type) {
       final long packedLocalDateTime = input.readLong(true);
-      final int packedYearMonthDay = (int)(packedLocalDateTime >> 32);
-      final int millisOfDay = (int)packedLocalDateTime;
+      final int packedYearMonthDay = (int)(packedLocalDateTime / 86400000);
+      final int millisOfDay = (int)(packedLocalDateTime % 86400000);
       final Chronology chronology = IdentifiableChronology.readChronology(input);
-      return new LocalDateTime(packedYearMonthDay / 10000,
-                               (packedYearMonthDay % 10000) / 100,
-                               packedYearMonthDay % 100,
+      return new LocalDateTime(packedYearMonthDay / (13 * 32),
+                               (packedYearMonthDay % (13 * 32)) / 32,
+                               packedYearMonthDay % 32,
                                millisOfDay / 3600000,
                                (millisOfDay % 3600000) / 60000,
                                (millisOfDay % 60000) / 1000,
@@ -80,10 +76,10 @@ public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
 
    @Override
    public void write(Kryo kryo, Output output, LocalDateTime localDateTime) {
-      final int packedYearMonthDay = localDateTime.getYear() * 10000 +
-                                     localDateTime.getMonthOfYear() * 100 +
+      final int packedYearMonthDay = localDateTime.getYear() * 13 * 32 +
+                                     localDateTime.getMonthOfYear() * 32 +
                                      localDateTime.getDayOfMonth();
-      output.writeLong(((long)packedYearMonthDay << 32) + localDateTime.getMillisOfDay(), true);
+      output.writeLong((long)packedYearMonthDay * 86400000 + localDateTime.getMillisOfDay(), true);
       final String chronologyId =
                            IdentifiableChronology.getChronologyId(localDateTime.getChronology());
       output.writeString(chronologyId == null ? "" : chronologyId);
