@@ -1,0 +1,10 @@
+package ProtocolBuffers; // the namespace for the compiled classes
+
+option java_package = "de.javakaffee.kryoserializers.protobuf";
+option java_outer_classname = "SampleProtoBOuterClass";
+
+message SampleProtoB {
+    required uint32 identifier = 1;
+    required string state = 2;
+    required string city = 3;
+}
