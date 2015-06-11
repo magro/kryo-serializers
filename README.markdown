@@ -34,6 +34,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * jodatime/JodaIntervalSerializer - serializer for joda's Interval  
 * jodatime/JodaLocalDateSerializer - serializer for joda's LocalDate
 * jodatime/JodaLocalDateTimeSerializer - serializer for joda's LocalDateTime
+* protobuf/ProtobufSerializer - serializer for protobuf GeneratedMessages
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
 
 
@@ -71,6 +72,8 @@ After that's done you can register the custom serializers at the kryo instance. 
     kryo.register( DateTime.class, new JodaDateTimeSerializer() );
     kryo.register( LocalDate.class, new JodaLocalDateSerializer() );
     kryo.register( LocalDateTime.class, new JodaLocalDateTimeSerializer() );
+    // protobuf
+    kryo.register( SampleProtoA.class, new ProtobufSerializer() ); // or override Kryo.getDefaultSerializer as shown below
     // wicket
     kryo.register( MiniMap.class, new MiniMapSerializer() );
     // guava ImmutableList
@@ -106,6 +109,10 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
             if ( CGLibProxySerializer.canSerialize( type ) ) {
                 // return the serializer registered for CGLibProxyMarker.class (see above)
                 return getSerializer( CGLibProxySerializer.CGLibProxyMarker.class );
+            }
+            // protobuf
+            if ( com.google.protobuf.GeneratedMessage.class.isAssignableFrom( type ) ) {
+                return new ProtobufSerializer();
             }
             return super.getDefaultSerializer( clazz );
         }
