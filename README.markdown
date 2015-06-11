@@ -44,7 +44,7 @@ To be able to use the serializers you have to add the jar to your classpath. If 
     <dependency>
         <groupId>de.javakaffee</groupId>
         <artifactId>kryo-serializers</artifactId>
-        <version>0.29</version>
+        <version>0.30</version>
     </dependency>
 
 It's available in maven central, so you don't need an additional repository definition.
