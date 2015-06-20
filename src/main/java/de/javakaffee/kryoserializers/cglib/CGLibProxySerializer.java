@@ -37,11 +37,11 @@ public class CGLibProxySerializer extends Serializer<Object> {
 
     /**
      * This class is used as a marker class - written to the class attribute
-     * on serialization and checked on deserialization (via {@link CGLibProxyFormat#canConvert(Class)}.
+     * on serialization and checked on deserialization (via {@link CGLibProxySerializer#canSerialize(Class)}).
      */
     public static interface CGLibProxyMarker {}
 
-    static String DEFAULT_NAMING_MARKER = "$$EnhancerByCGLIB$$";
+    public static final String DEFAULT_NAMING_MARKER = "$$EnhancerByCGLIB$$";
 
     public static boolean canSerialize( final Class<?> cls ) {
         return Enhancer.isEnhanced( cls ) && cls.getName().indexOf( DEFAULT_NAMING_MARKER ) > 0;
