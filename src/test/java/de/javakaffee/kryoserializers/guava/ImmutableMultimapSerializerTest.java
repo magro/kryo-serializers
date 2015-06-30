@@ -2,19 +2,20 @@ package de.javakaffee.kryoserializers.guava;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.google.common.collect.ImmutableMultimap;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import static org.testng.Assert.*;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.junit.Assert.*;
 
 public class ImmutableMultimapSerializerTest {
 
     private Kryo _kryo;
 
-    @Before
+    @BeforeTest
     public void setUp() throws Exception {
         _kryo = new Kryo();
 
