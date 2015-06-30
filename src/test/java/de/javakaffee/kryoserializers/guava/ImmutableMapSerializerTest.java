@@ -1,0 +1,74 @@
+package de.javakaffee.kryoserializers.guava;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.google.common.collect.ImmutableMap;
+import org.junit.Before;
+import org.junit.Test;
+
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+import static org.junit.Assert.*;
+
+/**
+ * Created by pmarcos on 29/06/15.
+ */
+public class ImmutableMapSerializerTest {
+
+    private Kryo _kryo;
+
+    @Before
+    public void setUp() throws Exception {
+        _kryo = new Kryo();
+
+        ImmutableMapSerializer.registerSerializers(_kryo);
+    }
+
+    @Test
+    public void testEmpty() {
+        final ImmutableMap<?, ?> obj = ImmutableMap.of();
+        final byte[] serialized = serialize(_kryo, obj);
+        final ImmutableMap<?, ?> deserialized = deserialize(_kryo, serialized, ImmutableMap.class);
+        assertTrue(deserialized.isEmpty());
+        assertEquals(deserialized.size(), obj.size());
+    }
+
+    @Test
+    public void testSingleton() {
+        final ImmutableMap<?, ?> obj = ImmutableMap.of(3, "k");
+        final byte[] serialized = serialize(_kryo, obj);
+        final ImmutableMap<?, ?> deserialized = deserialize(_kryo, serialized, ImmutableMap.class);
+        assertEquals(deserialized, obj);
+    }
+
+    @Test
+    public void testRegular() {
+        final ImmutableMap<?, ?> obj = ImmutableMap.of(3, "k", 5, "r", 6, "y");
+        final byte[] serialized = serialize(_kryo, obj);
+        final ImmutableMap<?, ?> deserialized = deserialize(_kryo, serialized, ImmutableMap.class);
+        assertEquals(deserialized, obj);
+    }
+
+    // Kryo#copy tests
+
+    @Test
+    public void testCopyEmpty() {
+        final ImmutableMap<?, ?> obj = ImmutableMap.of();
+        final ImmutableMap<?, ?> copied = _kryo.copy(obj);
+        assertSame(copied, obj);
+    }
+
+    @Test
+    public void testCopySingleton() {
+        final ImmutableMap<?, ?> obj = ImmutableMap.of(1, 1);
+        final ImmutableMap<?, ?> copied = _kryo.copy(obj);
+        assertSame(copied, obj);
+    }
+
+    @Test
+    public void testCopyRegular() {
+        final ImmutableMap<?, ?> obj = ImmutableMap.of(1, 2, 3, 4);
+        final ImmutableMap<?, ?> copied = _kryo.copy(obj);
+        assertSame(copied, obj);
+    }
+
+}
