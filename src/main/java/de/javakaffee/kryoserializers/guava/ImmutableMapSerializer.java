@@ -20,27 +20,18 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
     private static final boolean DOES_NOT_ACCEPT_NULL = true;
     private static final boolean IMMUTABLE = true;
 
-    private MapSerializer mapSerializer;
-
-    private ImmutableMapSerializer() {
+    public ImmutableMapSerializer() {
         super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
-    }
-
-    private ImmutableMapSerializer(MapSerializer mapSerializer) {
-        this();
-        this.mapSerializer = mapSerializer;
     }
 
     @Override
     public void write(Kryo kryo, Output output, ImmutableMap<Object, ? extends Object> immutableMap) {
-        mapSerializer.write(kryo, output, Maps.newHashMap(immutableMap));
+        kryo.writeObject(output, Maps.newHashMap(immutableMap));
     }
 
     @Override
     public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMap<Object, ? extends Object>> type) {
-        // Assignment needed to be able to call mapSerializer.read
-        Class hashMapClass = HashMap.class;
-        Map map = mapSerializer.read(kryo, input, hashMapClass);
+        Map map = kryo.readObject(input, HashMap.class);
         return ImmutableMap.copyOf(map);
     }
 
@@ -50,9 +41,9 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
      *
      * @param kryo the {@link Kryo} instance to set the serializer on
      */
-    protected static void registerSerializers(final Kryo kryo) {
+    public static void registerSerializers(final Kryo kryo) {
 
-        final ImmutableMapSerializer serializer = new ImmutableMapSerializer((MapSerializer) kryo.getSerializer(Map.class));
+        final ImmutableMapSerializer serializer = new ImmutableMapSerializer();
 
         kryo.register(ImmutableMap.class, serializer);
         kryo.register(ImmutableMap.of().getClass(), serializer);

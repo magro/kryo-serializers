@@ -20,27 +20,19 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
 
     private static final boolean DOES_NOT_ACCEPT_NULL = true;
     private static final boolean IMMUTABLE = true;
-    private ImmutableMapSerializer mapSerializer;
 
-    private ImmutableMultimapSerializer() {
+    public ImmutableMultimapSerializer() {
         super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
-    }
-
-    private ImmutableMultimapSerializer(ImmutableMapSerializer mapSerializer) {
-        this();
-        this.mapSerializer = mapSerializer;
     }
 
     @Override
     public void write(Kryo kryo, Output output, ImmutableMultimap<Object, Object> immutableMultiMap) {
-        mapSerializer.write(kryo, output, ImmutableMap.copyOf(immutableMultiMap.asMap()));
+        kryo.writeObject(output, ImmutableMap.copyOf(immutableMultiMap.asMap()));
     }
 
     @Override
     public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMultimap<Object, Object>> type) {
-        // Assignment needed to be able to call mapSerializer.read
-        Class hashMapClass = HashMap.class;
-        Map map = mapSerializer.read(kryo, input, hashMapClass);
+        Map map = kryo.readObject(input, ImmutableMap.class);
 
         Set<Map.Entry<Object, List<? extends Object>>> entries = map.entrySet();
         ImmutableMultimap.Builder<Object, Object> builder = ImmutableMultimap.builder();
@@ -57,7 +49,7 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
      *
      * @param kryo the {@link Kryo} instance to set the serializer on
      */
-    protected static void registerSerializers(final Kryo kryo) {
+    public static void registerSerializers(final Kryo kryo) {
 
         Serializer immutableListSerializer = kryo.getSerializer(ImmutableList.class);
         if (!(immutableListSerializer instanceof ImmutableListSerializer)) {
@@ -69,8 +61,7 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
             ImmutableMapSerializer.registerSerializers(kryo);
         }
 
-        final ImmutableMultimapSerializer serializer = new ImmutableMultimapSerializer((ImmutableMapSerializer) kryo.getSerializer(ImmutableMap.class));
-
+        final ImmutableMultimapSerializer serializer = new ImmutableMultimapSerializer();
 
         kryo.register(ImmutableMultimap.class, serializer);
         kryo.register(ImmutableMultimap.of().getClass(), serializer);
