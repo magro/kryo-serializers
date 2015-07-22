@@ -7,6 +7,8 @@ import static org.testng.Assert.*;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.EnumMap;
+
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
 
@@ -14,6 +16,10 @@ import static de.javakaffee.kryoserializers.KryoTest.serialize;
  * Created by pmarcos on 29/06/15.
  */
 public class ImmutableMapSerializerTest {
+
+    private enum Planet {
+        MERCURY, VENUS, EARTH, MARS;
+    }
 
     private Kryo _kryo;
 
@@ -47,6 +53,19 @@ public class ImmutableMapSerializerTest {
         final byte[] serialized = serialize(_kryo, obj);
         final ImmutableMap<?, ?> deserialized = deserialize(_kryo, serialized, ImmutableMap.class);
         assertEquals(deserialized, obj);
+    }
+
+    @Test
+    public void testEnum() {
+        final EnumMap<Planet, String> obj = new EnumMap<Planet, String>(Planet.class);
+        for (Planet p : Planet.values()) {
+            obj.put(p, p.name());
+        }
+
+        final ImmutableMap<?, ?> immutableObj = ImmutableMap.copyOf(obj);
+        final byte[] serialized = serialize(_kryo, immutableObj);
+        final ImmutableMap<?, ?> deserialized = deserialize(_kryo, serialized, ImmutableMap.class);
+        assertEquals(deserialized, immutableObj);
     }
 
     // Kryo#copy tests
