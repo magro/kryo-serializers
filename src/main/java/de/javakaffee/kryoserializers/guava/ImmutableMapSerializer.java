@@ -4,10 +4,10 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.MapSerializer;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,5 +54,16 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
         kryo.register(ImmutableMap.of(o1, o1).getClass(), serializer);
         kryo.register(ImmutableMap.of(o1, o1, o2, o2).getClass(), serializer);
 
+        Map<DummyEnum,Object> enumMap = new EnumMap<DummyEnum, Object>(DummyEnum.class);
+        for (DummyEnum e : DummyEnum.values()) {
+            enumMap.put(e, o1);
+        }
+
+        kryo.register(ImmutableMap.copyOf(enumMap).getClass(), serializer);
+    }
+
+    private enum DummyEnum {
+        VALUE1,
+        VALUE2
     }
 }
