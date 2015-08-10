@@ -53,7 +53,7 @@ import com.esotericsoftware.kryo.io.Output;
  * <li>{@link GJChronology}</li>
  * </ul>
  * </p>
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class JodaDateTimeSerializer extends Serializer<DateTime> {
@@ -78,22 +78,23 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
     @Override
     public void write(final Kryo kryo, final Output output, final DateTime obj) {
         output.writeLong(obj.getMillis(), true);
+
         final String chronologyId = IdentifiableChronology.getChronologyId( obj.getChronology() );
         output.writeString(chronologyId == null ? "" : chronologyId);
 
-        if ( obj.getZone() != null && obj.getZone() != DateTimeZone.getDefault() )
-            output.writeString(obj.getZone().getID() );
-        else
-            output.writeString( "" );
+        output.writeString(obj.getZone().getID());
     }
-
-    
 
     private DateTimeZone readTimeZone( final Input input ) {
         final String tz = input.readString();
-        return "".equals( tz ) ? DateTimeZone.getDefault() : DateTimeZone.forID( tz );
+
+        // special case for "" to maintain backwards compatibility, but generally this is considered harmful,
+        // potentially remove this with the next major release that involves breaking changes
+        // https://github.com/magro/kryo-serializers/issues/30
+        if ("".equals(tz)) {
+            return DateTimeZone.getDefault();
+        }
+
+        return DateTimeZone.forID(tz);
     }
-
-    
-
 }
