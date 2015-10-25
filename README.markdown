@@ -1,9 +1,9 @@
 A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and v3) serializers for some jdk types and some external libs like e.g. joda time.
-
+ 
 [![Build Status](https://travis-ci.org/magro/kryo-serializers.png?branch=master)](https://travis-ci.org/magro/kryo-serializers)
-
+ 
 # Provided serializers / supporting classes:
-
+ 
 * ArraysAsListSerializer - serializer for lists created via Arrays#asList(Object...)
 * CollectionsEmptyListSerializer - for Collections#EMPTY_LIST or lists created via Collections#emptyList()
 * CollectionsEmptyMapSerializer - for Collections#EMPTY_MAP or maps created via Collections#emptyMap()
@@ -27,34 +27,35 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * SubListSerializers - serializer for lists created via List#subList(int, int)
 * SynchronizedCollectionsSerializer - for synchronized Collections and Maps created via Collections.synchronized*.
 * UnmodifiableCollectionsSerializer - for unmodifiable Collections and Maps created via Collections.unmodifiable*.
-
+* CharsetSerializer - for some of the java.nio.charset.Charset classes which are not public - for example UTF-8, UTF-16, UTF-16BE, UTF-16LE, ISO_8859_1*. 
+ 
 * cglib/CGLibProxySerializer - serializer for CGLib proxies
 * guava/ImmutableListSerializer - serializer for guava-libraries' ImmutableList
 * guava/ImmutableSetSerializer - serializer for guava-libraries' ImmutableSet
 * guava/ImmutableMapSerializer - serializer for guava-libraries' ImmutableMap
 * guava/ImmutableMultimapSerializer - serializer for guava-libraries' ImmutableMultimap
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
-* jodatime/JodaIntervalSerializer - serializer for joda's Interval  
+* jodatime/JodaIntervalSerializer - serializer for joda's Interval 
 * jodatime/JodaLocalDateSerializer - serializer for joda's LocalDate
 * jodatime/JodaLocalDateTimeSerializer - serializer for joda's LocalDateTime
 * protobuf/ProtobufSerializer - serializer for protobuf GeneratedMessages
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
-
-
+ 
+ 
 # Usage
 To be able to use the serializers you have to add the jar to your classpath. If your build tool support maven repositories you can use this dependency:
-
+ 
     <dependency>
         <groupId>de.javakaffee</groupId>
         <artifactId>kryo-serializers</artifactId>
         <version>0.37</version>
     </dependency>
-
+ 
 It's available in maven central, so you don't need an additional repository definition.
 If you're managing the classpath differently you can get the jar from the downloads section or [download from maven central](http://repo1.maven.org/maven2/de/javakaffee/kryo-serializers/).
-
+ 
 After that's done you can register the custom serializers at the kryo instance. The following code snippet shows how this is done for serializers that can be registered statically (directly for a known class).
-
+ 
     kryo.register( Arrays.asList( "" ).getClass(), new ArraysAsListSerializer() );
     kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
     kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
@@ -66,9 +67,10 @@ After that's done you can register the custom serializers at the kryo instance. 
     kryo.register( InvocationHandler.class, new JdkProxySerializer() );
     UnmodifiableCollectionsSerializer.registerSerializers( kryo );
     SynchronizedCollectionsSerializer.registerSerializers( kryo );
-
+    CharsetSerializer.registerKnownCharSets( kryo );
+ 
     // custom serializers for non-jdk libs
-
+ 
     // register CGLibProxySerializer, works in combination with the appropriate action in handleUnregisteredClass (see below)
     kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( kryo ) );
     // joda DateTime, LocalDate and LocalDateTime
@@ -84,11 +86,11 @@ After that's done you can register the custom serializers at the kryo instance. 
     ImmutableSetSerializer.registerSerializers( kryo );
     ImmutableMapSerializer.registerSerializers( kryo );
     ImmutableMultimapSerializer.registerSerializers( kryo );
-
+ 
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
-
+ 
     final Kryo kryo = new KryoReflectionFactorySupport() {
-
+ 
         @Override
         public Serializer<?> getDefaultSerializer(final Class clazz) {
             if ( EnumSet.class.isAssignableFrom( clazz ) ) {
@@ -122,12 +124,13 @@ The following code snippet shows how to use the `KryoReflectionFactorySupport` (
             }
             return super.getDefaultSerializer( clazz );
         }
-
+ 
     };
-
-
+ 
+ 
 # Where to get help
 You can [contact me via github](https://github.com/inbox/new/magro) or [submit an issue](https://github.com/magro/kryo-serializers/issues).
-
+ 
 # How to contribute
 If you want to contribute to this project you can fork the [sources on github](https://github.com/magro/kryo-serializers), make your changes and submit a pull request. Alternatively you can [submit an issue](https://github.com/magro/kryo-serializers/issues) with a patch attached.
+ 
