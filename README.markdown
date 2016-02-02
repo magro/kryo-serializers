@@ -1,6 +1,8 @@
 A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and v3) serializers for some jdk types and some external libs like e.g. joda time.
 
 [![Build Status](https://travis-ci.org/magro/kryo-serializers.png?branch=master)](https://travis-ci.org/magro/kryo-serializers)
+[![Coverage Status](https://coveralls.io/repos/github/magro/kryo-serializers/badge.svg?branch=master)](https://coveralls.io/github/magro/kryo-serializers?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.javakaffee/kryo-serializers/badge.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22de.javakaffee%22%20AND%20a%3Akryo-serializers)
 
 # Provided serializers / supporting classes:
 
