@@ -1,11 +1,21 @@
 language: java
+
 jdk:
   - openjdk6
   - oraclejdk7
   - openjdk7
   - oraclejdk8
+
+cache:
+  directories:
+    - $HOME/.m2
+
 after_success:
   - mvn cobertura:cobertura coveralls:report
+
 env:
   global:
     - secure: VowI35vSogCpbHhqkStwHdU3A9+0g3x3v4RiE6Ps6RH5Y4E0F5mD9MzrYloRGIWpbeLgw0azRVsM2nDufUIJgogWIOnxKxi4AqSo23VKcY6z/tN0kRgIfD+QuMbRmaUU6yIXaws3xjOXCHbLsBFBHeu0pGkB9e3qiMeJatj9bDo=
+
+# use container
+sudo: false
