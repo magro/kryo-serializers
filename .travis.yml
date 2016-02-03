@@ -5,4 +5,4 @@ jdk:
   - openjdk7
   - oraclejdk8
 after_success:
-  - mvn cobertura:cobertura coveralls:report
+  - mvn cobertura:cobertura coveralls:report -DrepoToken=$COVERALLS_REPO_TOKEN
