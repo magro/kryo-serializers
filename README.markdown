@@ -41,7 +41,9 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * jodatime/JodaLocalDateTimeSerializer - serializer for joda's LocalDateTime
 * protobuf/ProtobufSerializer - serializer for protobuf GeneratedMessages
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
-
+* dexx/ListSerializer - serializer for dexx-collections' List
+* dexx/SetSerializer - serializer for dexx collecttions' Set
+* dexx/MapSerializer - serializer for dexx collections' Map
 
 # Usage
 To be able to use the serializers you have to add the jar to your classpath. If your build tool support maven repositories you can use this dependency:

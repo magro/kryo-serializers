@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<!-- To be able to deploy snapshots/releases to sonatype / maven central: https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -213,6 +213,12 @@
 			<artifactId>guava</artifactId>
 			<version>17.0</version>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+            <groupId>com.github.andrewoma.dexx</groupId>
+			<artifactId>collection</artifactId>
+            <version>0.6</version>
+            <optional>true</optional>
 		</dependency>
 
 		<!-- Testing -->
