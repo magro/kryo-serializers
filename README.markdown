@@ -35,8 +35,9 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * guava/ImmutableSetSerializer - serializer for guava-libraries' ImmutableSet
 * guava/ImmutableMapSerializer - serializer for guava-libraries' ImmutableMap
 * guava/ImmutableMultimapSerializer - serializer for guava-libraries' ImmutableMultimap
+* guava/ImmutableSortedSetSerializer - serializer for guava-libraries' ImmutableSortedSet
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
-* jodatime/JodaIntervalSerializer - serializer for joda's Interval  
+* jodatime/JodaIntervalSerializer - serializer for joda's Interval
 * jodatime/JodaLocalDateSerializer - serializer for joda's LocalDate
 * jodatime/JodaLocalDateTimeSerializer - serializer for joda's LocalDateTime
 * protobuf/ProtobufSerializer - serializer for protobuf GeneratedMessages
