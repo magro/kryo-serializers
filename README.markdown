@@ -36,6 +36,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * guava/ImmutableMapSerializer - serializer for guava-libraries' ImmutableMap
 * guava/ImmutableMultimapSerializer - serializer for guava-libraries' ImmutableMultimap
 * guava/ImmutableSortedSetSerializer - serializer for guava-libraries' ImmutableSortedSet
+* guava/UnmodifiableNavigableSetSerializer - serializer for guava-libraries' UnmodifiableNavigableSet
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
 * jodatime/JodaIntervalSerializer - serializer for joda's Interval
 * jodatime/JodaLocalDateSerializer - serializer for joda's LocalDate
@@ -82,11 +83,12 @@ After that's done you can register the custom serializers at the kryo instance. 
     kryo.register( SampleProtoA.class, new ProtobufSerializer() ); // or override Kryo.getDefaultSerializer as shown below
     // wicket
     kryo.register( MiniMap.class, new MiniMapSerializer() );
-    // guava ImmutableList, ImmutableSet, ImmutableMap, ImmutableMultimap
+    // guava ImmutableList, ImmutableSet, ImmutableMap, ImmutableMultimap, UnmodifiableNavigableSet
     ImmutableListSerializer.registerSerializers( kryo );
     ImmutableSetSerializer.registerSerializers( kryo );
     ImmutableMapSerializer.registerSerializers( kryo );
     ImmutableMultimapSerializer.registerSerializers( kryo );
+    UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
 
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
 
