@@ -9,7 +9,6 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.CollectionSerializer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,11 +40,11 @@ public abstract class ReverseListSerializer extends Serializer<Object> {
         kryo.register(Lists.reverse(Lists.newArrayList()).getClass(), forRandomAccessReverseList());
     }
 
-    private static ReverseListSerializer forReverseList() {
+    public static ReverseListSerializer forReverseList() {
       return new ReverseListSerializer.ReverseList();
     }
 
-    private static ReverseListSerializer forRandomAccessReverseList() {
+    public static ReverseListSerializer forRandomAccessReverseList() {
       return new ReverseListSerializer.RandomAccessReverseList();
     }
 
