@@ -31,11 +31,16 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * UnmodifiableCollectionsSerializer - for unmodifiable Collections and Maps created via Collections.unmodifiable*.
 
 * cglib/CGLibProxySerializer - serializer for CGLib proxies
+* guava/ArrayListMultimapSerializer - serializer for guava-libraries' ArrayListMultimap
+* guava/HashMultimapSerializer -- serializer for guava-libraries' HashMultimap
 * guava/ImmutableListSerializer - serializer for guava-libraries' ImmutableList
 * guava/ImmutableSetSerializer - serializer for guava-libraries' ImmutableSet
 * guava/ImmutableMapSerializer - serializer for guava-libraries' ImmutableMap
 * guava/ImmutableMultimapSerializer - serializer for guava-libraries' ImmutableMultimap
 * guava/ImmutableSortedSetSerializer - serializer for guava-libraries' ImmutableSortedSet
+* guava/LinkedHashMultimapSerializer - serializer for guava-libraries' LinkedHashMultimap
+* guava/LinkedListMultimapSerializer - serializer for guava-libraries' LinkedListMultimap
+* guava/TreeMultimapSerializer - serializer for guava-libraries' TreeMultimap
 * guava/UnmodifiableNavigableSetSerializer - serializer for guava-libraries' UnmodifiableNavigableSet
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
 * jodatime/JodaIntervalSerializer - serializer for joda's Interval
@@ -89,6 +94,12 @@ After that's done you can register the custom serializers at the kryo instance. 
     ImmutableMapSerializer.registerSerializers( kryo );
     ImmutableMultimapSerializer.registerSerializers( kryo );
     UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
+    // guava ArrayListMultimap, HashMultimap, LinkedHashMultimap, LinkedListMultimap, TreeMultimap
+    ArrayListMultimapSerializer.registerSerializers( kryo );
+    HashMultimapSerializer.registerSerializers( kryo );
+    LinkedHashMultimapSerializer.registerSerializers( kryo );
+    LinkedListMultimapSerializer.registerSerializers( kryo );
+    TreeMultimapSerializer.registerSerializers( kryo );
 
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracly jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
 
