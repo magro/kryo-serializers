@@ -22,7 +22,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * UUIDSerializer - serializer for java.util.UUID
 * EnumMapSerializer - serializer for EnumMap
 * EnumSetSerializer - serializer for EnumSet
-* FieldAnnotationAwareSerializer - field serializer that either ignores fields with user specified annotations or exclusively considers such fields (e.g. useful to ignore all fields annotated with Springs `@Autowired` annotation).
+* FieldAnnotationAwareSerializer - field serializer that either ignores fields with user-specified annotations or exclusively considers such fields (e.g. useful to ignore all fields annotated with Springs `@Autowired` annotation).
 * GregorianCalendarSerializer - optimized serializer for (Gregorian)Calendar (24 bytes vs. 1323 bytes with FieldSerializer)
 * JdkProxySerializer - for jdk proxies (proxies created via Proxy.newProxyInstance)
 * KryoReflectionFactorySupport - kryo specialization that uses sun's ReflectionFactory to create new instances for classes without a default constructor
