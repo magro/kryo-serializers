@@ -9,6 +9,7 @@ import com.google.common.collect.TreeMultimap;
 
 /**
  * A kryo {@link Serializer} for guava-libraries {@link TreeMultimap}.
+ * The default comparator is assumed so the multimaps are not null-safe.
  * This does not yet support {@link Kryo#copy(java.lang.Object)}.
  */
 public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, Comparable, TreeMultimap<Comparable, Comparable>> {
