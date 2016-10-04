@@ -31,6 +31,9 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * UnmodifiableCollectionsSerializer - for unmodifiable Collections and Maps created via Collections.unmodifiable*.
 
 * cglib/CGLibProxySerializer - serializer for CGLib proxies
+* dexx/ListSerializer - serializer for dexx-collections' List
+* dexx/SetSerializer - serializer for dexx collecttions' Set
+* dexx/MapSerializer - serializer for dexx collections' Map
 * guava/ArrayListMultimapSerializer - serializer for guava-libraries' ArrayListMultimap
 * guava/HashMultimapSerializer -- serializer for guava-libraries' HashMultimap
 * guava/ImmutableListSerializer - serializer for guava-libraries' ImmutableList
@@ -49,7 +52,6 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * jodatime/JodaLocalDateTimeSerializer - serializer for joda's LocalDateTime
 * protobuf/ProtobufSerializer - serializer for protobuf GeneratedMessages
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
-
 
 # Usage
 To be able to use the serializers you have to add the jar to your classpath. If your build tool support maven repositories you can use this dependency:
@@ -81,6 +83,10 @@ After that's done you can register the custom serializers at the kryo instance. 
 
     // register CGLibProxySerializer, works in combination with the appropriate action in handleUnregisteredClass (see below)
     kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerializer( kryo ) );
+    // dexx
+    ListSerializer.registerSerializers( kryo );
+    MapSerializer.registerSerializers( kryo );
+    SetSerializer.registerSerializers( kryo );
     // joda DateTime, LocalDate and LocalDateTime
     kryo.register( DateTime.class, new JodaDateTimeSerializer() );
     kryo.register( LocalDate.class, new JodaLocalDateSerializer() );
@@ -94,7 +100,7 @@ After that's done you can register the custom serializers at the kryo instance. 
     ImmutableSetSerializer.registerSerializers( kryo );
     ImmutableMapSerializer.registerSerializers( kryo );
     ImmutableMultimapSerializer.registerSerializers( kryo );
-    ReverseListSerializer.registerSerializers(_kryo);
+    ReverseListSerializer.registerSerializers( kryo );
     UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
     // guava ArrayListMultimap, HashMultimap, LinkedHashMultimap, LinkedListMultimap, TreeMultimap
     ArrayListMultimapSerializer.registerSerializers( kryo );
