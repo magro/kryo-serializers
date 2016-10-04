@@ -16,22 +16,22 @@ import java.util.List;
  * A {@link Lists.ReverseList} Serializer.
  * Treat as a {@link List} by reversing before write and after read.
  */
-public abstract class ReverseListSerializer extends Serializer<Object> {
+public abstract class ReverseListSerializer extends Serializer<List<Object>> {
 
     private static final CollectionSerializer serializer = new CollectionSerializer();
 
     @SuppressWarnings("unchecked")
     @Override
-    public void write(Kryo kryo, Output output, Object object) {
+    public void write(Kryo kryo, Output output, List<Object> object) {
         // reverse the ReverseList to get the "forward" list, and treat as regular List.
-        List forwardList = Lists.reverse((List<Object>) object);
+        List forwardList = Lists.reverse(object);
         serializer.write(kryo, output, forwardList);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object copy(Kryo kryo, Object original) {
-        List forwardList = Lists.reverse((List) original);
+    public List<Object> copy(Kryo kryo, List<Object> original) {
+        List forwardList = Lists.reverse(original);
         return Lists.reverse((List<Object>) serializer.copy(kryo, forwardList));
     }
 
@@ -55,7 +55,7 @@ public abstract class ReverseListSerializer extends Serializer<Object> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Object read(Kryo kryo, Input input, Class<Object> type) {
+        public List<Object> read(Kryo kryo, Input input, Class<List<Object>> type) {
             // reading a "forward" list as a LinkedList and returning the reversed list.
             List forwardList = (List) serializer.read(kryo, input, (Class) LinkedList.class);
             return Lists.reverse(forwardList);
@@ -69,7 +69,7 @@ public abstract class ReverseListSerializer extends Serializer<Object> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public Object read(Kryo kryo, Input input, Class<Object> type) {
+        public List<Object> read(Kryo kryo, Input input, Class<List<Object>> type) {
             // reading a "forward" list as a ArrayList and returning the reversed list.
             List forwardList = (List) serializer.read(kryo, input, (Class) ArrayList.class);
             return Lists.reverse(forwardList);

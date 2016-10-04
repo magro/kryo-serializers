@@ -40,6 +40,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and
 * guava/ImmutableSortedSetSerializer - serializer for guava-libraries' ImmutableSortedSet
 * guava/LinkedHashMultimapSerializer - serializer for guava-libraries' LinkedHashMultimap
 * guava/LinkedListMultimapSerializer - serializer for guava-libraries' LinkedListMultimap
+* guava/ReverseListSerializer - serializer for guava-libraries' Lists.ReverseList / Lists.reverse
 * guava/TreeMultimapSerializer - serializer for guava-libraries' TreeMultimap
 * guava/UnmodifiableNavigableSetSerializer - serializer for guava-libraries' UnmodifiableNavigableSet
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
@@ -88,11 +89,12 @@ After that's done you can register the custom serializers at the kryo instance. 
     kryo.register( SampleProtoA.class, new ProtobufSerializer() ); // or override Kryo.getDefaultSerializer as shown below
     // wicket
     kryo.register( MiniMap.class, new MiniMapSerializer() );
-    // guava ImmutableList, ImmutableSet, ImmutableMap, ImmutableMultimap, UnmodifiableNavigableSet
+    // guava ImmutableList, ImmutableSet, ImmutableMap, ImmutableMultimap, ReverseList, UnmodifiableNavigableSet
     ImmutableListSerializer.registerSerializers( kryo );
     ImmutableSetSerializer.registerSerializers( kryo );
     ImmutableMapSerializer.registerSerializers( kryo );
     ImmutableMultimapSerializer.registerSerializers( kryo );
+    ReverseListSerializer.registerSerializers(_kryo);
     UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
     // guava ArrayListMultimap, HashMultimap, LinkedHashMultimap, LinkedListMultimap, TreeMultimap
     ArrayListMultimapSerializer.registerSerializers( kryo );
