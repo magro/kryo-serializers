@@ -12,7 +12,6 @@ import com.github.andrewoma.dexx.collection.Pair;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Map.Entry;
-import java.util.Iterator;
 
 /**
 * A kryo {@link Serializer} for dexx {@link Map}
