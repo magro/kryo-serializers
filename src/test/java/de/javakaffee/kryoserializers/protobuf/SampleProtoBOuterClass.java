@@ -53,11 +53,11 @@ public final class SampleProtoBOuterClass {
    * Protobuf type {@code ProtocolBuffers.SampleProtoB}
    */
   public static final class SampleProtoB extends
-      com.google.protobuf.GeneratedMessage implements
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:ProtocolBuffers.SampleProtoB)
       SampleProtoBOrBuilder {
     // Use SampleProtoB.newBuilder() to construct.
-    private SampleProtoB(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private SampleProtoB(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
@@ -135,7 +135,7 @@ public final class SampleProtoBOuterClass {
       return de.javakaffee.kryoserializers.protobuf.SampleProtoBOuterClass.internal_static_ProtocolBuffers_SampleProtoB_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return de.javakaffee.kryoserializers.protobuf.SampleProtoBOuterClass.internal_static_ProtocolBuffers_SampleProtoB_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
@@ -391,7 +391,7 @@ public final class SampleProtoBOuterClass {
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -399,7 +399,7 @@ public final class SampleProtoBOuterClass {
      * Protobuf type {@code ProtocolBuffers.SampleProtoB}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:ProtocolBuffers.SampleProtoB)
         de.javakaffee.kryoserializers.protobuf.SampleProtoBOuterClass.SampleProtoBOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -407,7 +407,7 @@ public final class SampleProtoBOuterClass {
         return de.javakaffee.kryoserializers.protobuf.SampleProtoBOuterClass.internal_static_ProtocolBuffers_SampleProtoB_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return de.javakaffee.kryoserializers.protobuf.SampleProtoBOuterClass.internal_static_ProtocolBuffers_SampleProtoB_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -420,12 +420,12 @@ public final class SampleProtoBOuterClass {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
         }
       }
       private static Builder create() {
@@ -746,7 +746,7 @@ public final class SampleProtoBOuterClass {
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ProtocolBuffers_SampleProtoB_descriptor;
   private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ProtocolBuffers_SampleProtoB_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
@@ -778,7 +778,7 @@ public final class SampleProtoBOuterClass {
     internal_static_ProtocolBuffers_SampleProtoB_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_ProtocolBuffers_SampleProtoB_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ProtocolBuffers_SampleProtoB_descriptor,
         new java.lang.String[] { "Identifier", "State", "City", });
   }
