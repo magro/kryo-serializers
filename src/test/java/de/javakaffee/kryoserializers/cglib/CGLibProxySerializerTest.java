@@ -18,7 +18,7 @@ package de.javakaffee.kryoserializers.cglib;
 
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,7 +38,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 
 import org.objenesis.strategy.StdInstantiatorStrategy;
-import org.testng.Assert;
+
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -105,8 +105,8 @@ public class CGLibProxySerializerTest {
         Log.TRACE = true;
         final ClassToProxy obj = new ClassToProxy();
         obj._value = "foo";
-		final ClassToProxy proxy1 = createProxy( obj );
-		final ClassToProxy proxy2 = createProxy( obj );
+        final ClassToProxy proxy1 = createProxy( obj );
+        final ClassToProxy proxy2 = createProxy( obj );
         final List<ClassToProxy> proxies = Arrays.asList( proxy1, proxy2 );
         final OutputStream out = new FileOutputStream( new File( "/tmp/cglib-data-1.ser" ) );
         final Output output = new Output(out);
@@ -130,13 +130,13 @@ public class CGLibProxySerializerTest {
         System.out.println(proxies);
         assertEquals(2, proxies.size());
         final ClassToProxy proxy1 = proxies.get(0);
-		assertEquals( "foo", proxy1.getValue() );
+        assertEquals( "foo", proxy1.getValue() );
         final ClassToProxy proxy2 = proxies.get(1);
-		assertEquals( "foo", proxy2.getValue() );
+        assertEquals( "foo", proxy2.getValue() );
         // test that the proxied object is referenced by both proxies
-		proxy1.setValue("bar");
-		assertEquals( "bar", proxy1.getValue() );
-		assertEquals( "bar", proxy2.getValue() );
+        proxy1.setValue("bar");
+        assertEquals( "bar", proxy1.getValue() );
+        assertEquals( "bar", proxy2.getValue() );
     }
 
     @Test( enabled = true )
@@ -171,7 +171,7 @@ public class CGLibProxySerializerTest {
         
         final byte[] serialized = serialize(_kryo, proxy);
         final ClassToProxy deserialized = deserialize(_kryo, serialized, proxy.getClass() );
-        Assert.assertEquals( deserialized.getValue(), proxy.getValue() );
+        assertEquals( deserialized.getValue(), proxy.getValue() );
     }
 
     /**
@@ -181,12 +181,12 @@ public class CGLibProxySerializerTest {
     public void testCGLibProxyForExistingFormat() {
         final Map<String, String> proxy = createProxy( new HashMap<String, String>() );
         proxy.put( "foo", "bar" );
-        Assert.assertEquals( proxy.get( "foo" ), "bar" );
+        assertEquals( proxy.get( "foo" ), "bar" );
         
         final byte[] serialized = serialize(_kryo, proxy);
         @SuppressWarnings( "unchecked" )
         final Map<String, String> deserialized = deserialize(_kryo, serialized, proxy.getClass() );
-        Assert.assertEquals( deserialized.get( "foo" ), proxy.get( "foo" ) );
+        assertEquals( deserialized.get( "foo" ), proxy.get( "foo" ) );
     }
 
     @SuppressWarnings( "unchecked" )

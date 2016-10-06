@@ -216,18 +216,24 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-            <groupId>com.github.andrewoma.dexx</groupId>
+			<groupId>com.github.andrewoma.dexx</groupId>
 			<artifactId>collection</artifactId>
-            <version>0.6</version>
-            <optional>true</optional>
+			<version>0.6</version>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>5.10</version>
-			<classifier>jdk15</classifier>
+			<version>6.8.21</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Required for CGLibProxySerializerTest -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -255,6 +261,13 @@
 	</dependencies>
 
 	<repositories>
+		<!-- Required for TestNG -->
+		<repository>
+			<id>jcenter</id>
+			<name>bintray</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
+
 		<!--
 		  kryo jars were uploaded as 3rd party jars following
 		  https://docs.sonatype.org/display/Repository/Uploading+3rd-party+Artifacts+to+Maven+Central
