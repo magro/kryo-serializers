@@ -4,9 +4,13 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
 
 import java.util.List;
 import java.util.Map;
@@ -31,10 +35,20 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
 
     @Override
     public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMultimap<Object, Object>> type) {
-        Map map = kryo.readObject(input, ImmutableMap.class);
+        final ImmutableMultimap.Builder builder;
+        if (type.equals (ImmutableListMultimap.class)) {
+            builder = ImmutableMultimap.builder();
+        }
+        else if (type.equals (ImmutableSetMultimap.class)) {
+            builder = ImmutableSetMultimap.builder();
+        }
+        else {
+            builder = ImmutableMultimap.builder();
+        }
 
-        Set<Map.Entry<Object, List<? extends Object>>> entries = map.entrySet();
-        ImmutableMultimap.Builder<Object, Object> builder = ImmutableMultimap.builder();
+        final Map map = kryo.readObject(input, ImmutableMap.class);
+        final Set<Map.Entry<Object, List<? extends Object>>> entries = map.entrySet();
+
         for (Map.Entry<Object, List<? extends Object>> entry : entries) {
             builder.putAll(entry.getKey(), entry.getValue());
         }
@@ -49,24 +63,42 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
      * @param kryo the {@link Kryo} instance to set the serializer on
      */
     public static void registerSerializers(final Kryo kryo) {
-
-        Serializer immutableListSerializer = kryo.getSerializer(ImmutableList.class);
-        if (!(immutableListSerializer instanceof ImmutableListSerializer)) {
-            ImmutableListSerializer.registerSerializers(kryo);
-        }
-
+        // ImmutableMap is used by ImmutableMultimap. However,
+        // we already have a separate serializer class for ImmutableMap,
+        // ImmutableMapSerializer. If it is not already being used, register it.
         Serializer immutableMapSerializer = kryo.getSerializer(ImmutableMap.class);
         if (!(immutableMapSerializer instanceof ImmutableMapSerializer)) {
             ImmutableMapSerializer.registerSerializers(kryo);
         }
 
+        // ImmutableList is used by ImmutableListMultimap. However,
+        // we already have a separate serializer class for ImmutableList,
+        // ImmutableListSerializer. If it is not already being used, register it.
+        Serializer immutableListSerializer = kryo.getSerializer(ImmutableList.class);
+        if (!(immutableListSerializer instanceof ImmutableListSerializer)) {
+            ImmutableListSerializer.registerSerializers(kryo);
+        }
+
+        // ImmutableSet is used by ImmutableSetMultimap. However,
+        // we already have a separate serializer class for ImmutableSet,
+        // ImmutableSetSerializer. If it is not already being used, register it.
+        Serializer immutableSetSerializer = kryo.getSerializer(ImmutableSet.class);
+        if (!(immutableSetSerializer instanceof ImmutableSetSerializer)) {
+            ImmutableSetSerializer.registerSerializers(kryo);
+        }
+
         final ImmutableMultimapSerializer serializer = new ImmutableMultimapSerializer();
 
+        // ImmutableMultimap (abstract class)
+        //  +- EmptyImmutableListMultimap
+        //  +- ImmutableListMultimap
+        //  +- EmptyImmutableSetMultimap
+        //  +- ImmutableSetMultimap
+
         kryo.register(ImmutableMultimap.class, serializer);
-        kryo.register(ImmutableMultimap.of().getClass(), serializer);
-        Object o = new Object();
-
-        kryo.register(ImmutableMultimap.of(o, o).getClass(), serializer);
-
+        kryo.register(ImmutableListMultimap.of().getClass(), serializer);
+        kryo.register(ImmutableListMultimap.of("A", "B").getClass(), serializer);
+        kryo.register(ImmutableSetMultimap.of().getClass(), serializer);
+        kryo.register(ImmutableSetMultimap.of("A", "B").getClass(), serializer);
     }
 }
