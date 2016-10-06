@@ -60,7 +60,7 @@ To be able to use the serializers you have to add the jar to your classpath. If 
 <dependency>
     <groupId>de.javakaffee</groupId>
     <artifactId>kryo-serializers</artifactId>
-    <version>0.40</version>
+    <version>0.41</version>
 </dependency>
 ```
 
