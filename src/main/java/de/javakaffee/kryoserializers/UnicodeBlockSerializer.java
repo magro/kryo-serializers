@@ -9,6 +9,8 @@ import java.lang.Character.UnicodeBlock;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.IdentityHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by chris on 12/25/2016.
@@ -25,7 +27,8 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                     Object value = field.get(null);
                     if (value instanceof UnicodeBlock) {
                         // Temporary debugging code:
-                        System.out.println("Found an instance in field " + field.getName());
+                        Logger.getLogger("UnicodeBlockSerializer")
+                                .log(Level.INFO, "Found an instance in field " + field.getName());
 
                         BLOCK_NAMES.put((UnicodeBlock) value, field.getName());
                     }
@@ -35,6 +38,9 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                 }
             }
         }
+        // Temporary debugging code:
+        Logger.getLogger("UnicodeBlockSerializer")
+                .log(Level.INFO, "All fields processed");
     }
 
     public UnicodeBlockSerializer() {
