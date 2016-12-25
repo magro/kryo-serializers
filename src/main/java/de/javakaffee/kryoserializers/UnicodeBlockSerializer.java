@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  */
 
 public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
+    private static final Logger LOG = Logger.getLogger("UnicodeBlockSerializer");
     private static final IdentityHashMap<UnicodeBlock, String> BLOCK_NAMES
             = new IdentityHashMap<UnicodeBlock, String>();
 
@@ -27,9 +28,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                 try {
                     Object value = field.get(null);
                     if (value instanceof UnicodeBlock) {
-                        // Temporary debugging code:
-                        Logger.getLogger("UnicodeBlockSerializer")
-                                .log(Level.INFO, "Found an instance in field " + field.getName());
+                        LOG.log(Level.INFO, "Found an instance in field " + field.getName());
 
                         BLOCK_NAMES.put((UnicodeBlock) value, field.getName());
                     }
@@ -37,6 +36,8 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                     // Should never happen
                     throw new InternalError();
                 }
+            } else {
+                LOG.log(Level.INFO, "Field is inaccessible or not static: " + field.getName());
             }
         }
         // Temporary debugging code:
