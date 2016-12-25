@@ -13,37 +13,33 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by chris on 12/25/2016.
+ * A kryo {@link Serializer} for fields of type {@link UnicodeBlock}, which is effectively but not
+ * actually an enum.
+ *
+ * @author <a href="mailto:seahen123@gmail.com">Chris Hennick</a>
  */
-
 public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
-    private static final Logger LOG = Logger.getLogger("UnicodeBlockSerializer");
     private static final IdentityHashMap<UnicodeBlock, String> BLOCK_NAMES
             = new IdentityHashMap<UnicodeBlock, String>();
-
     static {
-        // For some reason getFields() doesn't return these
+        // Reflectively look up the instances and their names, which are in UnicodeBlock's static
+        // fields (necessary since UnicodeBlock isn't an actual enum)
         for (Field field : UnicodeBlock.class.getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 try {
+                    // For some reason, UnicodeBlock constants aren't already accessible, even
+                    // though they're public! WTF?
                     field.setAccessible(true);
                     Object value = field.get(null);
                     if (value instanceof UnicodeBlock) {
-                        LOG.log(Level.INFO, "Found an instance in field " + field.getName());
-
                         BLOCK_NAMES.put((UnicodeBlock) value, field.getName());
                     }
                 } catch (IllegalAccessException e) {
                     // Should never happen
                     throw new InternalError();
                 }
-            } else {
-                LOG.log(Level.INFO, "Field is not static: " + field.getName());
             }
         }
-        // Temporary debugging code:
-        Logger.getLogger("UnicodeBlockSerializer")
-                .log(Level.INFO, "All fields processed");
     }
 
     public UnicodeBlockSerializer() {

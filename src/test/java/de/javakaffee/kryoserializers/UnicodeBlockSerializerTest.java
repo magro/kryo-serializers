@@ -58,18 +58,12 @@ public class UnicodeBlockSerializerTest {
     @Test
     public void testDeserializingUnknownInstanceReturnsNull() {
         byte[] serialized = serialize(kryo, new ObjenesisStd().newInstance(UnicodeBlock.class));
-        try {
-            assertNull(deserialize(kryo, serialized, UnicodeBlock.class));
-        } catch (NullPointerException e) {
-            // Temporary debugging code
-            e.printStackTrace();
-            throw e;
-        }
+        assertNull(deserialize(kryo, serialized, UnicodeBlock.class));
     }
 
     @Test
     public void testCopyContainingObject() {
         ThingWithUnicodeBlock original = new ThingWithUnicodeBlock(UnicodeBlock.GREEK);
-        assertSame(UnicodeBlock.GREEK, kryo.copy(original).unicodeBlock);
+        assertSame(kryo.copy(original).unicodeBlock, UnicodeBlock.GREEK);
     }
 }
