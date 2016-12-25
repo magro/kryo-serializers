@@ -46,6 +46,15 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
         output.writeAscii(BLOCK_NAMES.get(obj));
     }
 
+    /**
+     * Returns {@code original}; see {@link com.esotericsoftware.kryo.serialize.EnumSerializer#copy}
+     * for why we behave this way.
+     */
+    @Override
+    public UnicodeBlock copy(final Kryo kryo, final UnicodeBlock original) {
+        return original;
+    }
+
     @Override
     public UnicodeBlock read(final Kryo kryo, final Input input,
                              final Class<UnicodeBlock> unicodeBlockClass) {
