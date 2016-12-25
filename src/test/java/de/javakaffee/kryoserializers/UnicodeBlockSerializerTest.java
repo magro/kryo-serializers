@@ -48,7 +48,7 @@ public class UnicodeBlockSerializerTest {
      * Copying should return the same object, since UnicodeBlock is effectively an enum.
      */
     @Test
-    public void testShallowCopy() {
+    public void testCopy() {
         assertSame(UnicodeBlock.HIRAGANA, _kryo.copy(UnicodeBlock.HIRAGANA));
     }
 
@@ -56,7 +56,7 @@ public class UnicodeBlockSerializerTest {
      * Copying should return the same object, since UnicodeBlock is effectively an enum.
      */
     @Test
-    public void testDeepCopy() {
-        assertSame(UnicodeBlock.VEDIC_EXTENSIONS, _kryo.deepCopy(UnicodeBlock.VEDIC_EXTENSIONS));
+    public void testCopyShallow() {
+        assertSame(UnicodeBlock.VEDIC_EXTENSIONS, _kryo.copyShallow(UnicodeBlock.VEDIC_EXTENSIONS));
     }
 }
