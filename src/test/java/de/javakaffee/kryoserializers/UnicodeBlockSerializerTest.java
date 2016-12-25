@@ -55,6 +55,6 @@ public class UnicodeBlockSerializerTest {
     @Test
     public void testCopyContainingObject() {
         ThingWithUnicodeBlock original = new ThingWithUnicodeBlock(UnicodeBlock.GREEK);
-        assertEquals(UnicodeBlock.GREEK, _kryo.copy(original).unicodeBlock);
+        assertSame(UnicodeBlock.GREEK, _kryo.copy(original).unicodeBlock);
     }
 }
