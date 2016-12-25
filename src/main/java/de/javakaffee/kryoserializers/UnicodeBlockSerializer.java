@@ -24,7 +24,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                 try {
                     Object value = field.get(null);
                     if (value instanceof UnicodeBlock) {
-                        BLOCK_NAMES.put(value, field.getName());
+                        BLOCK_NAMES.put((UnicodeBlock) value, field.getName());
                     }
                 } catch (IllegalAccessException e) {
                     throw new InternalError(e);
