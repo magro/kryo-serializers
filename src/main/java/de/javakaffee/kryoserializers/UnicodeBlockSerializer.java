@@ -24,6 +24,9 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                 try {
                     Object value = field.get(null);
                     if (value instanceof UnicodeBlock) {
+                        // Temporary debugging code:
+                        System.out.println("Found an instance in field " + field.getName());
+
                         BLOCK_NAMES.put((UnicodeBlock) value, field.getName());
                     }
                 } catch (IllegalAccessException e) {
