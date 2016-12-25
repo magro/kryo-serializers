@@ -23,6 +23,14 @@ public class UnicodeBlockSerializerTest {
     private static final String NONEXISTENT_BLOCK_NAME = "RURITANIAN";
     private Kryo _kryo;
 
+    private static class ThingWithUnicodeBlock {
+        final UnicodeBlock unicodeBlock;
+
+        private ThingWithUnicodeBlock(UnicodeBlock unicodeBlock) {
+            this.unicodeBlock = unicodeBlock;
+        }
+    }
+
     @BeforeTest
     protected void beforeTest() {
         _kryo = new Kryo();
@@ -44,19 +52,9 @@ public class UnicodeBlockSerializerTest {
         assertNull(deserialize(_kryo, serialized, UnicodeBlock.class));
     }
 
-    /**
-     * Copying should return the same object, since UnicodeBlock is effectively an enum.
-     */
     @Test
-    public void testCopy() {
-        assertSame(UnicodeBlock.HIRAGANA, _kryo.copy(UnicodeBlock.HIRAGANA));
-    }
-
-    /**
-     * Copying should return the same object, since UnicodeBlock is effectively an enum.
-     */
-    @Test
-    public void testCopyShallow() {
-        assertSame(UnicodeBlock.VEDIC_EXTENSIONS, _kryo.copyShallow(UnicodeBlock.VEDIC_EXTENSIONS));
+    public void testCopyContainingObject() {
+        ThingWithUnicodeBlock original = new ThingWithUnicodeBlock(UnicodeBlock.GREEK);
+        assertEquals(UnicodeBlock.GREEK, _kryo.copy(original).unicodeBlock);
     }
 }
