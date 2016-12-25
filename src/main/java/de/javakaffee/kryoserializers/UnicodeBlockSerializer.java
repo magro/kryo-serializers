@@ -21,7 +21,8 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
             = new IdentityHashMap<UnicodeBlock, String>();
 
     static {
-        for (Field field : UnicodeBlock.class.getFields()) {
+        // For some reason getFields() doesn't return these
+        for (Field field : UnicodeBlock.class.getDeclaredFields()) {
             if (field.isAccessible() && Modifier.isStatic(field.getModifiers())) {
                 try {
                     Object value = field.get(null);
