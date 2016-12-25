@@ -24,8 +24,9 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
     static {
         // For some reason getFields() doesn't return these
         for (Field field : UnicodeBlock.class.getDeclaredFields()) {
-            if (field.isAccessible() && Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 try {
+                    field.setAccessible(true);
                     Object value = field.get(null);
                     if (value instanceof UnicodeBlock) {
                         LOG.log(Level.INFO, "Found an instance in field " + field.getName());
@@ -37,7 +38,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                     throw new InternalError();
                 }
             } else {
-                LOG.log(Level.INFO, "Field is inaccessible or not static: " + field.getName());
+                LOG.log(Level.INFO, "Field is not static: " + field.getName());
             }
         }
         // Temporary debugging code:
