@@ -6,8 +6,10 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Kryo.DefaultInstantiatorStrategy;
 
 import org.objenesis.ObjenesisStd;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -34,6 +36,9 @@ public class UnicodeBlockSerializerTest {
     @BeforeTest
     protected void beforeTest() {
         _kryo = new Kryo();
+        final DefaultInstantiatorStrategy instantiatorStrategy = new DefaultInstantiatorStrategy();
+        instantiatorStrategy.setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+        kryo.setInstantiatorStrategy(instantiatorStrategy);
         _kryo.register(UnicodeBlock.class, new UnicodeBlockSerializer());
     }
 
