@@ -16,7 +16,7 @@ import java.util.IdentityHashMap;
 
 public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
     private static final IdentityHashMap<UnicodeBlock, String> BLOCK_NAMES
-            = new IdentityHashMap<>();
+            = new IdentityHashMap<UnicodeBlock, String>();
 
     static {
         for (Field field : UnicodeBlock.class.getFields()) {
