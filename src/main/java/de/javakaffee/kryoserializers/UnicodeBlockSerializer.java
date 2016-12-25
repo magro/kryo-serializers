@@ -58,6 +58,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
     @Override
     public UnicodeBlock read(final Kryo kryo, final Input input,
                              final Class<UnicodeBlock> unicodeBlockClass) {
-        return UnicodeBlock.forName(input.readString());
+        String name = input.readString();
+        return (name == null) ? null : UnicodeBlock.forName(name);
     }
 }
