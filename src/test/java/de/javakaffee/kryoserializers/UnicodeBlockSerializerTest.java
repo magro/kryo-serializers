@@ -23,7 +23,7 @@ import java.lang.Character.UnicodeBlock;
 public class UnicodeBlockSerializerTest {
 
     private static final String NONEXISTENT_BLOCK_NAME = "RURITANIAN";
-    private Kryo _kryo;
+    private Kryo kryo;
 
     private static class ThingWithUnicodeBlock {
         final UnicodeBlock unicodeBlock;
@@ -35,31 +35,31 @@ public class UnicodeBlockSerializerTest {
 
     @BeforeTest
     protected void beforeTest() {
-        _kryo = new Kryo();
+        kryo = new Kryo();
         final DefaultInstantiatorStrategy instantiatorStrategy = new DefaultInstantiatorStrategy();
         instantiatorStrategy.setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
         kryo.setInstantiatorStrategy(instantiatorStrategy);
-        _kryo.register(UnicodeBlock.class, new UnicodeBlockSerializer());
+        kryo.register(UnicodeBlock.class, new UnicodeBlockSerializer());
     }
 
     @Test
     public void testBasicRoundTrip() {
-        byte[] serialized = serialize(_kryo, UnicodeBlock.UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS);
+        byte[] serialized = serialize(kryo, UnicodeBlock.UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS);
         assertSame(UnicodeBlock.UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS,
-                deserialize(_kryo, serialized, UnicodeBlock.class));
+                deserialize(kryo, serialized, UnicodeBlock.class));
     }
 
     @Test
     public void testDeserializingUnknownInstanceReturnsNull() {
-        byte[] serialized = serialize(_kryo, new ObjenesisStd().newInstance(UnicodeBlock.class));
-        assertNull(deserialize(_kryo, serialized, UnicodeBlock.class));
-        serialized = serialize(_kryo, NONEXISTENT_BLOCK_NAME);
-        assertNull(deserialize(_kryo, serialized, UnicodeBlock.class));
+        byte[] serialized = serialize(kryo, new ObjenesisStd().newInstance(UnicodeBlock.class));
+        assertNull(deserialize(kryo, serialized, UnicodeBlock.class));
+        serialized = serialize(kryo, NONEXISTENT_BLOCK_NAME);
+        assertNull(deserialize(kryo, serialized, UnicodeBlock.class));
     }
 
     @Test
     public void testCopyContainingObject() {
         ThingWithUnicodeBlock original = new ThingWithUnicodeBlock(UnicodeBlock.GREEK);
-        assertSame(UnicodeBlock.GREEK, _kryo.copy(original).unicodeBlock);
+        assertSame(UnicodeBlock.GREEK, kryo.copy(original).unicodeBlock);
     }
 }
