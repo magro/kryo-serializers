@@ -27,7 +27,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
                         BLOCK_NAMES.put((UnicodeBlock) value, field.getName());
                     }
                 } catch (IllegalAccessException e) {
-                    throw new InternalError(e);
+                    throw new InternalError();
                 }
             }
         }
