@@ -72,8 +72,8 @@ public class ImmutableListSerializer extends Serializer<ImmutableList<Object>> {
 
         kryo.register(ImmutableList.of().getClass(), serializer);
         kryo.register(ImmutableList.of(1).getClass(), serializer);
-        kryo.register(ImmutableList.of(1,2,3).subList(1, 2).getClass(), serializer);
-        kryo.register(ImmutableList.of().reverse().getClass(), serializer);
+        kryo.register(ImmutableList.of(1, 2, 3, 4).subList(1, 3).getClass(), serializer);
+        kryo.register(ImmutableList.of(1, 2).reverse().getClass(), serializer);
 
         kryo.register(Lists.charactersOf("KryoRocks").getClass(), serializer);
 
