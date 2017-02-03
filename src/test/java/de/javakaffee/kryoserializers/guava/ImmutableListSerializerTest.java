@@ -56,7 +56,7 @@ public class ImmutableListSerializerTest {
 
     @Test( enabled = true )
     public void testSubList() {
-        final ImmutableList<?> obj = ImmutableList.of(3, 4, 5, 6).subList(1, 2);
+        final ImmutableList<?> obj = ImmutableList.of(3, 4, 5, 6).subList(1, 3);
         final byte[] serialized = serialize( _kryo, obj );
         final ImmutableList<?> deserialized = deserialize(_kryo, serialized, ImmutableList.class);
         assertEquals(deserialized, obj);
@@ -115,7 +115,7 @@ public class ImmutableListSerializerTest {
 
     @Test( enabled = true )
     public void testCopySubList() {
-        final ImmutableList<?> obj = ImmutableList.of(1, 2, 3, 4).subList(1, 2);
+        final ImmutableList<?> obj = ImmutableList.of(1, 2, 3, 4).subList(1, 3);
         final ImmutableList<?> copied = _kryo.copy(obj);
         assertSame(copied, obj);
     }
