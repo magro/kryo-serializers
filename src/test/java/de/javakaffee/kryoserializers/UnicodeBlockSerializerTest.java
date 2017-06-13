@@ -45,14 +45,8 @@ public class UnicodeBlockSerializerTest {
     @Test
     public void testBasicRoundTrip() {
         byte[] serialized = serialize(kryo, UnicodeBlock.UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS);
-        try {
         assertSame(deserialize(kryo, serialized, UnicodeBlock.class),
                 UnicodeBlock.UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS);
-        } catch (NullPointerException e) {
-            // Temporary debugging code
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     @Test
