@@ -1,4 +1,4 @@
-A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2 and v3) serializers for some jdk types and some external libs like e.g. joda time.
+A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2, v3, v4) serializers for some jdk types and some external libs like e.g. joda time.
 
 [![Build Status](https://travis-ci.org/magro/kryo-serializers.png?branch=master)](https://travis-ci.org/magro/kryo-serializers)
 [![Coverage Status](https://coveralls.io/repos/github/magro/kryo-serializers/badge.svg?branch=master)](https://coveralls.io/github/magro/kryo-serializers?branch=master)
