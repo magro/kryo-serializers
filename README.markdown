@@ -51,6 +51,7 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2, v3
 * jodatime/JodaIntervalSerializer - serializer for joda's Interval
 * jodatime/JodaLocalDateSerializer - serializer for joda's LocalDate
 * jodatime/JodaLocalDateTimeSerializer - serializer for joda's LocalDateTime
+* jodatime/JodaLocalTimeSerializer - serializer for joda's LocalTime
 * protobuf/ProtobufSerializer - serializer for protobuf GeneratedMessages
 * wicket/MiniMapSerializer - serializer for wicket's MiniMap
 
@@ -91,10 +92,11 @@ kryo.register( CGLibProxySerializer.CGLibProxyMarker.class, new CGLibProxySerial
 ListSerializer.registerSerializers( kryo );
 MapSerializer.registerSerializers( kryo );
 SetSerializer.registerSerializers( kryo );
-// joda DateTime, LocalDate and LocalDateTime
+// joda DateTime, LocalDate, LocalDateTime and LocalTime
 kryo.register( DateTime.class, new JodaDateTimeSerializer() );
 kryo.register( LocalDate.class, new JodaLocalDateSerializer() );
 kryo.register( LocalDateTime.class, new JodaLocalDateTimeSerializer() );
+kryo.register( LocalDateTime.class, new JodaLocalTimeSerializer() );
 // protobuf
 kryo.register( SampleProtoA.class, new ProtobufSerializer() ); // or override Kryo.getDefaultSerializer as shown below
 // wicket
