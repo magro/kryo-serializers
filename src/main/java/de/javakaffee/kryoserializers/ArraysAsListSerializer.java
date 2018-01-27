@@ -46,8 +46,6 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }
-        // Immutable causes #copy(obj) to return the original object
-        setImmutable(true);
     }
 
     @Override
