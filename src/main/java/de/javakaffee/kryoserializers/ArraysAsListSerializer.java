@@ -16,15 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A kryo {@link Serializer} for lists created via {@link Arrays#asList(Object...)}.
@@ -32,7 +32,7 @@ import com.esotericsoftware.kryo.io.Output;
  * Note: This serializer does not support cyclic references, so if one of the objects
  * gets set the list as attribute this might cause an error during deserialization.
  * </p>
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class ArraysAsListSerializer extends Serializer<List<?>> {
@@ -46,8 +46,6 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
         } catch ( final Exception e ) {
             throw new RuntimeException( e );
         }
-        // Immutable causes #copy(obj) to return the original object
-        setImmutable(true);
     }
 
     @Override
@@ -84,6 +82,18 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
              throw e;
         } catch ( final Exception e ) {
              throw new RuntimeException( e );
+        }
+    }
+
+    @Override
+    public List<?> copy(Kryo kryo, List<?> original) {
+        try {
+            final Object[] array = (Object[]) _arrayField.get(original);
+            kryo.reference(array);
+            Object[] arrayCopy = kryo.copy(array);
+            return Arrays.asList(arrayCopy);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
