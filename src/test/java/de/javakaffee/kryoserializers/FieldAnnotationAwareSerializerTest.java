@@ -1,23 +1,25 @@
 package de.javakaffee.kryoserializers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.factories.SerializerFactory;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
+import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.testng.annotations.Test;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.factories.SerializerFactory;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * A test case for the {@link FieldAnnotationAwareSerializer}.
@@ -29,8 +31,8 @@ public class FieldAnnotationAwareSerializerTest {
 
     // Use Non-ASCII characters in order to be able to check the byte buffer for
     // the existence of the string values.
-    protected static final String FIRST_VALUE = "åæø first value";
-    protected static final String SECOND_VALUE = "äöü second value";
+    protected static final String FIRST_VALUE = "\u00e5\u00e6\u00f8 first value";
+    protected static final String SECOND_VALUE = "\u00e4\u00f6\u00fc second value";
 
     private static final int BUFFER_SIZE = 1024;
 
@@ -63,9 +65,11 @@ public class FieldAnnotationAwareSerializerTest {
         final Input input = new Input(buffer);
         final CustomBean inputBean = kryo.readObject(input, CustomBean.class);
 
+        String decodedBuffer = UTF_8.decode(ByteBuffer.wrap(buffer)).toString();
+
         assertEquals(inputBean.getSecondValue(), outputBean.getSecondValue());
-        assertFalse(new String(buffer).contains(outputBean.getFirstValue()));
-        assertTrue(new String(buffer).contains(outputBean.getSecondValue()));
+        assertFalse(decodedBuffer.contains(outputBean.getFirstValue()));
+        assertTrue(decodedBuffer.contains(outputBean.getSecondValue()));
         assertNull(inputBean.getFirstValue());
     }
 
@@ -87,9 +91,11 @@ public class FieldAnnotationAwareSerializerTest {
         final Input input = new Input(buffer);
         final CustomBean inputBean = kryo.readObject(input, CustomBean.class);
 
+        String decodedBuffer = UTF_8.decode(ByteBuffer.wrap(buffer)).toString();
+
         assertEquals(inputBean.getFirstValue(), outputBean.getFirstValue());
-        assertTrue(new String(buffer).contains(outputBean.getFirstValue()));
-        assertFalse(new String(buffer).contains(outputBean.getSecondValue()));
+        assertTrue(decodedBuffer.contains(outputBean.getFirstValue()));
+        assertFalse(decodedBuffer.contains(outputBean.getSecondValue()));
         assertNull(inputBean.getSecondValue());
     }
 
