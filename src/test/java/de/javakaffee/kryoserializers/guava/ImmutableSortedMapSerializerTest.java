@@ -2,8 +2,7 @@ package de.javakaffee.kryoserializers.guava;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
+
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -11,7 +10,9 @@ import java.util.EnumMap;
 
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 public class ImmutableSortedMapSerializerTest {
 

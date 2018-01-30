@@ -16,8 +16,9 @@
  */
 package de.javakaffee.kryoserializers.wicket;
 
-import static de.javakaffee.kryoserializers.KryoTest.deserialize;
-import static de.javakaffee.kryoserializers.KryoTest.serialize;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -31,12 +32,11 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
-
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import de.javakaffee.kryoserializers.KryoTest;
+
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
 
 /**
  * A general test for several wicket serializations that don't require
@@ -107,12 +107,12 @@ public class WicketTest {
     public void testFeedbackPanel() throws Exception {
         final FeedbackPanel markupContainer = new FeedbackPanel("foo");
         //markupContainer.info( "foo" );
-        final Component child = markupContainer.get( 0 );
+        final Component child = markupContainer.get( "feedbackul" );
         child.isVisible();
         final byte[] serialized = serialize( _kryo, markupContainer );
         final MarkupContainer deserialized = deserialize( _kryo, serialized, markupContainer.getClass() );
 
-        final Component deserializedChild = deserialized.get( 0 );
+        final Component deserializedChild = deserialized.get( "feedbackul" );
         deserializedChild.isVisible();
         
         KryoTest.assertDeepEquals( deserialized, markupContainer );

@@ -16,6 +16,8 @@
  */
 package de.javakaffee.kryoserializers;
 
+import org.apache.commons.lang3.mutable.MutableInt;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -34,8 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.commons.lang.mutable.MutableInt;
 
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 

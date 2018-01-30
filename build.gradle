@@ -1,0 +1,45 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.diffplug.gradle.spotless' version '3.8.0'
+    id 'com.github.ben-manes.versions' version '0.17.0'
+}
+
+group = 'de.javakaffee'
+version = '0.43-SNAPSHOT'
+
+description = 'Extra Kryo Serializers'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+test {
+    useTestNG()
+}
+
+
+repositories {
+    jcenter()
+}
+
+ext.optionalDependencies = [
+        'com.google.protobuf:protobuf-java:3.5.1',
+        'joda-time:joda-time:2.9.9',
+        'cglib:cglib:3.2.6',
+        //'org.apache.wicket:wicket:1.4.17',
+        'org.apache.wicket:wicket-core:8.0.0-M8',
+        'com.google.guava:guava:21.0',
+        'com.github.andrewoma.dexx:collection:0.7'
+]
+
+dependencies {
+    api 'com.esotericsoftware:kryo:4.0.1'
+    compileOnly optionalDependencies
+
+    testImplementation 'org.testng:testng:6.13.1'
+    testImplementation 'junit:junit:4.12'
+    testImplementation optionalDependencies
+    testImplementation 'javax.servlet:javax.servlet-api:4.0.0'
+    testImplementation 'org.slf4j:slf4j-simple:1.8.0-beta0'
+    testImplementation 'org.apache.commons:commons-lang3:3.7'
+}

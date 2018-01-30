@@ -16,8 +16,18 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static de.javakaffee.kryoserializers.TestClasses.createPerson;
-import static org.testng.Assert.assertEquals;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerializer;
+
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -51,19 +61,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigDecimalSerializer;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerializer;
-
 import de.javakaffee.kryoserializers.TestClasses.ClassWithoutDefaultConstructor;
 import de.javakaffee.kryoserializers.TestClasses.Container;
 import de.javakaffee.kryoserializers.TestClasses.CounterHolder;
@@ -77,6 +74,9 @@ import de.javakaffee.kryoserializers.TestClasses.MyContainer;
 import de.javakaffee.kryoserializers.TestClasses.Person;
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 import de.javakaffee.kryoserializers.TestClasses.SomeInterface;
+
+import static de.javakaffee.kryoserializers.TestClasses.createPerson;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test for {@link Kryo} serialization.
