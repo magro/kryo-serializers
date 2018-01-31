@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * A kryo {@link Serializer} for guava-libraries {@link ImmutableMap}.
  */
-public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? extends Object>> {
+public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ?>> {
 
     private static final boolean DOES_NOT_ACCEPT_NULL = true;
     private static final boolean IMMUTABLE = true;
@@ -25,12 +25,13 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
     }
 
     @Override
-    public void write(Kryo kryo, Output output, ImmutableMap<Object, ? extends Object> immutableMap) {
+    public void write(Kryo kryo, Output output, ImmutableMap<Object, ?> immutableMap) {
         kryo.writeObject(output, Maps.newHashMap(immutableMap));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMap<Object, ? extends Object>> type) {
+    public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMap<Object, ?>> type) {
         Map map = kryo.readObject(input, HashMap.class);
         return ImmutableMap.copyOf(map);
     }

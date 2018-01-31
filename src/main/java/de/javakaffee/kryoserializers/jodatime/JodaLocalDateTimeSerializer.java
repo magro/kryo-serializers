@@ -16,6 +16,11 @@
  */
 package de.javakaffee.kryoserializers.jodatime;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import org.joda.time.Chronology;
 import org.joda.time.LocalDateTime;
 import org.joda.time.chrono.BuddhistChronology;
@@ -26,11 +31,6 @@ import org.joda.time.chrono.GregorianChronology;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.Serializer;
 
 /**
  * A Kryo serializer for joda {@link LocalDateTime}. The LocalDateTime object is read or written as
@@ -50,7 +50,6 @@ import com.esotericsoftware.kryo.Serializer;
  * <li>{@link BuddhistChronology}</li>
  * <li>{@link GJChronology}</li>
  * </ul>
- * </p>
  *
  * @author <a href="mailto:rp@merlinia.com">Rennie Petersen</a>
  */

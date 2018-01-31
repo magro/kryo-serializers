@@ -40,7 +40,7 @@ public class SetSerializer extends Serializer<Set<Object>> {
     }
 
     /**
-     * Creates a new {@link ImmutableSetSerializer} and registers its serializer
+     * Creates a new {@link de.javakaffee.kryoserializers.guava.ImmutableSetSerializer} and registers its serializer
      * for the several ImmutableSet related classes.
      *
      * @param kryo the {@link Kryo} instance to set the serializer on

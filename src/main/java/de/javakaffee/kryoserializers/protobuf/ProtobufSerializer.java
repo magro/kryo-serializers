@@ -37,6 +37,7 @@ public class ProtobufSerializer<T extends GeneratedMessage> extends Serializer<T
         output.flush();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T read(Kryo kryo, Input input, Class<T> type) {
         // Read the length of our byte array
@@ -51,7 +52,7 @@ public class ProtobufSerializer<T extends GeneratedMessage> extends Serializer<T
         byte[] bytes = input.readBytes(length - 1);
         try {
             // Deserialize protobuf
-            return (T) (getParseFromMethod(type).invoke(type, bytes));
+            return (T) (getParseFromMethod(type).invoke(type, (Object) bytes));
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Unable to deserialize protobuf "+e.getMessage(), e);
         } catch (InvocationTargetException e) {

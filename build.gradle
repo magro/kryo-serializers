@@ -10,13 +10,50 @@ version = '0.43-SNAPSHOT'
 
 description = 'Extra Kryo Serializers'
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier 'javadoc'
+
+    // Add support for new doc tags
+    (javadoc.options as CoreJavadocOptions).with {
+        addMultilineStringsOption("tag").setValue([
+                "apiNote:a:API Note:",
+                "implSpec:a:Implementation Requirements:",
+                "implNote:a:Implementation Note:"
+        ])
+    }
+}
+
+compileJava {
+    // Disable warnings about Sun classes (ReflectionFactory).
+    options.compilerArgs += ["-XDignore.symbol.file", "-Xlint:unchecked"]
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            //noinspection GroovyAssignabilityCheck
+            artifact sourcesJar
+            //noinspection GroovyAssignabilityCheck
+            artifact javadocJar
+        }
+    }
+}
 
 test {
     useTestNG()
 }
-
 
 repositories {
     jcenter()
@@ -26,7 +63,6 @@ ext.optionalDependencies = [
         'com.google.protobuf:protobuf-java:3.5.1',
         'joda-time:joda-time:2.9.9',
         'cglib:cglib:3.2.6',
-        //'org.apache.wicket:wicket:1.4.17',
         'org.apache.wicket:wicket-core:8.0.0-M8',
         'com.google.guava:guava:21.0',
         'com.github.andrewoma.dexx:collection:0.7'
@@ -36,9 +72,13 @@ dependencies {
     api 'com.esotericsoftware:kryo:4.0.1'
     compileOnly optionalDependencies
 
+    // Testing
+
     testImplementation 'org.testng:testng:6.13.1'
     testImplementation 'junit:junit:4.12'
+
     testImplementation optionalDependencies
+
     testImplementation 'javax.servlet:javax.servlet-api:4.0.0'
     testImplementation 'org.slf4j:slf4j-simple:1.8.0-beta0'
     testImplementation 'org.apache.commons:commons-lang3:3.7'

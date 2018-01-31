@@ -39,7 +39,7 @@ public class ListSerializer extends Serializer<List> {
     }
 
     /**
-     * Creates a new {@link  ImmutableListSerializer} and registers its serializer
+     * Creates a new {@link  de.javakaffee.kryoserializers.guava.ImmutableListSerializer} and registers its serializer
      *
      * @param kryo the {@link Kryo} instance to set the serializer on
      */

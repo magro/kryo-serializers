@@ -1,13 +1,12 @@
 package de.javakaffee.kryoserializers.guava;
 
-import java.util.Map;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
 import com.google.common.collect.Multimap;
+
+import java.util.Map;
 
 public abstract class MultimapSerializerBase<K, V, T extends Multimap<K, V>> extends Serializer<T> {
 
@@ -23,6 +22,7 @@ public abstract class MultimapSerializerBase<K, V, T extends Multimap<K, V>> ext
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void readMultimap(Kryo kryo, Input input, Multimap<K, V> multimap) {
         final int size = input.readInt(true);
         for (int i = 0; i < size; ++i) {

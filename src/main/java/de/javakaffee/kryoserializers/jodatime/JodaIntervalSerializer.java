@@ -14,6 +14,11 @@
  */
 package de.javakaffee.kryoserializers.jodatime;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import org.joda.time.Chronology;
 import org.joda.time.Interval;
 import org.joda.time.chrono.BuddhistChronology;
@@ -24,11 +29,6 @@ import org.joda.time.chrono.GregorianChronology;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A format for Joda {@link Interval}, that stores the start and end millis, and chronology 
@@ -46,7 +46,6 @@ import com.esotericsoftware.kryo.io.Output;
  * <li>{@link BuddhistChronology}</li>
  * <li>{@link GJChronology}</li>
  * </ul>
- * </p>
  * 
  */
 public class JodaIntervalSerializer extends Serializer<Interval> {

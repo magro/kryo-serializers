@@ -16,15 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import sun.reflect.ReflectionFactory;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
  * A {@link Kryo} specialization that uses sun's {@link ReflectionFactory} to create
@@ -32,7 +32,7 @@ import com.esotericsoftware.kryo.serializers.FieldSerializer;
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings({"restriction", "sunapi"})
 public class KryoReflectionFactorySupport extends Kryo {
 
     private static final ReflectionFactory REFLECTION_FACTORY = ReflectionFactory.getReflectionFactory();

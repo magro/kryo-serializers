@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 /**
 * A kryo {@link Serializer} for dexx {@link Map}
  */
-public class MapSerializer extends Serializer<Map<Object, ? extends Object>> {
+public class MapSerializer extends Serializer<Map<Object, ?>> {
 
     private static final boolean DOES_NOT_ACCEPT_NULL = true;
     private static final boolean IMMUTABLE = true;
@@ -26,12 +26,13 @@ public class MapSerializer extends Serializer<Map<Object, ? extends Object>> {
     }
 
     @Override
-    public void write(Kryo kryo, Output output, Map<Object, ? extends Object> immutableMap) {
+    public void write(Kryo kryo, Output output, Map<Object, ?> immutableMap) {
         kryo.writeObject(output, immutableMap.asMap());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Map<Object, Object> read(Kryo kryo, Input input, Class<Map<Object, ? extends Object>> type) {
+    public Map<Object, Object> read(Kryo kryo, Input input, Class<Map<Object, ?>> type) {
         HashMap<Object, Object> map = kryo.readObject(input, HashMap.class);
         ArrayList<Pair<Object, Object>> listOfPairs = new ArrayList();
 
@@ -44,7 +45,7 @@ public class MapSerializer extends Serializer<Map<Object, ? extends Object>> {
     }
 
     /**
-     * Creates a new {@link ImmutableMapSerializer} and registers its serializer
+     * Creates a new {@link de.javakaffee.kryoserializers.guava.ImmutableMapSerializer} and registers its serializer
      * for the several ImmutableMap related classes.
      *
      * @param kryo the {@link Kryo} instance to set the serializer on

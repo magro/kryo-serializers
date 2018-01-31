@@ -29,6 +29,7 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
         kryo.writeObject(output, Maps.newTreeMap(immutableMap));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableSortedMap<Object, ? extends Object>> type) {
         Map map = kryo.readObject(input, TreeMap.class);

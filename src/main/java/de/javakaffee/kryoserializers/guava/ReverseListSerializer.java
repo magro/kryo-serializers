@@ -1,19 +1,19 @@
 package de.javakaffee.kryoserializers.guava;
 
-import com.google.common.collect.Lists;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.CollectionSerializer;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A {@link Lists.ReverseList} Serializer.
+ * A {@link ImmutableList#reverse()} Serializer.
  * Treat as a {@link List} by reversing before write and after read.
  */
 public abstract class ReverseListSerializer extends Serializer<List<Object>> {

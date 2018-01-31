@@ -9,8 +9,6 @@ import java.lang.Character.UnicodeBlock;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.IdentityHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A kryo {@link Serializer} for fields of type {@link UnicodeBlock}, which is effectively but not
@@ -55,7 +53,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
     }
 
     /**
-     * Returns {@code original}; see {@link com.esotericsoftware.kryo.serialize.EnumSerializer#copy}
+     * Returns {@code original}; see {@link com.esotericsoftware.kryo.serializers.DefaultSerializers.EnumSerializer#copy}
      * for why we behave this way.
      */
     @Override

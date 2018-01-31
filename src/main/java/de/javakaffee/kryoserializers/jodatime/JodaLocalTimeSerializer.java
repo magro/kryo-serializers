@@ -24,7 +24,6 @@ import org.joda.time.chrono.*;
  * <li>{@link BuddhistChronology}</li>
  * <li>{@link GJChronology}</li>
  * </ul>
- * </p>
  *
  * @author <a href="mailto:robertpreeves@gmail.com">Rob Reeves</a>
  */

@@ -33,6 +33,7 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
         kryo.writeObject(output, ImmutableMap.copyOf(immutableMultiMap.asMap()));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMultimap<Object, Object>> type) {
         final ImmutableMultimap.Builder builder;
@@ -47,9 +48,9 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
         }
 
         final Map map = kryo.readObject(input, ImmutableMap.class);
-        final Set<Map.Entry<Object, List<? extends Object>>> entries = map.entrySet();
+        final Set<Map.Entry<Object, List<?>>> entries = map.entrySet();
 
-        for (Map.Entry<Object, List<? extends Object>> entry : entries) {
+        for (Map.Entry<Object, List<?>> entry : entries) {
             builder.putAll(entry.getKey(), entry.getValue());
         }
 

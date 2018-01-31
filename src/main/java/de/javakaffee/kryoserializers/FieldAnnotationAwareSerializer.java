@@ -1,7 +1,9 @@
 package de.javakaffee.kryoserializers;
 
-import static com.esotericsoftware.minlog.Log.TRACE;
-import static com.esotericsoftware.minlog.Log.trace;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.factories.SerializerFactory;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,16 +11,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.factories.SerializerFactory;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import static com.esotericsoftware.minlog.Log.TRACE;
+import static com.esotericsoftware.minlog.Log.trace;
 
 /**
  * A kryo {@link FieldSerializer} that allows to exclusively include or exclude fields that
  * are attributed with user-specific annotations. This can be for example useful when serializing beans that carry
  * references to a dependency injection framework. As an example for Spring:
- * <p/>
  * <pre>
  * {@code
  * Set<Class<? extends Annotation>> marks = new HashSet<>();
@@ -28,10 +27,10 @@ import com.esotericsoftware.kryo.serializers.FieldSerializer;
  * kryo.setDefaultSerializer(factory);
  * }
  * </pre>
- * <p/>
+ * <p>
  * The resulting {@link Kryo} instance would ignore all fields that are annotated with Spring's {@code @Autowired}
  * annotation.
- * <p/>
+ * <p>
  * Similarly, it is possible to created a serializer which does the opposite such that the resulting serializer
  * would only serialize fields that are annotated with the specified annotations.
  *
@@ -143,7 +142,7 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 
     /**
      * Adds an annotation to the annotations that are considered by this serializer.
-     * <p/>
+     * <p>
      * <b>Important</b>: This will not have an effect if the serializer was configured
      * to exclusively serialize annotated fields by setting {@code disregarding} to
      * {@code false}. This is similar to the contract of this serializer's superclass
@@ -166,7 +165,7 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 
     /**
      * Removes an annotation to the annotations that are considered by this serializer.
-     * <p/>
+     * <p>
      * <b>Important</b>: This will not have an effect if the serializer was configured
      * to not serialize annotated fields by setting {@code disregarding} to
      * {@code true}. This is similar to the contract of this serializer's superclass

@@ -10,8 +10,8 @@ import com.google.common.collect.Sets;
 /**
  * A kryo {@link Serializer} for guava-libraries {@link ImmutableSet}.
  *
- *@implNote ImmutableSet builder would be a little bit more efficient for less than five elements
- *(the array.clone as done by copyOf is saved), for more elements copyOf seems to get more efficient.
+ * (the array.clone as done by copyOf is saved), for more elements copyOf seems to get more efficient.
+ * @implNote ImmutableSet builder would be a little bit more efficient for less than five elements
  */
 public class ImmutableSetSerializer extends Serializer<ImmutableSet<Object>> {
 

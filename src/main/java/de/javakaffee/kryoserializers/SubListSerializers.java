@@ -16,15 +16,15 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Field;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
+import java.lang.reflect.Field;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Kryo {@link Serializer}s for lists created via {@link List#subList(int, int)}.
@@ -73,6 +73,9 @@ public class SubListSerializers {
 
     /**
      * Adds appropriate sublist serializers as default serializers.
+     *
+     * @param kryo the {@code Kryo} to add default serializers to.
+     * @return the input {@code Kryo}
      */
     public static Kryo addDefaultSerializers(Kryo kryo) {
         ArrayListSubListSerializer.addDefaultSerializer(kryo);

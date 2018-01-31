@@ -16,26 +16,26 @@
  */
 package de.javakaffee.kryoserializers;
 
-import java.lang.reflect.Constructor;
-import java.util.Date;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
+import java.lang.reflect.Constructor;
+import java.util.Date;
+
 /**
  * A kryo {@link Serializer} for {@link Date} and subclasses. Must be registered like this:
- * <code><pre>
- *  Kryo kryo = new Kryo() {
- *      public Serializer<?> getDefaultSerializer(final Class clazz) {
- *          if ( Date.class.isAssignableFrom( type ) ) {
- *              return new DateSerializer( type );
- *          }
- *          return super.getDefaultSerializer( clazz );
- *      }
- *  };
- * </pre></code>
+ * <pre>
+ * Kryo kryo = new Kryo() {
+ *     public Serializer&lt;?&gt; getDefaultSerializer(final Class clazz) {
+ *         if ( Date.class.isAssignableFrom( type ) ) {
+ *             return new DateSerializer( type );
+ *         }
+ *         return super.getDefaultSerializer( clazz );
+ *     }
+ * };
+ * </pre>
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
