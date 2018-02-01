@@ -1,4 +1,6 @@
 /*
+ * Copyright 2018 Martin Grotzke
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,31 +30,31 @@ import com.esotericsoftware.kryo.Kryo;
 
 /**
  * Test for {@link JodaIntervalSerializer}.
- * 
+ *
  */
 public class JodaIntervalSerializerTest {
-    
-    private Kryo _kryo;
 
-    @BeforeTest
-    protected void beforeTest() {
-        _kryo = new Kryo();
-        _kryo.register( Interval.class, new JodaIntervalSerializer() );
-    }
+	private Kryo _kryo;
 
-    @Test( enabled = true )
-    public void testJodaInterval() {
-        final Interval obj = new Interval(new DateTime(1942,1,1,0,0,0,0), Days.days(42));
-        final byte[] serialized = serialize( _kryo, obj );
-        final Interval deserialized = deserialize( _kryo, serialized, Interval.class );
-        Assert.assertEquals( deserialized, obj );
-    }
+	@BeforeTest
+	protected void beforeTest() {
+		_kryo = new Kryo();
+		_kryo.register(Interval.class, new JodaIntervalSerializer());
+	}
 
-    @Test( enabled = true )
-    public void testCopyJodaDateTime() {
-        final Interval obj = new Interval(new DateTime(1942,1,1,0,0,0,0), Days.days(42));
-        final Interval copy = _kryo.copy(obj);
-        Assert.assertEquals( copy, obj );
-    }
+	@Test(enabled = true)
+	public void testJodaInterval() {
+		final Interval obj = new Interval(new DateTime(1942, 1, 1, 0, 0, 0, 0), Days.days(42));
+		final byte[] serialized = serialize(_kryo, obj);
+		final Interval deserialized = deserialize(_kryo, serialized, Interval.class);
+		Assert.assertEquals(deserialized, obj);
+	}
+
+	@Test(enabled = true)
+	public void testCopyJodaDateTime() {
+		final Interval obj = new Interval(new DateTime(1942, 1, 1, 0, 0, 0, 0), Days.days(42));
+		final Interval copy = _kryo.copy(obj);
+		Assert.assertEquals(copy, obj);
+	}
 
 }

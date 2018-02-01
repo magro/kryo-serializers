@@ -16,11 +16,6 @@
  */
 package de.javakaffee.kryoserializers.jodatime;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -32,6 +27,11 @@ import org.joda.time.chrono.GregorianChronology;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A format for joda {@link DateTime}, that stores the millis, chronology and
@@ -57,43 +57,43 @@ import org.joda.time.chrono.JulianChronology;
  */
 public class JodaDateTimeSerializer extends Serializer<DateTime> {
 
-    static final String MILLIS = "millis";
-    static final String DATE_TIME = "dt";
-    static final String CHRONOLOGY = "ch";
-    static final String TIME_ZONE = "tz";
+	static final String MILLIS = "millis";
+	static final String DATE_TIME = "dt";
+	static final String CHRONOLOGY = "ch";
+	static final String TIME_ZONE = "tz";
 
-    public JodaDateTimeSerializer() {
-        setImmutable(true);
-    }
+	public JodaDateTimeSerializer() {
+		setImmutable(true);
+	}
 
-    @Override
-    public DateTime read(final Kryo kryo, final Input input, final Class<DateTime> type) {
-        final long millis = input.readLong(true);
-        final Chronology chronology = IdentifiableChronology.readChronology( input );
-        final DateTimeZone tz = readTimeZone( input );
-        return new DateTime( millis, chronology.withZone( tz ) );
-    }
+	@Override
+	public DateTime read(final Kryo kryo, final Input input, final Class<DateTime> type) {
+		final long millis = input.readLong(true);
+		final Chronology chronology = IdentifiableChronology.readChronology(input);
+		final DateTimeZone tz = readTimeZone(input);
+		return new DateTime(millis, chronology.withZone(tz));
+	}
 
-    @Override
-    public void write(final Kryo kryo, final Output output, final DateTime obj) {
-        output.writeLong(obj.getMillis(), true);
+	@Override
+	public void write(final Kryo kryo, final Output output, final DateTime obj) {
+		output.writeLong(obj.getMillis(), true);
 
-        final String chronologyId = IdentifiableChronology.getChronologyId( obj.getChronology() );
-        output.writeString(chronologyId == null ? "" : chronologyId);
+		final String chronologyId = IdentifiableChronology.getChronologyId(obj.getChronology());
+		output.writeString(chronologyId == null ? "" : chronologyId);
 
-        output.writeString(obj.getZone().getID());
-    }
+		output.writeString(obj.getZone().getID());
+	}
 
-    private DateTimeZone readTimeZone( final Input input ) {
-        final String tz = input.readString();
+	private DateTimeZone readTimeZone(final Input input) {
+		final String tz = input.readString();
 
-        // special case for "" to maintain backwards compatibility, but generally this is considered harmful,
-        // potentially remove this with the next major release that involves breaking changes
-        // https://github.com/magro/kryo-serializers/issues/30
-        if ("".equals(tz)) {
-            return DateTimeZone.getDefault();
-        }
+		// special case for "" to maintain backwards compatibility, but generally this is considered harmful,
+		// potentially remove this with the next major release that involves breaking changes
+		// https://github.com/magro/kryo-serializers/issues/30
+		if ("".equals(tz)) {
+			return DateTimeZone.getDefault();
+		}
 
-        return DateTimeZone.forID(tz);
-    }
+		return DateTimeZone.forID(tz);
+	}
 }

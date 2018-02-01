@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Rennie Petersen
+ * Copyright 2018 Martin Grotzke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
  */
 package de.javakaffee.kryoserializers.jodatime;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 import org.joda.time.Chronology;
 import org.joda.time.LocalDate;
 import org.joda.time.chrono.BuddhistChronology;
@@ -31,6 +26,11 @@ import org.joda.time.chrono.GregorianChronology;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A Kryo serializer for joda {@link LocalDate}. The LocalDate object is read or written as year,
@@ -61,27 +61,27 @@ import org.joda.time.chrono.JulianChronology;
  */
 public class JodaLocalDateSerializer extends Serializer<LocalDate> {
 
-   public JodaLocalDateSerializer() {
-      setImmutable(true);
-   }
+	public JodaLocalDateSerializer() {
+		setImmutable(true);
+	}
 
-   @Override
-   public LocalDate read(final Kryo kryo, final Input input, final Class<LocalDate> type) {
-      final int packedYearMonthDay = input.readInt(true);
-      final Chronology chronology = IdentifiableChronology.readChronology(input);
-      return new LocalDate(packedYearMonthDay / (13 * 32),
-                           (packedYearMonthDay % (13 * 32)) / 32,
-                           packedYearMonthDay % 32,
-                           chronology);
-   }
+	@Override
+	public LocalDate read(final Kryo kryo, final Input input, final Class<LocalDate> type) {
+		final int packedYearMonthDay = input.readInt(true);
+		final Chronology chronology = IdentifiableChronology.readChronology(input);
+		return new LocalDate(packedYearMonthDay / (13 * 32),
+				(packedYearMonthDay % (13 * 32)) / 32,
+				packedYearMonthDay % 32,
+				chronology);
+	}
 
-   @Override
-   public void write(final Kryo kryo, final Output output, final LocalDate localDate) {
-      final int packedYearMonthDay = localDate.getYear() * 13 * 32 +
-                                     localDate.getMonthOfYear() * 32 +
-                                     localDate.getDayOfMonth();
-      output.writeInt(packedYearMonthDay, true);
-      final String chronologyId = IdentifiableChronology.getChronologyId(localDate.getChronology());
-      output.writeString(chronologyId == null ? "" : chronologyId);
-   }
+	@Override
+	public void write(final Kryo kryo, final Output output, final LocalDate localDate) {
+		final int packedYearMonthDay = localDate.getYear() * 13 * 32 +
+				localDate.getMonthOfYear() * 32 +
+				localDate.getDayOfMonth();
+		output.writeInt(packedYearMonthDay, true);
+		final String chronologyId = IdentifiableChronology.getChronologyId(localDate.getChronology());
+		output.writeString(chronologyId == null ? "" : chronologyId);
+	}
 }

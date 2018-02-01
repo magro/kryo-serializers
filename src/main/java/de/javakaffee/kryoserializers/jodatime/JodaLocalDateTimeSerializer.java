@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Rennie Petersen
+ * Copyright 2018 Martin Grotzke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
  */
 package de.javakaffee.kryoserializers.jodatime;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
 import org.joda.time.Chronology;
 import org.joda.time.LocalDateTime;
 import org.joda.time.chrono.BuddhistChronology;
@@ -31,6 +26,11 @@ import org.joda.time.chrono.GregorianChronology;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.chrono.IslamicChronology;
 import org.joda.time.chrono.JulianChronology;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A Kryo serializer for joda {@link LocalDateTime}. The LocalDateTime object is read or written as
@@ -55,32 +55,33 @@ import org.joda.time.chrono.JulianChronology;
  */
 public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
 
-   public JodaLocalDateTimeSerializer() { setImmutable(true); }
+	public JodaLocalDateTimeSerializer() {
+		setImmutable(true);
+	}
 
-   @Override
-   public LocalDateTime read(Kryo kryo, Input input, Class<LocalDateTime> type) {
-      final long packedLocalDateTime = input.readLong(true);
-      final int packedYearMonthDay = (int)(packedLocalDateTime / 86400000);
-      final int millisOfDay = (int)(packedLocalDateTime % 86400000);
-      final Chronology chronology = IdentifiableChronology.readChronology(input);
-      return new LocalDateTime(packedYearMonthDay / (13 * 32),
-                               (packedYearMonthDay % (13 * 32)) / 32,
-                               packedYearMonthDay % 32,
-                               millisOfDay / 3600000,
-                               (millisOfDay % 3600000) / 60000,
-                               (millisOfDay % 60000) / 1000,
-                               millisOfDay % 1000,
-                               chronology );
-   }
+	@Override
+	public LocalDateTime read(Kryo kryo, Input input, Class<LocalDateTime> type) {
+		final long packedLocalDateTime = input.readLong(true);
+		final int packedYearMonthDay = (int) (packedLocalDateTime / 86400000);
+		final int millisOfDay = (int) (packedLocalDateTime % 86400000);
+		final Chronology chronology = IdentifiableChronology.readChronology(input);
+		return new LocalDateTime(packedYearMonthDay / (13 * 32),
+				(packedYearMonthDay % (13 * 32)) / 32,
+				packedYearMonthDay % 32,
+				millisOfDay / 3600000,
+				(millisOfDay % 3600000) / 60000,
+				(millisOfDay % 60000) / 1000,
+				millisOfDay % 1000,
+				chronology);
+	}
 
-   @Override
-   public void write(Kryo kryo, Output output, LocalDateTime localDateTime) {
-      final int packedYearMonthDay = localDateTime.getYear() * 13 * 32 +
-                                     localDateTime.getMonthOfYear() * 32 +
-                                     localDateTime.getDayOfMonth();
-      output.writeLong((long)packedYearMonthDay * 86400000 + localDateTime.getMillisOfDay(), true);
-      final String chronologyId =
-                           IdentifiableChronology.getChronologyId(localDateTime.getChronology());
-      output.writeString(chronologyId == null ? "" : chronologyId);
-   }
+	@Override
+	public void write(Kryo kryo, Output output, LocalDateTime localDateTime) {
+		final int packedYearMonthDay = localDateTime.getYear() * 13 * 32 +
+				localDateTime.getMonthOfYear() * 32 +
+				localDateTime.getDayOfMonth();
+		output.writeLong((long) packedYearMonthDay * 86400000 + localDateTime.getMillisOfDay(), true);
+		final String chronologyId = IdentifiableChronology.getChronologyId(localDateTime.getChronology());
+		output.writeString(chronologyId == null ? "" : chronologyId);
+	}
 }

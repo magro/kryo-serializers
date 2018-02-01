@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Rennie Petersen
+ * Copyright 2018 Martin Grotzke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,27 +33,27 @@ import com.esotericsoftware.kryo.Kryo;
  */
 public class JodaLocalDateTimeSerializerTest {
 
-   private Kryo _kryo;
+	private Kryo _kryo;
 
-   @BeforeTest
-   protected void beforeTest() {
-      _kryo = new Kryo();
-      _kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
-   }
+	@BeforeTest
+	protected void beforeTest() {
+		_kryo = new Kryo();
+		_kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
+	}
 
-   @Test(enabled = true)
-   public void testJodaLocalDateTime() {
-      final LocalDateTime obj = new LocalDateTime().withDayOfYear(42);
-      final byte[] serialized = serialize(_kryo, obj);
-      final LocalDateTime deserialized = deserialize(_kryo, serialized, LocalDateTime.class);
-      Assert.assertEquals(deserialized, obj);
-   }
+	@Test(enabled = true)
+	public void testJodaLocalDateTime() {
+		final LocalDateTime obj = new LocalDateTime().withDayOfYear(42);
+		final byte[] serialized = serialize(_kryo, obj);
+		final LocalDateTime deserialized = deserialize(_kryo, serialized, LocalDateTime.class);
+		Assert.assertEquals(deserialized, obj);
+	}
 
-   @Test(enabled = true)
-   public void testCopyJodaLocalDateTime() {
-      final LocalDateTime obj = new LocalDateTime().withDayOfYear(42);
-      final LocalDateTime copy = _kryo.copy(obj);
-      Assert.assertEquals(copy, obj);
-   }
+	@Test(enabled = true)
+	public void testCopyJodaLocalDateTime() {
+		final LocalDateTime obj = new LocalDateTime().withDayOfYear(42);
+		final LocalDateTime copy = _kryo.copy(obj);
+		Assert.assertEquals(copy, obj);
+	}
 
 }

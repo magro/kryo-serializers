@@ -33,24 +33,23 @@ import com.esotericsoftware.kryo.serializers.MapSerializer;
  * of concurrent modification exceptions, as even during taking the copy the
  * map might be modified by another thread.
  * </p>
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CopyForIterateMapSerializer extends MapSerializer {
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public void write( final Kryo kryo, final Output output, @SuppressWarnings("rawtypes") final Map object ) {
-        final Map<?, ?> map;
-        // we only need special support for linked hash map, as SortedMaps will
-        // recreate correct sorting during deserialization...
-        if ( object instanceof LinkedHashMap<?, ?> ) {
-            map = new LinkedHashMap<Object, Object>( object );
-        }
-        else {
-            map = new HashMap<Object, Object>( object );
-        }
-        super.write( kryo, output, map );
-    }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void write(final Kryo kryo, final Output output, @SuppressWarnings("rawtypes") final Map object) {
+		final Map<?, ?> map;
+		// we only need special support for linked hash map, as SortedMaps will
+		// recreate correct sorting during deserialization...
+		if (object instanceof LinkedHashMap<?, ?>) {
+			map = new LinkedHashMap<Object, Object>(object);
+		} else {
+			map = new HashMap<Object, Object>(object);
+		}
+		super.write(kryo, output, map);
+	}
 
 }

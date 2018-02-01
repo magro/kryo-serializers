@@ -28,21 +28,20 @@ import com.esotericsoftware.kryo.io.Output;
 /**
  * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptySet()}
  * or that were just assigned the {@link Collections#EMPTY_SET}.
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CollectionsEmptySetSerializer extends Serializer<Set<?>> {
 
-    public CollectionsEmptySetSerializer() {
-        setImmutable(true);
-    }
+	public CollectionsEmptySetSerializer() {
+		setImmutable(true);
+	}
 
-    @Override
-    public Set<?> read(final Kryo kryo, final Input input, final Class<Set<?>> type) {
-        return Collections.EMPTY_SET;
-    }
+	@Override
+	public Set<?> read(final Kryo kryo, final Input input, final Class<Set<?>> type) {
+		return Collections.EMPTY_SET;
+	}
 
-    @Override
-    public void write(final Kryo kryo, final Output output, final Set<?> object) {
-    }
+	@Override
+	public void write(final Kryo kryo, final Output output, final Set<?> object) {}
 }

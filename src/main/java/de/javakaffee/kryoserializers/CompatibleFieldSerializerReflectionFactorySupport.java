@@ -24,25 +24,25 @@ import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
  * A {@link CompatibleFieldSerializer} specialization that uses sun's {@link sun.reflect.ReflectionFactory} to create
  * new instances for classes without a default constructor (via reuse of
  * {@link KryoReflectionFactorySupport#newInstanceFromReflectionFactory(Class)}).
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 @SuppressWarnings("restriction")
 public class CompatibleFieldSerializerReflectionFactorySupport extends CompatibleFieldSerializer<Object> {
 
-    /**
-     * Creates a new instance.
-     * @param kryo the kryo instance that is passed to {@link CompatibleFieldSerializer#CompatibleFieldSerializer(Kryo, Class)}.
-     * @param type the type to serialize.
-     */
-    public CompatibleFieldSerializerReflectionFactorySupport(final Kryo kryo, final Class<?> type) {
-        super( kryo, type );
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object create(final Kryo kryo, final Input input, @SuppressWarnings("rawtypes") final Class type) {
-        return KryoReflectionFactorySupport.newInstanceFromReflectionFactory( type );
-    }
-    
+	/**
+	 * Creates a new instance.
+	 * @param kryo the kryo instance that is passed to {@link CompatibleFieldSerializer#CompatibleFieldSerializer(Kryo, Class)}.
+	 * @param type the type to serialize.
+	 */
+	public CompatibleFieldSerializerReflectionFactorySupport(final Kryo kryo, final Class<?> type) {
+		super(kryo, type);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object create(final Kryo kryo, final Input input, @SuppressWarnings("rawtypes") final Class type) {
+		return KryoReflectionFactorySupport.newInstanceFromReflectionFactory(type);
+	}
+
 }
