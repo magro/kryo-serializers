@@ -84,6 +84,34 @@ public class SubListSerializers {
 		return kryo;
 	}
 
+	private static List<?> subListRead(Kryo kryo, Input input) {
+		kryo.reference(FAKE_REFERENCE);
+		final List<?> list = (List<?>) kryo.readClassAndObject(input);
+		final int fromIndex = input.readInt(true);
+		final int toIndex = input.readInt(true);
+		return list.subList(fromIndex, toIndex);
+	}
+
+	private static List<?> subListCopy(Kryo kryo, List<?> originalList, int parentOffset, int size) {
+		final int toIndex = parentOffset + size;
+		return kryo.copy(originalList).subList(parentOffset, toIndex);
+	}
+
+	private static void subListWrite(Kryo kryo, Output output, Object originalList, int fromIndex, int size) {
+		try {
+			kryo.writeClassAndObject(output, originalList);
+			output.writeInt(fromIndex, true);
+			final int toIndex = fromIndex + size;
+			output.writeInt(toIndex, true);
+		} catch (final RuntimeException e) {
+			// Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
+			// handles SerializationException specifically (resizing the buffer)...
+			throw e;
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * Supports sublists created via {@link ArrayList#subList(int, int)} since java7 (oracle jdk,
 	 * represented by <code>java.util.ArrayList$SubList</code>).
@@ -128,22 +156,14 @@ public class SubListSerializers {
 
 		@Override
 		public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
-			kryo.reference(FAKE_REFERENCE);
-			final List<?> list = (List<?>) kryo.readClassAndObject(input);
-			final int fromIndex = input.readInt(true);
-			final int toIndex = input.readInt(true);
-			return list.subList(fromIndex, toIndex);
+			return subListRead(kryo, input);
 		}
 
 		@Override
 		public void write(final Kryo kryo, final Output output, final List<?> obj) {
 			try {
-				kryo.writeClassAndObject(output, _parentField.get(obj));
-				final int parentOffset = _parentOffsetField.getInt(obj);
-				final int fromIndex = parentOffset;
-				output.writeInt(fromIndex, true);
-				final int toIndex = fromIndex + _sizeField.getInt(obj);
-				output.writeInt(toIndex, true);
+				subListWrite(kryo, output, _parentField.get(obj), _parentOffsetField.getInt(obj),
+						_sizeField.getInt(obj));
 			} catch (final RuntimeException e) {
 				// Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
 				// handles SerializationException specifically (resizing the buffer)...
@@ -157,11 +177,8 @@ public class SubListSerializers {
 		public List<?> copy(final Kryo kryo, final List<?> original) {
 			kryo.reference(FAKE_REFERENCE);
 			try {
-				final List<?> list = (List<?>) _parentField.get(original);
-				final int parentOffset = _parentOffsetField.getInt(original);
-				final int fromIndex = parentOffset;
-				final int toIndex = fromIndex + _sizeField.getInt(original);
-				return kryo.copy(list).subList(fromIndex, toIndex);
+				return subListCopy(kryo, (List<?>) _parentField.get(original), _parentOffsetField.getInt(original),
+						_sizeField.getInt(original));
 			} catch (final Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -212,21 +229,13 @@ public class SubListSerializers {
 
 		@Override
 		public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
-			kryo.reference(FAKE_REFERENCE);
-			final List<?> list = (List<?>) kryo.readClassAndObject(input);
-			final int fromIndex = input.readInt(true);
-			final int toIndex = input.readInt(true);
-			return list.subList(fromIndex, toIndex);
+			return subListRead(kryo, input);
 		}
 
 		@Override
 		public void write(final Kryo kryo, final Output output, final List<?> obj) {
 			try {
-				kryo.writeClassAndObject(output, _listField.get(obj));
-				final int fromIndex = _offsetField.getInt(obj);
-				output.writeInt(fromIndex, true);
-				final int toIndex = fromIndex + _sizeField.getInt(obj);
-				output.writeInt(toIndex, true);
+				subListWrite(kryo, output, _listField.get(obj), _offsetField.getInt(obj), _sizeField.getInt(obj));
 			} catch (final RuntimeException e) {
 				// Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
 				// handles SerializationException specifically (resizing the buffer)...
@@ -240,10 +249,8 @@ public class SubListSerializers {
 		public List<?> copy(final Kryo kryo, final List<?> obj) {
 			kryo.reference(FAKE_REFERENCE);
 			try {
-				final List<?> list = (List<?>) _listField.get(obj);
-				final int fromIndex = _offsetField.getInt(obj);
-				final int toIndex = fromIndex + _sizeField.getInt(obj);
-				return kryo.copy(list).subList(fromIndex, toIndex);
+				return subListCopy(kryo, (List<?>) _listField.get(obj), _offsetField.getInt(obj),
+						_sizeField.getInt(obj));
 			} catch (final Exception e) {
 				throw new RuntimeException(e);
 			}

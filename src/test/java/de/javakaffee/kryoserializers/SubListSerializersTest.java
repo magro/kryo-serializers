@@ -40,8 +40,9 @@ public class SubListSerializersTest {
 
 	private Kryo _kryo;
 
+	@SafeVarargs
 	private static <T> ArrayList<T> arrayList(final T... items) {
-		return new ArrayList<T>(Arrays.asList(items));
+		return new ArrayList<>(Arrays.asList(items));
 	}
 
 	@BeforeClass
@@ -77,60 +78,56 @@ public class SubListSerializersTest {
 		assertEquals(copy.remove(0), subList.remove(0));
 	}
 
-	@Test(enabled = true)
-	public void testSubList() throws Exception {
-		final List<TestEnum> subList = new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 2);
+	@Test()
+	public void testSubList() {
+		final List<TestEnum> subList = new LinkedList<>(Arrays.asList(TestEnum.values())).subList(1, 2);
 		doTest(subList);
 	}
 
-	@Test(enabled = true)
-	public void testCopySubList() throws Exception {
-		final List<TestEnum> subList = new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 2);
+	@Test()
+	public void testCopySubList() {
+		final List<TestEnum> subList = new LinkedList<>(Arrays.asList(TestEnum.values())).subList(1, 2);
 		doTestCopy(subList);
 	}
 
-	@Test(enabled = true)
-	public void testSubListSubList() throws Exception {
-		final List<TestEnum> subList =
-				new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+	@Test()
+	public void testSubListSubList() {
+		final List<TestEnum> subList = new LinkedList<>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTest(subList);
 	}
 
-	@Test(enabled = true)
-	public void testCopySubListSubList() throws Exception {
-		final List<TestEnum> subList =
-				new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+	@Test()
+	public void testCopySubListSubList() {
+		final List<TestEnum> subList = new LinkedList<>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTestCopy(subList);
 	}
 
-	@Test(enabled = true)
-	public void testArrayListSubList() throws Exception {
-		final List<TestEnum> subList = new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 2);
+	@Test()
+	public void testArrayListSubList() {
+		final List<TestEnum> subList = new ArrayList<>(Arrays.asList(TestEnum.values())).subList(1, 2);
 		doTest(subList);
 	}
 
-	@Test(enabled = true)
-	public void testCopyArrayListSubList() throws Exception {
-		final List<TestEnum> subList = new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 2);
+	@Test()
+	public void testCopyArrayListSubList() {
+		final List<TestEnum> subList = new ArrayList<>(Arrays.asList(TestEnum.values())).subList(1, 2);
 		doTestCopy(subList);
 	}
 
-	@Test(enabled = true)
-	public void testArrayListSubListSubList() throws Exception {
-		final List<TestEnum> subList =
-				new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+	@Test()
+	public void testArrayListSubListSubList() {
+		final List<TestEnum> subList = new ArrayList<>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTest(subList);
 	}
 
-	@Test(enabled = true)
-	public void testCopyArrayListSubListSubList() throws Exception {
-		final List<TestEnum> subList =
-				new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+	@Test()
+	public void testCopyArrayListSubListSubList() {
+		final List<TestEnum> subList = new ArrayList<>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTestCopy(subList);
 	}
 
-	@Test(enabled = true)
-	public void testArrayListSubListWithSharedItems() throws Exception {
+	@Test()
+	public void testArrayListSubListWithSharedItems() {
 		final List<String> mylist = arrayList("1", "1", "2", "1", "1");
 		final List<String> subList = mylist.subList(0, 5);
 
@@ -142,9 +139,29 @@ public class SubListSerializersTest {
 		assertEquals(deserialized, mylist);
 	}
 
-	@Test(enabled = true)
-	@SuppressWarnings("unchecked")
-	public void testNestedArrayListSubListWithSharedItems_1() throws Exception {
+	@Test()
+	@SuppressWarnings({ "unchecked", "Duplicates" })
+	public void testNestedArrayListSubListWithSharedItems_1() {
+		final List<String> list1 = arrayList("1", "1", "2");
+		final List<String> list1SubList1 = list1.subList(0, 3);
+
+		final List<String> list1SubList2 = list1.subList(1, 3);
+
+		final List<String> list2 = arrayList("1", "2", "3");
+		final List<String> list2SubList1 = list2.subList(0, 3);
+
+		final List<List<String>> lists =
+				new ArrayList<>(Arrays.asList(list1SubList1, list1SubList2, list2SubList1, list1, list2));
+
+		final byte[] serialized = serialize(_kryo, lists);
+		final List<List<String>> deserialized = deserialize(_kryo, serialized, lists.getClass());
+
+		assertEquals(deserialized, lists);
+	}
+
+	@Test()
+	@SuppressWarnings({ "unchecked", "Duplicates" })
+	public void testNestedArrayListSubListWithSharedItems_2() {
 		final List<String> l1 = arrayList("1", "1", "2");
 		final List<String> l1s1 = l1.subList(0, 3);
 
@@ -153,7 +170,7 @@ public class SubListSerializersTest {
 		final List<String> l2 = arrayList("1", "2", "3");
 		final List<String> l2s1 = l2.subList(0, 3);
 
-		final List<List<String>> lists = new ArrayList<List<String>>(Arrays.asList(l1s1, l1s2, l2s1, l1, l2));
+		final List<List<String>> lists = new ArrayList<>(Arrays.asList(l1, l2, l1s1, l1s2, l2s1));
 
 		final byte[] serialized = serialize(_kryo, lists);
 		final List<List<String>> deserialized = deserialize(_kryo, serialized, lists.getClass());
@@ -161,29 +178,10 @@ public class SubListSerializersTest {
 		assertEquals(deserialized, lists);
 	}
 
-	@Test(enabled = true)
-	@SuppressWarnings("unchecked")
-	public void testNestedArrayListSubListWithSharedItems_2() throws Exception {
-		final List<String> l1 = arrayList("1", "1", "2");
-		final List<String> l1s1 = l1.subList(0, 3);
-
-		final List<String> l1s2 = l1.subList(1, 3);
-
-		final List<String> l2 = arrayList("1", "2", "3");
-		final List<String> l2s1 = l2.subList(0, 3);
-
-		final List<List<String>> lists = new ArrayList<List<String>>(Arrays.asList(l1, l2, l1s1, l1s2, l2s1));
-
-		final byte[] serialized = serialize(_kryo, lists);
-		final List<List<String>> deserialized = deserialize(_kryo, serialized, lists.getClass());
-
-		assertEquals(deserialized, lists);
-	}
-
-	static enum TestEnum {
+	enum TestEnum {
 		ITEM1,
 		ITEM2,
-		ITEM3;
+		ITEM3
 	}
 
 }
