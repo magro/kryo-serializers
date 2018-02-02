@@ -16,13 +16,13 @@
  */
 package de.javakaffee.kryoserializers;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A kryo {@link Serializer} for {@link List}s created via {@link Collections#singletonList(Object)}.
@@ -30,30 +30,30 @@ import java.util.List;
  * Note: This serializer does not support cyclic references, if a serialized object
  * is part of a cycle this might cause an error during deserialization.
  * </p>
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CollectionsSingletonListSerializer extends Serializer<List<?>> {
 
-    public CollectionsSingletonListSerializer() {
-    }
+	public CollectionsSingletonListSerializer() {
+	}
 
-    @Override
-    public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
-        final Object obj = kryo.readClassAndObject( input );
-        return Collections.singletonList( obj );
-    }
+	@Override
+	public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
+		final Object obj = kryo.readClassAndObject(input);
+		return Collections.singletonList(obj);
+	}
 
-    @Override
-    public void write(final Kryo kryo, final Output output, final List<?> list) {
-        kryo.writeClassAndObject(output, list.get( 0 ));
-    }
+	@Override
+	public void write(final Kryo kryo, final Output output, final List<?> list) {
+		kryo.writeClassAndObject(output, list.get(0));
+	}
 
-    @Override
-    public List<?> copy(Kryo kryo, List<?> original) {
-        Object singleton = original.get(0);
-        kryo.reference(singleton);
-        Object newSingleton = kryo.copy(singleton);
-        return Collections.singletonList(newSingleton);
-    }
+	@Override
+	public List<?> copy(Kryo kryo, List<?> original) {
+		Object singleton = original.get(0);
+		kryo.reference(singleton);
+		Object newSingleton = kryo.copy(singleton);
+		return Collections.singletonList(newSingleton);
+	}
 }

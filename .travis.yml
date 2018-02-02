@@ -1,19 +1,24 @@
+sudo: false
 language: java
 
 jdk:
-  - openjdk7
   - oraclejdk8
 
-cache:
-  directories:
-    - $HOME/.m2
+script:
+  - ./gradlew check
 
 after_success:
-  - mvn cobertura:cobertura coveralls:report
+ - ./gradlew cobertura coveralls
 
 env:
   global:
     - secure: VowI35vSogCpbHhqkStwHdU3A9+0g3x3v4RiE6Ps6RH5Y4E0F5mD9MzrYloRGIWpbeLgw0azRVsM2nDufUIJgogWIOnxKxi4AqSo23VKcY6z/tN0kRgIfD+QuMbRmaUU6yIXaws3xjOXCHbLsBFBHeu0pGkB9e3qiMeJatj9bDo=
+    # Must also set COVERALLS_REPO_TOKEN env variable in Travis CI to push Coveralls reports
 
-# use container
-sudo: false
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/

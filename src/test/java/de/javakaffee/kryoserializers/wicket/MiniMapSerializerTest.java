@@ -1,5 +1,5 @@
 /*
-* Copyright 2010 Martin Grotzke
+ * Copyright 2018 Martin Grotzke
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,67 +32,67 @@ import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
 
 /**
  * Test for {@link JodaDateTimeSerializer}.
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class MiniMapSerializerTest {
-    
-    private Kryo _kryo;
 
-    @BeforeTest
-    protected void beforeTest() {
-        _kryo = new Kryo();
-        _kryo.register( MiniMap.class, new MiniMapSerializer() );
-    }
+	private Kryo _kryo;
 
-    @Test( enabled = true )
-    public void testMiniMapEmpty() {
-        final MiniMap<?, ?> obj = new MiniMap<Object, Object>( 0 );
-        final byte[] serialized = serialize( _kryo, obj );
-        final MiniMap<?, ?> deserialized = deserialize( _kryo, serialized, MiniMap.class );
-        Assert.assertEquals( deserialized.size(), obj.size() );
-    }
+	@BeforeTest
+	protected void beforeTest() {
+		_kryo = new Kryo();
+		_kryo.register(MiniMap.class, new MiniMapSerializer());
+	}
 
-    @Test( enabled = true )
-    public void testMiniMapExactNumberOfEntries() {
-        final MiniMap<String, String> obj = new MiniMap<String, String>( 1 );
-        obj.put( "foo", "bar" );
-        final byte[] serialized = serialize( _kryo, obj );
-        final MiniMap<?, ?> deserialized = deserialize( _kryo, serialized, MiniMap.class );
-        Assert.assertEquals( deserialized.size(), obj.size() );
-        final Entry<?, ?> deserializedNext = deserialized.entrySet().iterator().next();
-        final Entry<?, ?> origNext = obj.entrySet().iterator().next();
-        Assert.assertEquals( deserializedNext.getKey(), origNext.getKey() );
-        Assert.assertEquals( deserializedNext.getValue(), origNext.getValue() );
-    }
+	@Test(enabled = true)
+	public void testMiniMapEmpty() {
+		final MiniMap<?, ?> obj = new MiniMap<Object, Object>(0);
+		final byte[] serialized = serialize(_kryo, obj);
+		final MiniMap<?, ?> deserialized = deserialize(_kryo, serialized, MiniMap.class);
+		Assert.assertEquals(deserialized.size(), obj.size());
+	}
 
-    @Test( enabled = true )
-    public void testMiniMapLessThanMaxEntries() {
-        final MiniMap<String, String> obj = new MiniMap<String, String>( 2 );
-        obj.put( "foo", "bar" );
-        final byte[] serialized = serialize( _kryo, obj );
-        final MiniMap<?, ?> deserialized = deserialize( _kryo, serialized, MiniMap.class );
-        Assert.assertEquals( deserialized.size(), obj.size() );
-    }
+	@Test(enabled = true)
+	public void testMiniMapExactNumberOfEntries() {
+		final MiniMap<String, String> obj = new MiniMap<String, String>(1);
+		obj.put("foo", "bar");
+		final byte[] serialized = serialize(_kryo, obj);
+		final MiniMap<?, ?> deserialized = deserialize(_kryo, serialized, MiniMap.class);
+		Assert.assertEquals(deserialized.size(), obj.size());
+		final Entry<?, ?> deserializedNext = deserialized.entrySet().iterator().next();
+		final Entry<?, ?> origNext = obj.entrySet().iterator().next();
+		Assert.assertEquals(deserializedNext.getKey(), origNext.getKey());
+		Assert.assertEquals(deserializedNext.getValue(), origNext.getValue());
+	}
 
-    @SuppressWarnings("unchecked")
-    @Test( enabled = true )
-    public void testMiniMapAddEntriesAfterDeserialization() {
-        final MiniMap<String, String> obj = new MiniMap<String, String>( 2 );
-        obj.put( "foo", "bar" );
-        final byte[] serialized = serialize( _kryo, obj );
-        final MiniMap<String, String> deserialized = deserialize( _kryo, serialized, MiniMap.class );
-        Assert.assertEquals( deserialized.size(), obj.size() );
-        
-        deserialized.put( "bar", "baz" );
-        try {
-            deserialized.put( "this should", "fail" );
-            Assert.fail( "We told the orig MiniMap to accept 2 entries at max," +
-            		" therefore we should not be allowed to put more." );
-        } catch( final RuntimeException e ) {
-            // this is expected - didn't use @Test.expectedExceptions
-            // as this would tie us to the exactly thrown exception
-        }
-    }
+	@Test(enabled = true)
+	public void testMiniMapLessThanMaxEntries() {
+		final MiniMap<String, String> obj = new MiniMap<String, String>(2);
+		obj.put("foo", "bar");
+		final byte[] serialized = serialize(_kryo, obj);
+		final MiniMap<?, ?> deserialized = deserialize(_kryo, serialized, MiniMap.class);
+		Assert.assertEquals(deserialized.size(), obj.size());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test(enabled = true)
+	public void testMiniMapAddEntriesAfterDeserialization() {
+		final MiniMap<String, String> obj = new MiniMap<String, String>(2);
+		obj.put("foo", "bar");
+		final byte[] serialized = serialize(_kryo, obj);
+		final MiniMap<String, String> deserialized = deserialize(_kryo, serialized, MiniMap.class);
+		Assert.assertEquals(deserialized.size(), obj.size());
+
+		deserialized.put("bar", "baz");
+		try {
+			deserialized.put("this should", "fail");
+			Assert.fail("We told the orig MiniMap to accept 2 entries at max,"
+					+ " therefore we should not be allowed to put more.");
+		} catch (final RuntimeException e) {
+			// this is expected - didn't use @Test.expectedExceptions
+			// as this would tie us to the exactly thrown exception
+		}
+	}
 
 }

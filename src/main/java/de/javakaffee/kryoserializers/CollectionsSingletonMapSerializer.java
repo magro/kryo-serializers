@@ -32,28 +32,27 @@ import com.esotericsoftware.kryo.io.Output;
  * Note: This serializer does not support cyclic references, if a serialized object
  * is part of a cycle this might cause an error during deserialization.
  * </p>
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CollectionsSingletonMapSerializer extends Serializer<Map<?, ?>> {
 
-    public CollectionsSingletonMapSerializer() {
-        setImmutable(true);
-    }
+	public CollectionsSingletonMapSerializer() {
+		setImmutable(true);
+	}
 
-    @Override
-    public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
-        final Object key = kryo.readClassAndObject( input );
-        final Object value = kryo.readClassAndObject( input );
-        return Collections.singletonMap( key, value );
-    }
+	@Override
+	public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
+		final Object key = kryo.readClassAndObject(input);
+		final Object value = kryo.readClassAndObject(input);
+		return Collections.singletonMap(key, value);
+	}
 
-    @Override
-    public void write(final Kryo kryo, final Output output, final Map<?, ?> map) {
-        final Entry<?, ?> entry = map.entrySet().iterator().next();
-        kryo.writeClassAndObject( output, entry.getKey() );
-        kryo.writeClassAndObject( output, entry.getValue() );
-    }
-
+	@Override
+	public void write(final Kryo kryo, final Output output, final Map<?, ?> map) {
+		final Entry<?, ?> entry = map.entrySet().iterator().next();
+		kryo.writeClassAndObject(output, entry.getKey());
+		kryo.writeClassAndObject(output, entry.getValue());
+	}
 
 }

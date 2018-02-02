@@ -32,15 +32,15 @@ import com.esotericsoftware.kryo.serializers.CollectionSerializer;
  * of concurrent modification exceptions, as even during taking the copy the
  * collection might be modified by another thread.
  * </p>
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CopyForIterateCollectionSerializer extends CollectionSerializer {
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public void write( final Kryo kryo, final Output output, @SuppressWarnings("rawtypes") final Collection object ) {
-        super.write( kryo, output, new ArrayList<Object>(object));
-    }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void write(final Kryo kryo, final Output output, @SuppressWarnings("rawtypes") final Collection object) {
+		super.write(kryo, output, new ArrayList<Object>(object));
+	}
 
 }

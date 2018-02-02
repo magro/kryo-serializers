@@ -31,57 +31,58 @@ import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A format for wicket's {@link MiniMap}.
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class MiniMapSerializer extends Serializer<MiniMap<Object, Object>> {
-    
-    /* To be correct we need to know the size of the internal array, otherwise
-     * we might create a too small MiniMap on deserilization
-     */
-    private static final Field KEYS_FIELD;
-    
-    static {
-        try {
-            KEYS_FIELD = MiniMap.class.getDeclaredField( "keys" );
-            KEYS_FIELD.setAccessible( true );
-        } catch ( final Exception e ) {
-            throw new RuntimeException( "The MiniMap seems to have changed, could not access expected field.", e );
-        }
-    }
 
-    private int getMaxEntries( final MiniMap<?, ?> map ) {
-        try {
-            return ( (Object[])KEYS_FIELD.get( map ) ).length;
-        } catch ( final Exception e ) {
-            throw new RuntimeException( "Could not access keys field.", e );
-        }
-    }
+	/* To be correct we need to know the size of the internal array, otherwise
+	 * we might create a too small MiniMap on deserilization
+	 */
+	private static final Field KEYS_FIELD;
 
-    @Override
-    public void write(final Kryo kryo, final Output output, final MiniMap<Object, Object> map) {
-        output.writeInt(getMaxEntries( map ), true);
-        output.writeInt( map.size(), true);
+	static {
+		try {
+			KEYS_FIELD = MiniMap.class.getDeclaredField("keys");
+			KEYS_FIELD.setAccessible(true);
+		} catch (final Exception e) {
+			throw new RuntimeException("The MiniMap seems to have changed, could not access expected field.", e);
+		}
+	}
 
-        for (final Entry<?, ?> entry : map.entrySet()) {
-            kryo.writeClassAndObject(output, entry.getKey());
-            kryo.writeClassAndObject(output, entry.getValue());
-        }
+	private int getMaxEntries(final MiniMap<?, ?> map) {
+		try {
+			return ((Object[]) KEYS_FIELD.get(map)).length;
+		} catch (final Exception e) {
+			throw new RuntimeException("Could not access keys field.", e);
+		}
+	}
 
-        if ( TRACE ) trace( "kryo", "Wrote map: " + map );
-    }
+	@Override
+	public void write(final Kryo kryo, final Output output, final MiniMap<Object, Object> map) {
+		output.writeInt(getMaxEntries(map), true);
+		output.writeInt(map.size(), true);
 
-    @Override
-    public MiniMap<Object, Object> read(final Kryo kryo, final Input input, final Class<MiniMap<Object, Object>> type) {
-        final int maxEntries = input.readInt( true );
-        final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );
-        final int size = input.readInt( true );
-        for ( int i = 0; i < size; i++ ) {
-            final Object key = kryo.readClassAndObject( input );
-            final Object value = kryo.readClassAndObject( input );
-            result.put( key, value );
-        }
-        return result;
-    }
+		for (final Entry<?, ?> entry : map.entrySet()) {
+			kryo.writeClassAndObject(output, entry.getKey());
+			kryo.writeClassAndObject(output, entry.getValue());
+		}
+
+		if (TRACE)
+			trace("kryo", "Wrote map: " + map);
+	}
+
+	@Override
+	public MiniMap<Object, Object> read(final Kryo kryo, final Input input, final Class<MiniMap<Object, Object>> type) {
+		final int maxEntries = input.readInt(true);
+		final MiniMap<Object, Object> result = new MiniMap<Object, Object>(maxEntries);
+		final int size = input.readInt(true);
+		for (int i = 0; i < size; i++) {
+			final Object key = kryo.readClassAndObject(input);
+			final Object value = kryo.readClassAndObject(input);
+			result.put(key, value);
+		}
+		return result;
+	}
 
 }

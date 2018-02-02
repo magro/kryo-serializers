@@ -27,21 +27,21 @@ import com.esotericsoftware.kryo.io.Output;
 /**
  * A kryo {@link Serializer} for {@link Map}s created via {@link Collections#emptyMap()}
  * or that were just assigned the {@link Collections#EMPTY_MAP}.
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class CollectionsEmptyMapSerializer extends Serializer<Map<?, ?>> {
 
-    public CollectionsEmptyMapSerializer() {
-        setImmutable(true);
-    }
+	public CollectionsEmptyMapSerializer() {
+		setImmutable(true);
+	}
 
-    @Override
-    public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
-        return Collections.EMPTY_MAP;
-    }
+	@Override
+	public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
+		return Collections.EMPTY_MAP;
+	}
 
-    @Override
-    public void write(final Kryo kryo, final Output output, final Map<?, ?> object) {
-    }
+	@Override
+	public void write(final Kryo kryo, final Output output, final Map<?, ?> object) {
+	}
 }

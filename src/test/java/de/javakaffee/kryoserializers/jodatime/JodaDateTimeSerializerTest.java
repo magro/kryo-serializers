@@ -28,32 +28,32 @@ import com.esotericsoftware.kryo.Kryo;
 
 /**
  * Test for {@link JodaDateTimeSerializer}.
- * 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class JodaDateTimeSerializerTest {
-    
-    private Kryo _kryo;
 
-    @BeforeTest
-    protected void beforeTest() {
-        _kryo = new Kryo();
-        _kryo.register( DateTime.class, new JodaDateTimeSerializer() );
-    }
+	private Kryo _kryo;
 
-    @Test( enabled = true )
-    public void testJodaDateTime() {
-        final DateTime obj = new DateTime().withDayOfYear( 42 );
-        final byte[] serialized = serialize( _kryo, obj );
-        final DateTime deserialized = deserialize( _kryo, serialized, DateTime.class );
-        Assert.assertEquals( deserialized, obj );
-    }
+	@BeforeTest
+	protected void beforeTest() {
+		_kryo = new Kryo();
+		_kryo.register(DateTime.class, new JodaDateTimeSerializer());
+	}
 
-    @Test( enabled = true )
-    public void testCopyJodaDateTime() {
-        final DateTime obj = new DateTime().withDayOfYear( 42 );
-        final DateTime copy = _kryo.copy(obj);
-        Assert.assertEquals( copy, obj );
-    }
+	@Test(enabled = true)
+	public void testJodaDateTime() {
+		final DateTime obj = new DateTime().withDayOfYear(42);
+		final byte[] serialized = serialize(_kryo, obj);
+		final DateTime deserialized = deserialize(_kryo, serialized, DateTime.class);
+		Assert.assertEquals(deserialized, obj);
+	}
+
+	@Test(enabled = true)
+	public void testCopyJodaDateTime() {
+		final DateTime obj = new DateTime().withDayOfYear(42);
+		final DateTime copy = _kryo.copy(obj);
+		Assert.assertEquals(copy, obj);
+	}
 
 }

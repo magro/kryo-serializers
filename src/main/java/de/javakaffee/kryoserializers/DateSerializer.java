@@ -26,54 +26,54 @@ import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A kryo {@link Serializer} for {@link Date} and subclasses. Must be registered like this:
- * <code><pre>
- *  Kryo kryo = new Kryo() {
- *      public Serializer<?> getDefaultSerializer(final Class clazz) {
- *          if ( Date.class.isAssignableFrom( type ) ) {
- *              return new DateSerializer( type );
- *          }
- *          return super.getDefaultSerializer( clazz );
- *      }
- *  };
- * </pre></code>
- * 
+ * <pre>
+ * Kryo kryo = new Kryo() {
+ *     public Serializer&lt;?&gt; getDefaultSerializer(final Class clazz) {
+ *         if ( Date.class.isAssignableFrom( type ) ) {
+ *             return new DateSerializer( type );
+ *         }
+ *         return super.getDefaultSerializer( clazz );
+ *     }
+ * };
+ * </pre>
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class DateSerializer extends Serializer<Date> {
 
-    private final Constructor<? extends Date> _constructor;
+	private final Constructor<? extends Date> _constructor;
 
-    public DateSerializer(final Class<? extends Date> clazz) {
-        try {
-            _constructor = clazz.getConstructor(long.class);
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        }
-    }
+	public DateSerializer(final Class<? extends Date> clazz) {
+		try {
+			_constructor = clazz.getConstructor(long.class);
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Date read(final Kryo kryo, final Input input, final Class<Date> type) {
-        try {
-            return _constructor.newInstance(input.readLong(true));
-        } catch (final Exception e) {
-            throw new RuntimeException( e );
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Date read(final Kryo kryo, final Input input, final Class<Date> type) {
+		try {
+			return _constructor.newInstance(input.readLong(true));
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final Kryo kryo, final Output output, final Date obj) {
-        output.writeLong(obj.getTime(), true);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void write(final Kryo kryo, final Output output, final Date obj) {
+		output.writeLong(obj.getTime(), true);
+	}
 
-    @Override
-    public Date copy(final Kryo kryo, final Date original) {
-        return (Date) original.clone();
-    }
+	@Override
+	public Date copy(final Kryo kryo, final Date original) {
+		return (Date) original.clone();
+	}
 
 }
