@@ -36,6 +36,10 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class SubListSerializers {
 
+	// Workaround reference reading, this should be removed sometimes. See also
+	// https://groups.google.com/d/msg/kryo-users/Eu5V4bxCfws/k-8UQ22y59AJ
+	private static final Object FAKE_REFERENCE = new Object();
+
 	static Class<?> getClass(final String className) {
 		try {
 			return Class.forName(className);
@@ -52,13 +56,10 @@ public class SubListSerializers {
 		}
 	}
 
-	// Workaround reference reading, this should be removed sometimes. See also
-	// https://groups.google.com/d/msg/kryo-users/Eu5V4bxCfws/k-8UQ22y59AJ
-	private static final Object FAKE_REFERENCE = new Object();
-
 	/**
 	 * Obtain a serializer for the given sublist type. If the type is not supported
 	 * <code>null</code> is returned.
+	 *
 	 * @param type the class of the sublist.
 	 * @return a serializer instance or <code>null</code>.
 	 */
@@ -112,8 +113,7 @@ public class SubListSerializers {
 		/**
 		 * Can be used to determine, if the given type can be handled by this serializer.
 		 *
-		 * @param type
-		 *            the class to check.
+		 * @param type the class to check.
 		 * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
 		 */
 		public static boolean canSerialize(final Class<?> type) {
@@ -197,8 +197,7 @@ public class SubListSerializers {
 		/**
 		 * Can be used to determine, if the given type can be handled by this serializer.
 		 *
-		 * @param type
-		 *            the class to check.
+		 * @param type the class to check.
 		 * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
 		 */
 		public static boolean canSerialize(final Class<?> type) {

@@ -24,11 +24,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
+import com.google.common.collect.*;
 
 /**
  * Test for {@link ImmutableListSerializer}.

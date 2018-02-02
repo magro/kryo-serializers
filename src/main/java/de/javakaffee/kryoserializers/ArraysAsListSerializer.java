@@ -48,6 +48,29 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
 		}
 	}
 
+	private static Class<?> getPrimitiveWrapperClass(final Class<?> c) {
+		if (c.isPrimitive()) {
+			if (c.equals(Long.TYPE)) {
+				return Long.class;
+			} else if (c.equals(Integer.TYPE)) {
+				return Integer.class;
+			} else if (c.equals(Double.TYPE)) {
+				return Double.class;
+			} else if (c.equals(Float.TYPE)) {
+				return Float.class;
+			} else if (c.equals(Boolean.TYPE)) {
+				return Boolean.class;
+			} else if (c.equals(Character.TYPE)) {
+				return Character.class;
+			} else if (c.equals(Short.TYPE)) {
+				return Short.class;
+			} else if (c.equals(Byte.TYPE)) {
+				return Byte.class;
+			}
+		}
+		return c;
+	}
+
 	@Override
 	public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> type) {
 		final int length = input.readInt(true);
@@ -95,28 +118,5 @@ public class ArraysAsListSerializer extends Serializer<List<?>> {
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private static Class<?> getPrimitiveWrapperClass(final Class<?> c) {
-		if (c.isPrimitive()) {
-			if (c.equals(Long.TYPE)) {
-				return Long.class;
-			} else if (c.equals(Integer.TYPE)) {
-				return Integer.class;
-			} else if (c.equals(Double.TYPE)) {
-				return Double.class;
-			} else if (c.equals(Float.TYPE)) {
-				return Float.class;
-			} else if (c.equals(Boolean.TYPE)) {
-				return Boolean.class;
-			} else if (c.equals(Character.TYPE)) {
-				return Character.class;
-			} else if (c.equals(Short.TYPE)) {
-				return Short.class;
-			} else if (c.equals(Byte.TYPE)) {
-				return Byte.class;
-			}
-		}
-		return c;
 	}
 }

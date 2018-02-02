@@ -41,14 +41,6 @@ public class UnicodeBlockSerializerTest {
 	private static final String NONEXISTENT_BLOCK_NAME = "RURITANIAN";
 	private Kryo kryo;
 
-	private static class ThingWithUnicodeBlock {
-		final UnicodeBlock unicodeBlock;
-
-		private ThingWithUnicodeBlock(UnicodeBlock unicodeBlock) {
-			this.unicodeBlock = unicodeBlock;
-		}
-	}
-
 	@BeforeTest
 	protected void beforeTest() {
 		kryo = new Kryo();
@@ -75,5 +67,13 @@ public class UnicodeBlockSerializerTest {
 	public void testCopyContainingObject() {
 		ThingWithUnicodeBlock original = new ThingWithUnicodeBlock(UnicodeBlock.GREEK);
 		assertSame(kryo.copy(original).unicodeBlock, UnicodeBlock.GREEK);
+	}
+
+	private static class ThingWithUnicodeBlock {
+		final UnicodeBlock unicodeBlock;
+
+		private ThingWithUnicodeBlock(UnicodeBlock unicodeBlock) {
+			this.unicodeBlock = unicodeBlock;
+		}
 	}
 }

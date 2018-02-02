@@ -39,7 +39,8 @@ public class LinkedListMultimapSerializerTest extends MultimapSerializerTestBase
 		final LinkedListMultimap<Object, Object> multimap = LinkedListMultimap.create();
 		populateMultimap(multimap, contents);
 		final byte[] serialized = KryoTest.serialize(_kryo, multimap);
-		final LinkedListMultimap<Object, Object> deserialized = KryoTest.deserialize(_kryo, serialized, LinkedListMultimap.class);
+		final LinkedListMultimap<Object, Object> deserialized =
+				KryoTest.deserialize(_kryo, serialized, LinkedListMultimap.class);
 		assertEqualMultimaps(true, true, deserialized, multimap);
 	}
 }

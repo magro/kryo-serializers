@@ -1,4 +1,6 @@
-package ProtocolBuffers; // the namespace for the compiled classes
+syntax = "proto2";
+
+package de.javakaffee.kryoserializers.protobuf; // the namespace for the compiled classes
 
 option java_package = "de.javakaffee.kryoserializers.protobuf";
 option java_outer_classname = "SampleProtoAOuterClass";

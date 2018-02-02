@@ -39,18 +39,6 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
 	}
 
-	@Override
-	public void write(Kryo kryo, Output output, ImmutableSortedMap<Object, ? extends Object> immutableMap) {
-		kryo.writeObject(output, Maps.newTreeMap(immutableMap));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableSortedMap<Object, ? extends Object>> type) {
-		Map map = kryo.readObject(input, TreeMap.class);
-		return ImmutableSortedMap.copyOf(map);
-	}
-
 	/**
 	 * Creates a new {@link ImmutableSortedMapSerializer} and registers its serializer
 	 * for the several ImmutableMap related classes.
@@ -88,6 +76,19 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
 		}
 
 		kryo.register(ImmutableSortedMap.copyOf(enumMap).getClass(), serializer);
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, ImmutableSortedMap<Object, ? extends Object> immutableMap) {
+		kryo.writeObject(output, Maps.newTreeMap(immutableMap));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input,
+			Class<ImmutableSortedMap<Object, ? extends Object>> type) {
+		Map map = kryo.readObject(input, TreeMap.class);
+		return ImmutableSortedMap.copyOf(map);
 	}
 
 	private enum DummyEnum {

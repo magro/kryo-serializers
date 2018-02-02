@@ -16,9 +16,7 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -33,24 +31,6 @@ import com.esotericsoftware.kryo.Kryo;
  * A test case for the {@link EnumMapSerializer}.
  */
 public class EnumMapSerializerTest {
-	private static enum Vipers {
-		SNAKE_CHARMER,
-		BLACK_MAMBA,
-		COTTONMOUTH,
-		COPPERHEAD,
-		CALIFORNIA_MOUNTAIN_SNAKE,
-		SIDEWINDER;
-	}
-
-	private static enum Colors {
-		BLUE,
-		ORANGE,
-		PINK,
-		WHITE,
-		BROWN,
-		BLONDE;
-	}
-
 	private Kryo _kryo;
 	private EnumMap<Vipers, Set<String>> _original;
 
@@ -61,8 +41,8 @@ public class EnumMapSerializerTest {
 		_original = new EnumMap<Vipers, Set<String>>(Vipers.class);
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Test(expectedExceptions = {ClassCastException.class})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test(expectedExceptions = { ClassCastException.class })
 	public void testCopyEmpty() throws Exception {
 		EnumMap copy = _kryo.copy(_original);
 		// The next statement asserts that the key type of the copy is initialized correctly -
@@ -82,5 +62,23 @@ public class EnumMapSerializerTest {
 		assertTrue(copy.containsKey(Vipers.BLACK_MAMBA));
 		assertNotSame(_original.get(Vipers.BLACK_MAMBA), copy.get(Vipers.BLACK_MAMBA));
 		assertEquals(_original, copy);
+	}
+
+	private static enum Vipers {
+		SNAKE_CHARMER,
+		BLACK_MAMBA,
+		COTTONMOUTH,
+		COPPERHEAD,
+		CALIFORNIA_MOUNTAIN_SNAKE,
+		SIDEWINDER;
+	}
+
+	private static enum Colors {
+		BLUE,
+		ORANGE,
+		PINK,
+		WHITE,
+		BROWN,
+		BLONDE;
 	}
 }

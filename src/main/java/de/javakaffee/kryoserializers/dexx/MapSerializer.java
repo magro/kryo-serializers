@@ -29,7 +29,7 @@ import com.github.andrewoma.dexx.collection.Maps;
 import com.github.andrewoma.dexx.collection.Pair;
 
 /**
-* A kryo {@link Serializer} for dexx {@link Map}
+ * A kryo {@link Serializer} for dexx {@link Map}
  */
 public class MapSerializer extends Serializer<Map<Object, ?>> {
 
@@ -38,25 +38,6 @@ public class MapSerializer extends Serializer<Map<Object, ?>> {
 
 	public MapSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
-	}
-
-	@Override
-	public void write(Kryo kryo, Output output, Map<Object, ?> immutableMap) {
-		kryo.writeObject(output, immutableMap.asMap());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Map<Object, Object> read(Kryo kryo, Input input, Class<Map<Object, ?>> type) {
-		HashMap<Object, Object> map = kryo.readObject(input, HashMap.class);
-		ArrayList<Pair<Object, Object>> listOfPairs = new ArrayList();
-
-		for (Entry<Object, Object> entry : map.entrySet()) {
-			Pair pair = new Pair(entry.getKey(), entry.getValue());
-			listOfPairs.add(pair);
-		}
-
-		return Maps.copyOf(listOfPairs);
 	}
 
 	/**
@@ -84,5 +65,24 @@ public class MapSerializer extends Serializer<Map<Object, ?>> {
 		kryo.register(Maps.of(o1, o1, o2, o2, o3, o3, o4, o4).getClass(), serializer);
 		kryo.register(Maps.of(o1, o1, o2, o2, o3, o3, o4, o4, o5, o5).getClass(), serializer);
 
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, Map<Object, ?> immutableMap) {
+		kryo.writeObject(output, immutableMap.asMap());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<Object, Object> read(Kryo kryo, Input input, Class<Map<Object, ?>> type) {
+		HashMap<Object, Object> map = kryo.readObject(input, HashMap.class);
+		ArrayList<Pair<Object, Object>> listOfPairs = new ArrayList();
+
+		for (Entry<Object, Object> entry : map.entrySet()) {
+			Pair pair = new Pair(entry.getKey(), entry.getValue());
+			listOfPairs.add(pair);
+		}
+
+		return Maps.copyOf(listOfPairs);
 	}
 }

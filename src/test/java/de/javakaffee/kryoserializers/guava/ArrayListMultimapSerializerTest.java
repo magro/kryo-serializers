@@ -39,7 +39,8 @@ public class ArrayListMultimapSerializerTest extends MultimapSerializerTestBase 
 		final ArrayListMultimap<Object, Object> multimap = ArrayListMultimap.create();
 		populateMultimap(multimap, contents);
 		final byte[] serialized = KryoTest.serialize(_kryo, multimap);
-		final ArrayListMultimap<Object, Object> deserialized = KryoTest.deserialize(_kryo, serialized, ArrayListMultimap.class);
+		final ArrayListMultimap<Object, Object> deserialized =
+				KryoTest.deserialize(_kryo, serialized, ArrayListMultimap.class);
 		assertEqualMultimaps(false, true, deserialized, multimap);
 	}
 }

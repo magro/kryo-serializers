@@ -27,7 +27,8 @@ import com.google.common.collect.TreeMultimap;
  * The default comparator is assumed so the multimaps are not null-safe.
  * This does not yet support {@link Kryo#copy(java.lang.Object)}.
  */
-public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, Comparable, TreeMultimap<Comparable, Comparable>> {
+public class TreeMultimapSerializer
+		extends MultimapSerializerBase<Comparable, Comparable, TreeMultimap<Comparable, Comparable>> {
 
 	/* assumes default comparator */
 	private static final boolean DOES_NOT_ACCEPT_NULL = true;
@@ -36,6 +37,16 @@ public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, C
 
 	public TreeMultimapSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
+	}
+
+	/**
+	 * Creates a new {@link TreeMultimapSerializer} and registers its serializer.
+	 *
+	 * @param kryo the {@link Kryo} instance to set the serializer on
+	 */
+	public static void registerSerializers(final Kryo kryo) {
+		final TreeMultimapSerializer serializer = new TreeMultimapSerializer();
+		kryo.register(TreeMultimap.class, serializer);
 	}
 
 	@Override
@@ -48,15 +59,5 @@ public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, C
 		final TreeMultimap<Comparable, Comparable> multimap = TreeMultimap.create();
 		readMultimap(kryo, input, multimap);
 		return multimap;
-	}
-
-	/**
-	 * Creates a new {@link TreeMultimapSerializer} and registers its serializer.
-	 *
-	 * @param kryo the {@link Kryo} instance to set the serializer on
-	 */
-	public static void registerSerializers(final Kryo kryo) {
-		final TreeMultimapSerializer serializer = new TreeMultimapSerializer();
-		kryo.register(TreeMultimap.class, serializer);
 	}
 }

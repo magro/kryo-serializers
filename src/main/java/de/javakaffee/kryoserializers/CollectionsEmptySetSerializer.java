@@ -43,5 +43,6 @@ public class CollectionsEmptySetSerializer extends Serializer<Set<?>> {
 	}
 
 	@Override
-	public void write(final Kryo kryo, final Output output, final Set<?> object) {}
+	public void write(final Kryo kryo, final Output output, final Set<?> object) {
+	}
 }

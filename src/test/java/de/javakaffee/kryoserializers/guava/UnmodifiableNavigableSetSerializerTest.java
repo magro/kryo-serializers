@@ -18,10 +18,7 @@ package de.javakaffee.kryoserializers.guava;
 
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -36,10 +33,16 @@ import com.google.common.collect.Sets;
 /**
  * Test for {@link ImmutableSortedSetSerializer}.
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class UnmodifiableNavigableSetSerializerTest {
 
+	Class<NavigableSet> unmodifiableClass;
+	UnmodifiableNavigableSetSerializer forUnwrapping = new UnmodifiableNavigableSetSerializer();
 	private Kryo _kryo;
+
+	{
+		unmodifiableClass = (Class<NavigableSet>) Sets.unmodifiableNavigableSet(new TreeSet()).getClass();
+	}
 
 	@BeforeTest
 	public void setUp() {
@@ -48,17 +51,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		UnmodifiableNavigableSetSerializer.registerSerializers(_kryo);
 	}
 
-	Class<NavigableSet> unmodifiableClass;
-	{
-		unmodifiableClass = (Class<NavigableSet>) Sets.unmodifiableNavigableSet(new TreeSet()).getClass();
-	}
-
-	UnmodifiableNavigableSetSerializer forUnwrapping = new UnmodifiableNavigableSetSerializer();
-
 	private void assertUnderlyingSet(NavigableSet<String> deserialized, Class<?> class1) {
-		assertEquals(
-				forUnwrapping.getDelegateFromUnmodifiableNavigableSet(deserialized).getClass(),
-				class1,
+		assertEquals(forUnwrapping.getDelegateFromUnmodifiableNavigableSet(deserialized).getClass(), class1,
 				"Expected underlying class to match");
 	}
 
@@ -74,7 +68,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			deserialized.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(deserialized, coreSet.getClass());
 	}
 
@@ -90,7 +85,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			deserialized.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(deserialized, coreSet.getClass());
 	}
 
@@ -111,7 +107,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			deserialized.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(deserialized, coreSet.getClass());
 	}
 
@@ -132,7 +129,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			deserialized.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(deserialized, coreSet.getClass());
 	}
 
@@ -150,7 +148,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			copied.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(copied, coreSet.getClass());
 	}
 
@@ -166,7 +165,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			copied.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(copied, coreSet.getClass());
 	}
 
@@ -187,7 +187,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			copied.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(copied, coreSet.getClass());
 	}
 
@@ -208,7 +209,8 @@ public class UnmodifiableNavigableSetSerializerTest {
 		try {
 			copied.add("a");
 			fail("Should have been unable to add a field to an unmodifiable collection post deserialization");
-		} catch (UnsupportedOperationException expected) {}
+		} catch (UnsupportedOperationException expected) {
+		}
 		assertUnderlyingSet(copied, coreSet.getClass());
 	}
 }

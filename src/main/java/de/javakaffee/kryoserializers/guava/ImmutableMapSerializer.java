@@ -39,18 +39,6 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ?>> 
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
 	}
 
-	@Override
-	public void write(Kryo kryo, Output output, ImmutableMap<Object, ?> immutableMap) {
-		kryo.writeObject(output, Maps.newHashMap(immutableMap));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMap<Object, ?>> type) {
-		Map map = kryo.readObject(input, HashMap.class);
-		return ImmutableMap.copyOf(map);
-	}
-
 	/**
 	 * Creates a new {@link ImmutableMapSerializer} and registers its serializer
 	 * for the several ImmutableMap related classes.
@@ -76,6 +64,18 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ?>> 
 		}
 
 		kryo.register(ImmutableMap.copyOf(enumMap).getClass(), serializer);
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, ImmutableMap<Object, ?> immutableMap) {
+		kryo.writeObject(output, Maps.newHashMap(immutableMap));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMap<Object, ?>> type) {
+		Map map = kryo.readObject(input, HashMap.class);
+		return ImmutableMap.copyOf(map);
 	}
 
 	private enum DummyEnum {

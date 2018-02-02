@@ -39,10 +39,10 @@ public class JdkProxySerializer extends Serializer<Object> {
 		try {
 			return Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
 		} catch (final RuntimeException e) {
-			System.err.println(getClass().getName() + ".read:\n" +
-					"Could not create proxy using classLoader " + classLoader + "," +
-					" have invocationhandler.classloader: " + invocationHandler.getClass().getClassLoader() +
-					" have contextclassloader: " + Thread.currentThread().getContextClassLoader());
+			System.err.println(
+					getClass().getName() + ".read:\n" + "Could not create proxy using classLoader " + classLoader + ","
+							+ " have invocationhandler.classloader: " + invocationHandler.getClass().getClassLoader()
+							+ " have contextclassloader: " + Thread.currentThread().getContextClassLoader());
 			throw e;
 		}
 	}

@@ -33,7 +33,9 @@ import com.esotericsoftware.kryo.io.Output;
  * @author <a href="mailto:seahen123@gmail.com">Chris Hennick</a>
  */
 public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
-	private static final IdentityHashMap<UnicodeBlock, String> BLOCK_NAMES = new IdentityHashMap<UnicodeBlock, String>();
+	private static final IdentityHashMap<UnicodeBlock, String> BLOCK_NAMES =
+			new IdentityHashMap<UnicodeBlock, String>();
+
 	static {
 		// Reflectively look up the instances and their names, which are in UnicodeBlock's static
 		// fields (necessary since UnicodeBlock isn't an actual enum)
@@ -77,8 +79,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
 	}
 
 	@Override
-	public UnicodeBlock read(final Kryo kryo, final Input input,
-			final Class<UnicodeBlock> unicodeBlockClass) {
+	public UnicodeBlock read(final Kryo kryo, final Input input, final Class<UnicodeBlock> unicodeBlockClass) {
 		String name = input.readString();
 		return (name == null) ? null : UnicodeBlock.forName(name);
 	}

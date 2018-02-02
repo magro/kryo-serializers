@@ -87,8 +87,8 @@ public class MiniMapSerializerTest {
 		deserialized.put("bar", "baz");
 		try {
 			deserialized.put("this should", "fail");
-			Assert.fail("We told the orig MiniMap to accept 2 entries at max," +
-					" therefore we should not be allowed to put more.");
+			Assert.fail("We told the orig MiniMap to accept 2 entries at max,"
+					+ " therefore we should not be allowed to put more.");
 		} catch (final RuntimeException e) {
 			// this is expected - didn't use @Test.expectedExceptions
 			// as this would tie us to the exactly thrown exception

@@ -18,9 +18,7 @@ package de.javakaffee.kryoserializers.guava;
 
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.EnumMap;
 
@@ -31,13 +29,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.google.common.collect.ImmutableSortedMap;
 
 public class ImmutableSortedMapSerializerTest {
-
-	private enum Planet {
-		MERCURY,
-		VENUS,
-		EARTH,
-		MARS;
-	}
 
 	private Kryo _kryo;
 
@@ -93,14 +84,14 @@ public class ImmutableSortedMapSerializerTest {
 		assertEquals(deserialized, immutableObj);
 	}
 
-	// Kryo#copy tests
-
 	@Test
 	public void testCopyEmpty() {
 		final ImmutableSortedMap<?, ?> obj = ImmutableSortedMap.of();
 		final ImmutableSortedMap<?, ?> copied = _kryo.copy(obj);
 		assertSame(copied, obj);
 	}
+
+	// Kryo#copy tests
 
 	@Test
 	public void testCopySingleton() {
@@ -114,6 +105,13 @@ public class ImmutableSortedMapSerializerTest {
 		final ImmutableSortedMap<?, ?> obj = ImmutableSortedMap.of(1, 2, 3, 4);
 		final ImmutableSortedMap<?, ?> copied = _kryo.copy(obj);
 		assertSame(copied, obj);
+	}
+
+	private enum Planet {
+		MERCURY,
+		VENUS,
+		EARTH,
+		MARS;
 	}
 
 }

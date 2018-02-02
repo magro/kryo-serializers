@@ -26,7 +26,8 @@ import com.google.common.collect.ArrayListMultimap;
  * A kryo {@link Serializer} for guava-libraries {@link ArrayListMultimap}.
  * This does not yet support {@link Kryo#copy(java.lang.Object)}.
  */
-public class ArrayListMultimapSerializer extends MultimapSerializerBase<Object, Object, ArrayListMultimap<Object, Object>> {
+public class ArrayListMultimapSerializer
+		extends MultimapSerializerBase<Object, Object, ArrayListMultimap<Object, Object>> {
 
 	private static final boolean DOES_NOT_ACCEPT_NULL = false;
 
@@ -34,6 +35,16 @@ public class ArrayListMultimapSerializer extends MultimapSerializerBase<Object, 
 
 	public ArrayListMultimapSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
+	}
+
+	/**
+	 * Creates a new {@link ArrayListMultimapSerializer} and registers its serializer.
+	 *
+	 * @param kryo the {@link Kryo} instance to set the serializer on
+	 */
+	public static void registerSerializers(final Kryo kryo) {
+		final ArrayListMultimapSerializer serializer = new ArrayListMultimapSerializer();
+		kryo.register(ArrayListMultimap.class, serializer);
 	}
 
 	@Override
@@ -46,15 +57,5 @@ public class ArrayListMultimapSerializer extends MultimapSerializerBase<Object, 
 		final ArrayListMultimap<Object, Object> multimap = ArrayListMultimap.create();
 		readMultimap(kryo, input, multimap);
 		return multimap;
-	}
-
-	/**
-	 * Creates a new {@link ArrayListMultimapSerializer} and registers its serializer.
-	 *
-	 * @param kryo the {@link Kryo} instance to set the serializer on
-	 */
-	public static void registerSerializers(final Kryo kryo) {
-		final ArrayListMultimapSerializer serializer = new ArrayListMultimapSerializer();
-		kryo.register(ArrayListMultimap.class, serializer);
 	}
 }

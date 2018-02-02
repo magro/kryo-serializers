@@ -36,6 +36,19 @@ public abstract class ReverseListSerializer extends Serializer<List<Object>> {
 
 	private static final CollectionSerializer serializer = new CollectionSerializer();
 
+	public static void registerSerializers(final Kryo kryo) {
+		kryo.register(Lists.reverse(Lists.newLinkedList()).getClass(), forReverseList());
+		kryo.register(Lists.reverse(Lists.newArrayList()).getClass(), forRandomAccessReverseList());
+	}
+
+	public static ReverseListSerializer forReverseList() {
+		return new ReverseListSerializer.ReverseList();
+	}
+
+	public static ReverseListSerializer forRandomAccessReverseList() {
+		return new ReverseListSerializer.RandomAccessReverseList();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void write(Kryo kryo, Output output, List<Object> object) {
@@ -49,19 +62,6 @@ public abstract class ReverseListSerializer extends Serializer<List<Object>> {
 	public List<Object> copy(Kryo kryo, List<Object> original) {
 		List forwardList = Lists.reverse(original);
 		return Lists.reverse((List<Object>) serializer.copy(kryo, forwardList));
-	}
-
-	public static void registerSerializers(final Kryo kryo) {
-		kryo.register(Lists.reverse(Lists.newLinkedList()).getClass(), forReverseList());
-		kryo.register(Lists.reverse(Lists.newArrayList()).getClass(), forRandomAccessReverseList());
-	}
-
-	public static ReverseListSerializer forReverseList() {
-		return new ReverseListSerializer.ReverseList();
-	}
-
-	public static ReverseListSerializer forRandomAccessReverseList() {
-		return new ReverseListSerializer.RandomAccessReverseList();
 	}
 
 	/**

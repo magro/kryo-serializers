@@ -33,9 +33,10 @@ import java.util.Set;
  * request to the parent.
  *
  * @see <a href="http://www.javablogging.com/java-classloader-2-write-your-own-classloader/">Java ClassLoader (2) – Write your own ClassLoader</a>
- *
  */
 public class CustomClassLoader extends ClassLoader {
+
+	private final Set<String> _definedClasses = new HashSet<String>();
 
 	/**
 	 * Parent ClassLoader passed to this constructor
@@ -43,7 +44,7 @@ public class CustomClassLoader extends ClassLoader {
 	 * particular class.
 	 *
 	 * @param parent Parent ClassLoader
-	 *              (may be from getClass().getClassLoader())
+	 *               (may be from getClass().getClassLoader())
 	 */
 	public CustomClassLoader(final ClassLoader parent) {
 		super(parent);
@@ -57,14 +58,12 @@ public class CustomClassLoader extends ClassLoader {
 	 *
 	 * @param name Full class name
 	 */
-	private Class<?> getClass(final String name)
-			throws ClassNotFoundException {
+	private Class<?> getClass(final String name) throws ClassNotFoundException {
 		// We are getting a name that looks like
 		// javablogging.package.ClassToLoad
 		// and we have to convert it into the .class file name
 		// like javablogging/package/ClassToLoad.class
-		final String file = name.replace('.', File.separatorChar)
-				+ ".class";
+		final String file = name.replace('.', File.separatorChar) + ".class";
 		byte[] b = null;
 		try {
 			// This loads the byte code data from the file
@@ -88,12 +87,10 @@ public class CustomClassLoader extends ClassLoader {
 	 * If not, it will use the super.loadClass() method
 	 * which in turn will pass the request to the parent.
 	 *
-	 * @param name
-	 *            Full class name
+	 * @param name Full class name
 	 */
 	@Override
-	public Class<?> loadClass(final String name)
-			throws ClassNotFoundException {
+	public Class<?> loadClass(final String name) throws ClassNotFoundException {
 		System.out.println("loading class '" + name + "'");
 		if (name.startsWith(getClass().getPackage().getName()) && !_definedClasses.contains(name)) {
 			System.out.println("-> custom loading class '" + name + "'");
@@ -103,8 +100,6 @@ public class CustomClassLoader extends ClassLoader {
 		return super.loadClass(name);
 	}
 
-	private final Set<String> _definedClasses = new HashSet<String>();
-
 	/**
 	 * Loads a given file (presumably .class) into a byte array.
 	 * The file should be accessible as a resource, for example
@@ -113,12 +108,11 @@ public class CustomClassLoader extends ClassLoader {
 	 * @param name File name to load
 	 * @return Byte array read from the file
 	 * @throws IOException Is thrown when there
-	 *               was some problem reading the file
+	 *                     was some problem reading the file
 	 */
 	private byte[] loadClassData(final String name) throws IOException {
 		// Opening the file
-		final InputStream stream = getClass().getClassLoader()
-				.getResourceAsStream(name);
+		final InputStream stream = getClass().getClassLoader().getResourceAsStream(name);
 		final int size = stream.available();
 		final byte buff[] = new byte[size];
 		final DataInputStream in = new DataInputStream(stream);

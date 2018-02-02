@@ -32,7 +32,7 @@ import com.esotericsoftware.kryo.io.Output;
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class EnumSetSerializer extends Serializer<EnumSet<? extends Enum<?>>> {
 
 	private static final Field TYPE_FIELD;

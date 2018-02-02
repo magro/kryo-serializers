@@ -28,7 +28,7 @@ import com.github.andrewoma.dexx.collection.Map;
 import com.github.andrewoma.dexx.collection.Maps;
 
 /**
-* Test for {@link MapSerializer}
+ * Test for {@link MapSerializer}
  */
 public class MapSerializerTest {
 

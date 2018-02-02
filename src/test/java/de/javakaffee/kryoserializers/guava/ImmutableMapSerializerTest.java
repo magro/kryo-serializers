@@ -33,13 +33,6 @@ import com.google.common.collect.ImmutableMap;
  */
 public class ImmutableMapSerializerTest {
 
-	private enum Planet {
-		MERCURY,
-		VENUS,
-		EARTH,
-		MARS;
-	}
-
 	private Kryo _kryo;
 
 	@BeforeTest
@@ -87,14 +80,14 @@ public class ImmutableMapSerializerTest {
 		assertEquals(deserialized, immutableObj);
 	}
 
-	// Kryo#copy tests
-
 	@Test
 	public void testCopyEmpty() {
 		final ImmutableMap<?, ?> obj = ImmutableMap.of();
 		final ImmutableMap<?, ?> copied = _kryo.copy(obj);
 		assertSame(copied, obj);
 	}
+
+	// Kryo#copy tests
 
 	@Test
 	public void testCopySingleton() {
@@ -108,6 +101,13 @@ public class ImmutableMapSerializerTest {
 		final ImmutableMap<?, ?> obj = ImmutableMap.of(1, 2, 3, 4);
 		final ImmutableMap<?, ?> copied = _kryo.copy(obj);
 		assertSame(copied, obj);
+	}
+
+	private enum Planet {
+		MERCURY,
+		VENUS,
+		EARTH,
+		MARS;
 	}
 
 }

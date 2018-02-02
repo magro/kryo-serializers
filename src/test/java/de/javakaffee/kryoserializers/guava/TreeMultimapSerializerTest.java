@@ -36,10 +36,11 @@ public class TreeMultimapSerializerTest extends MultimapSerializerTestBase {
 
 	@Test(dataProvider = "Google Guava multimaps (no nulls)")
 	public void testMultimap(Object[] contents) {
-		final TreeMultimap<Comparable, Comparable> multimap = TreeMultimap.<Comparable, Comparable> create();
+		final TreeMultimap<Comparable, Comparable> multimap = TreeMultimap.<Comparable, Comparable>create();
 		populateMultimap(multimap, contents);
 		final byte[] serialized = KryoTest.serialize(_kryo, multimap);
-		final TreeMultimap<Comparable, Comparable> deserialized = KryoTest.deserialize(_kryo, serialized, TreeMultimap.class);
+		final TreeMultimap<Comparable, Comparable> deserialized =
+				KryoTest.deserialize(_kryo, serialized, TreeMultimap.class);
 		assertEqualMultimaps(true, true, deserialized, multimap);
 	}
 }

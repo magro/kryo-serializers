@@ -30,7 +30,6 @@ import com.esotericsoftware.kryo.Kryo;
 
 /**
  * Test for {@link JodaIntervalSerializer}.
- *
  */
 public class JodaIntervalSerializerTest {
 

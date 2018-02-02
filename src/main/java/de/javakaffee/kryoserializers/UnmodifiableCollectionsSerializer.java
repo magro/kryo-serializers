@@ -37,8 +37,8 @@ public class UnmodifiableCollectionsSerializer extends Serializer<Object> {
 
 	static {
 		try {
-			SOURCE_COLLECTION_FIELD = Class.forName("java.util.Collections$UnmodifiableCollection")
-					.getDeclaredField("c");
+			SOURCE_COLLECTION_FIELD =
+					Class.forName("java.util.Collections$UnmodifiableCollection").getDeclaredField("c");
 			SOURCE_COLLECTION_FIELD.setAccessible(true);
 
 			SOURCE_MAP_FIELD = Class.forName("java.util.Collections$UnmodifiableMap").getDeclaredField("m");
@@ -98,8 +98,8 @@ public class UnmodifiableCollectionsSerializer extends Serializer<Object> {
 	@Override
 	public Object copy(Kryo kryo, Object original) {
 		try {
-			final UnmodifiableCollection unmodifiableCollection = UnmodifiableCollection
-					.valueOfType(original.getClass());
+			final UnmodifiableCollection unmodifiableCollection =
+					UnmodifiableCollection.valueOfType(original.getClass());
 			Object sourceCollectionCopy = kryo.copy(unmodifiableCollection.sourceCollectionField.get(original));
 			return unmodifiableCollection.create(sourceCollectionCopy);
 		} catch (final RuntimeException e) {

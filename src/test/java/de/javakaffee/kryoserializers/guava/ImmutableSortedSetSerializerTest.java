@@ -18,9 +18,7 @@ package de.javakaffee.kryoserializers.guava;
 
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

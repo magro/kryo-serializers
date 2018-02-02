@@ -19,7 +19,9 @@ package de.javakaffee.kryoserializers.jodatime;
 import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
 
-import org.joda.time.*;
+import org.joda.time.Chronology;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalTime;
 import org.joda.time.chrono.GregorianChronology;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;

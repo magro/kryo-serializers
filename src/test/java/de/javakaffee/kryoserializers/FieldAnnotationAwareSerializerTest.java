@@ -17,16 +17,9 @@
 package de.javakaffee.kryoserializers;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -68,8 +61,9 @@ public class FieldAnnotationAwareSerializerTest {
 
 		final Kryo kryo = new Kryo();
 		@SuppressWarnings("unchecked")
-		final SerializerFactory disregardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
-				Arrays.<Class<? extends Annotation>> asList(CustomMark.class), true);
+		final SerializerFactory disregardingSerializerFactory =
+				new FieldAnnotationAwareSerializer.Factory(Arrays.<Class<? extends Annotation>>asList(CustomMark.class),
+						true);
 		kryo.addDefaultSerializer(CustomBean.class, disregardingSerializerFactory);
 
 		final byte[] buffer = makeBuffer();
@@ -94,8 +88,9 @@ public class FieldAnnotationAwareSerializerTest {
 
 		final Kryo kryo = new Kryo();
 		@SuppressWarnings("unchecked")
-		final SerializerFactory regardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
-				Arrays.<Class<? extends Annotation>> asList(CustomMark.class), false);
+		final SerializerFactory regardingSerializerFactory =
+				new FieldAnnotationAwareSerializer.Factory(Arrays.<Class<? extends Annotation>>asList(CustomMark.class),
+						false);
 		kryo.addDefaultSerializer(CustomBean.class, regardingSerializerFactory);
 
 		final byte[] buffer = makeBuffer();
@@ -113,6 +108,11 @@ public class FieldAnnotationAwareSerializerTest {
 		assertTrue(decodedBuffer.contains(outputBean.getFirstValue()));
 		assertFalse(decodedBuffer.contains(outputBean.getSecondValue()));
 		assertNull(inputBean.getSecondValue());
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	private static @interface CustomMark {
 	}
 
 	private static class CustomBean {
@@ -138,8 +138,4 @@ public class FieldAnnotationAwareSerializerTest {
 			this.firstValue = firstValue;
 		}
 	}
-
-	@Target(ElementType.FIELD)
-	@Retention(RetentionPolicy.RUNTIME)
-	private static @interface CustomMark {}
 }

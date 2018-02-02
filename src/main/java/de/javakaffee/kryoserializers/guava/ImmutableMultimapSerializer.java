@@ -24,12 +24,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.*;
 
 /**
  * A kryo {@link Serializer} for guava-libraries {@link ImmutableMultimap}.
@@ -41,33 +36,6 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
 
 	public ImmutableMultimapSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
-	}
-
-	@Override
-	public void write(Kryo kryo, Output output, ImmutableMultimap<Object, Object> immutableMultiMap) {
-		kryo.writeObject(output, ImmutableMap.copyOf(immutableMultiMap.asMap()));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMultimap<Object, Object>> type) {
-		final ImmutableMultimap.Builder builder;
-		if (type.equals(ImmutableListMultimap.class)) {
-			builder = ImmutableMultimap.builder();
-		} else if (type.equals(ImmutableSetMultimap.class)) {
-			builder = ImmutableSetMultimap.builder();
-		} else {
-			builder = ImmutableMultimap.builder();
-		}
-
-		final Map map = kryo.readObject(input, ImmutableMap.class);
-		final Set<Map.Entry<Object, List<?>>> entries = map.entrySet();
-
-		for (Map.Entry<Object, List<?>> entry : entries) {
-			builder.putAll(entry.getKey(), entry.getValue());
-		}
-
-		return builder.build();
 	}
 
 	/**
@@ -114,5 +82,33 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
 		kryo.register(ImmutableListMultimap.of("A", "B").getClass(), serializer);
 		kryo.register(ImmutableSetMultimap.of().getClass(), serializer);
 		kryo.register(ImmutableSetMultimap.of("A", "B").getClass(), serializer);
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, ImmutableMultimap<Object, Object> immutableMultiMap) {
+		kryo.writeObject(output, ImmutableMap.copyOf(immutableMultiMap.asMap()));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input,
+			Class<ImmutableMultimap<Object, Object>> type) {
+		final ImmutableMultimap.Builder builder;
+		if (type.equals(ImmutableListMultimap.class)) {
+			builder = ImmutableMultimap.builder();
+		} else if (type.equals(ImmutableSetMultimap.class)) {
+			builder = ImmutableSetMultimap.builder();
+		} else {
+			builder = ImmutableMultimap.builder();
+		}
+
+		final Map map = kryo.readObject(input, ImmutableMap.class);
+		final Set<Map.Entry<Object, List<?>>> entries = map.entrySet();
+
+		for (Map.Entry<Object, List<?>> entry : entries) {
+			builder.putAll(entry.getKey(), entry.getValue());
+		}
+
+		return builder.build();
 	}
 }

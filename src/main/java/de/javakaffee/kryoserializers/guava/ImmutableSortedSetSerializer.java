@@ -36,26 +36,6 @@ public class ImmutableSortedSetSerializer extends Serializer<ImmutableSortedSet<
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
 	}
 
-	@Override
-	public void write(Kryo kryo, Output output, ImmutableSortedSet<Object> object) {
-		kryo.writeClassAndObject(output, object.comparator());
-		output.writeInt(object.size(), true);
-		for (Object elm : object) {
-			kryo.writeClassAndObject(output, elm);
-		}
-	}
-
-	@Override
-	public ImmutableSortedSet<Object> read(Kryo kryo, Input input, Class<ImmutableSortedSet<Object>> type) {
-		@SuppressWarnings("unchecked")
-		ImmutableSortedSet.Builder<Object> builder = ImmutableSortedSet.orderedBy((Comparator<Object>) kryo.readClassAndObject(input));
-		final int size = input.readInt(true);
-		for (int i = 0; i < size; ++i) {
-			builder.add(kryo.readClassAndObject(input));
-		}
-		return builder.build();
-	}
-
 	/**
 	 * Creates a new {@link ImmutableSortedSetSerializer} and registers its serializer
 	 * for the several ImmutableSortedSet related classes.
@@ -75,5 +55,26 @@ public class ImmutableSortedSetSerializer extends Serializer<ImmutableSortedSet<
 		kryo.register(ImmutableSortedSet.of().getClass(), serializer);
 		kryo.register(ImmutableSortedSet.of("").getClass(), serializer);
 		kryo.register(ImmutableSortedSet.of().descendingSet().getClass(), serializer);
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, ImmutableSortedSet<Object> object) {
+		kryo.writeClassAndObject(output, object.comparator());
+		output.writeInt(object.size(), true);
+		for (Object elm : object) {
+			kryo.writeClassAndObject(output, elm);
+		}
+	}
+
+	@Override
+	public ImmutableSortedSet<Object> read(Kryo kryo, Input input, Class<ImmutableSortedSet<Object>> type) {
+		@SuppressWarnings("unchecked")
+		ImmutableSortedSet.Builder<Object> builder =
+				ImmutableSortedSet.orderedBy((Comparator<Object>) kryo.readClassAndObject(input));
+		final int size = input.readInt(true);
+		for (int i = 0; i < size; ++i) {
+			builder.add(kryo.readClassAndObject(input));
+		}
+		return builder.build();
 	}
 }

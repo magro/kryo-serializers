@@ -25,8 +25,9 @@ import com.google.common.collect.Sets;
 
 /**
  * A kryo {@link Serializer} for guava-libraries {@link ImmutableSet}.
- *
+ * <p>
  * (the array.clone as done by copyOf is saved), for more elements copyOf seems to get more efficient.
+ *
  * @implNote ImmutableSet builder would be a little bit more efficient for less than five elements
  */
 public class ImmutableSetSerializer extends Serializer<ImmutableSet<Object>> {
@@ -36,24 +37,6 @@ public class ImmutableSetSerializer extends Serializer<ImmutableSet<Object>> {
 
 	public ImmutableSetSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
-	}
-
-	@Override
-	public void write(Kryo kryo, Output output, ImmutableSet<Object> object) {
-		output.writeInt(object.size(), true);
-		for (Object elm : object) {
-			kryo.writeClassAndObject(output, elm);
-		}
-	}
-
-	@Override
-	public ImmutableSet<Object> read(Kryo kryo, Input input, Class<ImmutableSet<Object>> type) {
-		final int size = input.readInt(true);
-		ImmutableSet.Builder<Object> builder = ImmutableSet.builder();
-		for (int i = 0; i < size; ++i) {
-			builder.add(kryo.readClassAndObject(input));
-		}
-		return builder.build();
 	}
 
 	/**
@@ -87,6 +70,24 @@ public class ImmutableSetSerializer extends Serializer<ImmutableSet<Object>> {
 		kryo.register(ImmutableSet.of(1, 2, 3).getClass(), serializer);
 
 		kryo.register(Sets.immutableEnumSet(SomeEnum.A, SomeEnum.B, SomeEnum.C).getClass(), serializer);
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, ImmutableSet<Object> object) {
+		output.writeInt(object.size(), true);
+		for (Object elm : object) {
+			kryo.writeClassAndObject(output, elm);
+		}
+	}
+
+	@Override
+	public ImmutableSet<Object> read(Kryo kryo, Input input, Class<ImmutableSet<Object>> type) {
+		final int size = input.readInt(true);
+		ImmutableSet.Builder<Object> builder = ImmutableSet.builder();
+		for (int i = 0; i < size; ++i) {
+			builder.add(kryo.readClassAndObject(input));
+		}
+		return builder.build();
 	}
 
 	private enum SomeEnum {

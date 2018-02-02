@@ -17,20 +17,7 @@
 package de.javakaffee.kryoserializers;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -50,16 +37,37 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
 
 	static {
 		try {
-			SOURCE_COLLECTION_FIELD = Class.forName("java.util.Collections$SynchronizedCollection")
-					.getDeclaredField("c");
+			SOURCE_COLLECTION_FIELD =
+					Class.forName("java.util.Collections$SynchronizedCollection").getDeclaredField("c");
 			SOURCE_COLLECTION_FIELD.setAccessible(true);
 
-			SOURCE_MAP_FIELD = Class.forName("java.util.Collections$SynchronizedMap")
-					.getDeclaredField("m");
+			SOURCE_MAP_FIELD = Class.forName("java.util.Collections$SynchronizedMap").getDeclaredField("m");
 			SOURCE_MAP_FIELD.setAccessible(true);
 		} catch (final Exception e) {
-			throw new RuntimeException("Could not access source collection" +
-					" field in java.util.Collections$SynchronizedCollection.", e);
+			throw new RuntimeException(
+					"Could not access source collection" + " field in java.util.Collections$SynchronizedCollection.",
+					e);
+		}
+	}
+
+	/**
+	 * Creates a new {@link SynchronizedCollectionsSerializer} and registers its serializer
+	 * for the several synchronized Collections that can be created via {@link Collections},
+	 * including {@link Map}s.
+	 *
+	 * @param kryo the {@link Kryo} instance to set the serializer on.
+	 * @see Collections#synchronizedCollection(Collection)
+	 * @see Collections#synchronizedList(List)
+	 * @see Collections#synchronizedSet(Set)
+	 * @see Collections#synchronizedSortedSet(SortedSet)
+	 * @see Collections#synchronizedMap(Map)
+	 * @see Collections#synchronizedSortedMap(SortedMap)
+	 */
+	public static void registerSerializers(final Kryo kryo) {
+		final SynchronizedCollectionsSerializer serializer = new SynchronizedCollectionsSerializer();
+		SynchronizedCollection.values();
+		for (final SynchronizedCollection item : SynchronizedCollection.values()) {
+			kryo.register(item.type, serializer);
 		}
 	}
 
@@ -133,7 +141,6 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
 			}
 		},
 		MAP(Collections.synchronizedMap(new HashMap<Void, Void>()).getClass(), SOURCE_MAP_FIELD) {
-
 			@Override
 			public Object create(final Object sourceCollection) {
 				return Collections.synchronizedMap((Map<?, ?>) sourceCollection);
@@ -155,11 +162,6 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
 			this.sourceCollectionField = sourceCollectionField;
 		}
 
-		/**
-		 * @param sourceCollection
-		 */
-		public abstract Object create(Object sourceCollection);
-
 		static SynchronizedCollection valueOfType(final Class<?> type) {
 			for (final SynchronizedCollection item : values()) {
 				if (item.type.equals(type)) {
@@ -169,28 +171,11 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
 			throw new IllegalArgumentException("The type " + type + " is not supported.");
 		}
 
-	}
+		/**
+		 * @param sourceCollection
+		 */
+		public abstract Object create(Object sourceCollection);
 
-	/**
-	 * Creates a new {@link SynchronizedCollectionsSerializer} and registers its serializer
-	 * for the several synchronized Collections that can be created via {@link Collections},
-	 * including {@link Map}s.
-	 *
-	 * @param kryo the {@link Kryo} instance to set the serializer on.
-	 *
-	 * @see Collections#synchronizedCollection(Collection)
-	 * @see Collections#synchronizedList(List)
-	 * @see Collections#synchronizedSet(Set)
-	 * @see Collections#synchronizedSortedSet(SortedSet)
-	 * @see Collections#synchronizedMap(Map)
-	 * @see Collections#synchronizedSortedMap(SortedMap)
-	 */
-	public static void registerSerializers(final Kryo kryo) {
-		final SynchronizedCollectionsSerializer serializer = new SynchronizedCollectionsSerializer();
-		SynchronizedCollection.values();
-		for (final SynchronizedCollection item : SynchronizedCollection.values()) {
-			kryo.register(item.type, serializer);
-		}
 	}
 
 }

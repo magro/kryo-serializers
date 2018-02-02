@@ -36,6 +36,16 @@ public class HashMultimapSerializer extends MultimapSerializerBase<Object, Objec
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
 	}
 
+	/**
+	 * Creates a new {@link HashMultimapSerializer} and registers its serializer.
+	 *
+	 * @param kryo the {@link Kryo} instance to set the serializer on
+	 */
+	public static void registerSerializers(final Kryo kryo) {
+		final HashMultimapSerializer serializer = new HashMultimapSerializer();
+		kryo.register(HashMultimap.class, serializer);
+	}
+
 	@Override
 	public void write(Kryo kryo, Output output, HashMultimap<Object, Object> multimap) {
 		writeMultimap(kryo, output, multimap);
@@ -46,15 +56,5 @@ public class HashMultimapSerializer extends MultimapSerializerBase<Object, Objec
 		final HashMultimap<Object, Object> multimap = HashMultimap.create();
 		readMultimap(kryo, input, multimap);
 		return multimap;
-	}
-
-	/**
-	 * Creates a new {@link HashMultimapSerializer} and registers its serializer.
-	 *
-	 * @param kryo the {@link Kryo} instance to set the serializer on
-	 */
-	public static void registerSerializers(final Kryo kryo) {
-		final HashMultimapSerializer serializer = new HashMultimapSerializer();
-		kryo.register(HashMultimap.class, serializer);
 	}
 }

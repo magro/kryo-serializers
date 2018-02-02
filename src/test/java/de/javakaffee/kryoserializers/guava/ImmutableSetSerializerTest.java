@@ -24,7 +24,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test for {@link ImmutableSetSerializer}.

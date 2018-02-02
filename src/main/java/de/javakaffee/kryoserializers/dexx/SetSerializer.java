@@ -25,7 +25,7 @@ import com.github.andrewoma.dexx.collection.Set;
 import com.github.andrewoma.dexx.collection.Sets;
 
 /**
-* A kryo {@link Serializer} for dexx {@link Set}
+ * A kryo {@link Serializer} for dexx {@link Set}
  */
 public class SetSerializer extends Serializer<Set<Object>> {
 
@@ -34,24 +34,6 @@ public class SetSerializer extends Serializer<Set<Object>> {
 
 	public SetSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
-	}
-
-	@Override
-	public void write(Kryo kryo, Output output, Set<Object> object) {
-		output.writeInt(object.size(), true);
-		for (Object elm : object) {
-			kryo.writeClassAndObject(output, elm);
-		}
-	}
-
-	@Override
-	public Set<Object> read(Kryo kryo, Input input, Class<Set<Object>> type) {
-		final int size = input.readInt(true);
-		Builder<Object, Set<Object>> builder = Sets.builder();
-		for (int i = 0; i < size; ++i) {
-			builder.add(kryo.readClassAndObject(input));
-		}
-		return builder.build();
 	}
 
 	/**
@@ -82,5 +64,23 @@ public class SetSerializer extends Serializer<Set<Object>> {
 		kryo.register(Sets.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).getClass(), serializer);
 		kryo.register(Sets.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).getClass(), serializer);
 
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, Set<Object> object) {
+		output.writeInt(object.size(), true);
+		for (Object elm : object) {
+			kryo.writeClassAndObject(output, elm);
+		}
+	}
+
+	@Override
+	public Set<Object> read(Kryo kryo, Input input, Class<Set<Object>> type) {
+		final int size = input.readInt(true);
+		Builder<Object, Set<Object>> builder = Sets.builder();
+		for (int i = 0; i < size; ++i) {
+			builder.add(kryo.readClassAndObject(input));
+		}
+		return builder.build();
 	}
 }

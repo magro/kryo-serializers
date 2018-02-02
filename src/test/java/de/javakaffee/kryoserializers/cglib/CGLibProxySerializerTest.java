@@ -20,12 +20,7 @@ import static de.javakaffee.kryoserializers.KryoTest.deserialize;
 import static de.javakaffee.kryoserializers.KryoTest.serialize;
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -192,19 +187,23 @@ public class CGLibProxySerializerTest {
 	private <T> T createProxy(final T obj) {
 
 		final Enhancer e = new Enhancer();
-		e.setInterfaces(new Class[]{Serializable.class});
+		e.setInterfaces(new Class[] { Serializable.class });
 		final Class<? extends Object> class1 = obj.getClass();
 		e.setSuperclass(class1);
 		e.setCallback(new DelegatingHandler(obj));
 		e.setNamingPolicy(new DefaultNamingPolicy() {
 			@Override
-			public String getClassName(final String prefix, final String source,
-					final Object key, final Predicate names) {
+			public String getClassName(final String prefix, final String source, final Object key,
+					final Predicate names) {
 				return super.getClassName("MSM_" + prefix, source, key, names);
 			}
 		});
 
 		return (T) e.create();
+	}
+
+	public static interface MyService {
+		String sayHello();
 	}
 
 	public static class DelegatingHandler implements InvocationHandler, Serializable {
@@ -226,17 +225,17 @@ public class CGLibProxySerializerTest {
 		private String _value;
 
 		/**
-		 * @param value the value to set
-		 */
-		public void setValue(final String value) {
-			_value = value;
-		}
-
-		/**
 		 * @return the value
 		 */
 		public String getValue() {
 			return _value;
+		}
+
+		/**
+		 * @param value the value to set
+		 */
+		public void setValue(final String value) {
+			_value = value;
 		}
 
 		@Override
@@ -269,10 +268,6 @@ public class CGLibProxySerializerTest {
 			_myService = myService;
 		}
 
-	}
-
-	public static interface MyService {
-		String sayHello();
 	}
 
 	public static class MyServiceImpl implements MyService {

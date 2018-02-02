@@ -32,6 +32,7 @@ public class CompatibleFieldSerializerReflectionFactorySupport extends Compatibl
 
 	/**
 	 * Creates a new instance.
+	 *
 	 * @param kryo the kryo instance that is passed to {@link CompatibleFieldSerializer#CompatibleFieldSerializer(Kryo, Class)}.
 	 * @param type the type to serialize.
 	 */

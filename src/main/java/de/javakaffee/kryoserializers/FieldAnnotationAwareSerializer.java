@@ -55,36 +55,7 @@ import com.esotericsoftware.kryo.serializers.FieldSerializer;
  */
 public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 
-	/**
-	 * A factory for creating instances of {@link FieldAnnotationAwareSerializer}.
-	 */
-	public static class Factory implements SerializerFactory {
-
-		private final Collection<Class<? extends Annotation>> marked;
-		private final boolean disregarding;
-
-		/**
-		 * Creates a new factory. See {@link FieldAnnotationAwareSerializer#FieldAnnotationAwareSerializer(
-		 *com.esotericsoftware.kryo.Kryo, Class, java.util.Collection, boolean)}
-		 * for additional information on the constructor parameters.
-		 *
-		 * @param marked       The annotations that will be considered of the resulting converter.
-		 * @param disregarding If {@code true}, the serializer will ignore all annotated fields,
-		 *                     if set to {@code false} it will exclusively look at annotated fields.
-		 */
-		public Factory(final Collection<Class<? extends Annotation>> marked, final boolean disregarding) {
-			this.marked = marked;
-			this.disregarding = disregarding;
-		}
-
-		@Override
-		public Serializer<?> makeSerializer(final Kryo kryo, final Class<?> type) {
-			return new FieldAnnotationAwareSerializer<Object>(kryo, type, marked, disregarding);
-		}
-	}
-
 	private final Set<Class<? extends Annotation>> marked;
-
 	/**
 	 * Determines whether annotated fields should be excluded from serialization.
 	 * <p/>
@@ -107,10 +78,8 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 	 * @param disregarding If {@code true}, the serializer will ignore all annotated fields,
 	 *                     if set to {@code false} it will exclusively look at annotated fields.
 	 */
-	public FieldAnnotationAwareSerializer(final Kryo kryo,
-			final Class<?> type,
-			final Collection<Class<? extends Annotation>> marked,
-			final boolean disregarding) {
+	public FieldAnnotationAwareSerializer(final Kryo kryo, final Class<?> type,
+			final Collection<Class<? extends Annotation>> marked, final boolean disregarding) {
 		super(kryo, type);
 		this.disregarding = disregarding;
 		this.marked = new HashSet<Class<? extends Annotation>>(marked);
@@ -135,7 +104,8 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 			final Field field = cachedField.getField();
 			if (isRemove(field)) {
 				if (TRACE) {
-					trace("kryo", String.format("Ignoring field %s tag: %s", disregarding ? "without" : "with", cachedField));
+					trace("kryo",
+							String.format("Ignoring field %s tag: %s", disregarding ? "without" : "with", cachedField));
 				}
 				super.removeField(field.getName());
 			}
@@ -200,5 +170,33 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * A factory for creating instances of {@link FieldAnnotationAwareSerializer}.
+	 */
+	public static class Factory implements SerializerFactory {
+
+		private final Collection<Class<? extends Annotation>> marked;
+		private final boolean disregarding;
+
+		/**
+		 * Creates a new factory. See {@link FieldAnnotationAwareSerializer#FieldAnnotationAwareSerializer(
+		 *com.esotericsoftware.kryo.Kryo, Class, java.util.Collection, boolean)}
+		 * for additional information on the constructor parameters.
+		 *
+		 * @param marked       The annotations that will be considered of the resulting converter.
+		 * @param disregarding If {@code true}, the serializer will ignore all annotated fields,
+		 *                     if set to {@code false} it will exclusively look at annotated fields.
+		 */
+		public Factory(final Collection<Class<? extends Annotation>> marked, final boolean disregarding) {
+			this.marked = marked;
+			this.disregarding = disregarding;
+		}
+
+		@Override
+		public Serializer<?> makeSerializer(final Kryo kryo, final Class<?> type) {
+			return new FieldAnnotationAwareSerializer<Object>(kryo, type, marked, disregarding);
+		}
 	}
 }

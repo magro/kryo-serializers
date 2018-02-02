@@ -25,9 +25,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.GeneratedMessageV3;
 
-public class ProtobufSerializer<T extends GeneratedMessage> extends Serializer<T> {
+public class ProtobufSerializer<T extends GeneratedMessageV3> extends Serializer<T> {
 
 	private Method parseFromMethod = null;
 
@@ -70,18 +70,15 @@ public class ProtobufSerializer<T extends GeneratedMessage> extends Serializer<T
 		try {
 			// Deserialize protobuf
 			return (T) (getParseFromMethod(type).invoke(type, (Object) bytes));
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("Unable to deserialize protobuf " + e.getMessage(), e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException("Unable to deserialize protobuf " + e.getMessage(), e);
-		} catch (IllegalAccessException e) {
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException("Unable to deserialize protobuf " + e.getMessage(), e);
 		}
 	}
 
 	/**
 	 * Caches method reflection lookup
-	 * @throws NoSuchMethodException
+	 *
+	 * @throws NoSuchMethodException should never be thrown
 	 */
 	private Method getParseFromMethod(Class<T> type) throws NoSuchMethodException {
 		if (parseFromMethod == null) {

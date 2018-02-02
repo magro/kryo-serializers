@@ -36,6 +36,9 @@ import com.esotericsoftware.kryo.io.Output;
 public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>> {
 
 	private static final Field TYPE_FIELD;
+	// Workaround reference reading, this should be removed sometimes. See also
+	// https://groups.google.com/d/msg/kryo-users/Eu5V4bxCfws/k-8UQ22y59AJ
+	private static final Object FAKE_REFERENCE = new Object();
 
 	static {
 		try {
@@ -46,12 +49,8 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
 		}
 	}
 
-	// Workaround reference reading, this should be removed sometimes. See also
-	// https://groups.google.com/d/msg/kryo-users/Eu5V4bxCfws/k-8UQ22y59AJ
-	private static final Object FAKE_REFERENCE = new Object();
-
 	@Override
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public EnumMap<? extends Enum<?>, ?> copy(final Kryo kryo, final EnumMap<? extends Enum<?>, ?> original) {
 		// Make a shallow copy to copy the private key type of the original map without using reflection.
 		// This will work for empty original maps as well.
@@ -62,7 +61,7 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
 		return copy;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private EnumMap<? extends Enum<?>, ?> create(final Kryo kryo, final Input input,
 			final Class<EnumMap<? extends Enum<?>, ?>> type) {
 		final Class<? extends Enum<?>> keyType = kryo.readClass(input).getType();
@@ -70,7 +69,7 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
 	}
 
 	@Override
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public EnumMap<? extends Enum<?>, ?> read(final Kryo kryo, final Input input,
 			final Class<EnumMap<? extends Enum<?>, ?>> type) {
 		kryo.reference(FAKE_REFERENCE);

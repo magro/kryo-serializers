@@ -18,14 +18,7 @@ package de.javakaffee.kryoserializers.jodatime;
 
 import org.joda.time.Chronology;
 import org.joda.time.LocalDate;
-import org.joda.time.chrono.BuddhistChronology;
-import org.joda.time.chrono.CopticChronology;
-import org.joda.time.chrono.EthiopicChronology;
-import org.joda.time.chrono.GJChronology;
-import org.joda.time.chrono.GregorianChronology;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.chrono.IslamicChronology;
-import org.joda.time.chrono.JulianChronology;
+import org.joda.time.chrono.*;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -38,7 +31,7 @@ import com.esotericsoftware.kryo.io.Output;
  * No time zone is involved. If the chronology is {@link org.joda.time.chrono.ISOChronology} the
  * attribute is serialized as an empty string, thus {@link org.joda.time.chrono.ISOChronology} is
  * considered to be default.
- *
+ * <p>
  * Note that internally the LocalDate object makes use of an iLocalMillis value, but that field is
  * not accessible for reading here because the getLocalMillis() method is protected. There could
  * conceivably be cases where a user has created a derived version of LocalDate, and is using the
@@ -69,17 +62,14 @@ public class JodaLocalDateSerializer extends Serializer<LocalDate> {
 	public LocalDate read(final Kryo kryo, final Input input, final Class<LocalDate> type) {
 		final int packedYearMonthDay = input.readInt(true);
 		final Chronology chronology = IdentifiableChronology.readChronology(input);
-		return new LocalDate(packedYearMonthDay / (13 * 32),
-				(packedYearMonthDay % (13 * 32)) / 32,
-				packedYearMonthDay % 32,
-				chronology);
+		return new LocalDate(packedYearMonthDay / (13 * 32), (packedYearMonthDay % (13 * 32)) / 32,
+				packedYearMonthDay % 32, chronology);
 	}
 
 	@Override
 	public void write(final Kryo kryo, final Output output, final LocalDate localDate) {
-		final int packedYearMonthDay = localDate.getYear() * 13 * 32 +
-				localDate.getMonthOfYear() * 32 +
-				localDate.getDayOfMonth();
+		final int packedYearMonthDay =
+				localDate.getYear() * 13 * 32 + localDate.getMonthOfYear() * 32 + localDate.getDayOfMonth();
 		output.writeInt(packedYearMonthDay, true);
 		final String chronologyId = IdentifiableChronology.getChronologyId(localDate.getChronology());
 		output.writeString(chronologyId == null ? "" : chronologyId);

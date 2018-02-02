@@ -40,6 +40,10 @@ public class SubListSerializersTest {
 
 	private Kryo _kryo;
 
+	private static <T> ArrayList<T> arrayList(final T... items) {
+		return new ArrayList<T>(Arrays.asList(items));
+	}
+
 	@BeforeClass
 	public void beforeClass() {
 		_kryo = new KryoReflectionFactorySupport() {
@@ -87,13 +91,15 @@ public class SubListSerializersTest {
 
 	@Test(enabled = true)
 	public void testSubListSubList() throws Exception {
-		final List<TestEnum> subList = new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+		final List<TestEnum> subList =
+				new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTest(subList);
 	}
 
 	@Test(enabled = true)
 	public void testCopySubListSubList() throws Exception {
-		final List<TestEnum> subList = new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+		final List<TestEnum> subList =
+				new LinkedList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTestCopy(subList);
 	}
 
@@ -111,13 +117,15 @@ public class SubListSerializersTest {
 
 	@Test(enabled = true)
 	public void testArrayListSubListSubList() throws Exception {
-		final List<TestEnum> subList = new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+		final List<TestEnum> subList =
+				new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTest(subList);
 	}
 
 	@Test(enabled = true)
 	public void testCopyArrayListSubListSubList() throws Exception {
-		final List<TestEnum> subList = new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
+		final List<TestEnum> subList =
+				new ArrayList<TestEnum>(Arrays.asList(TestEnum.values())).subList(1, 3).subList(1, 2);
 		doTestCopy(subList);
 	}
 
@@ -176,10 +184,6 @@ public class SubListSerializersTest {
 		ITEM1,
 		ITEM2,
 		ITEM3;
-	}
-
-	private static <T> ArrayList<T> arrayList(final T... items) {
-		return new ArrayList<T>(Arrays.asList(items));
 	}
 
 }

@@ -16,6 +16,9 @@
  */
 package de.javakaffee.kryoserializers;
 
+import static de.javakaffee.kryoserializers.TestClasses.*;
+import static org.testng.Assert.assertEquals;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Modifier;
@@ -43,9 +46,6 @@ import com.esotericsoftware.kryo.serializers.DefaultSerializers.BigIntegerSerial
 
 import de.javakaffee.kryoserializers.TestClasses.*;
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
-
-import static de.javakaffee.kryoserializers.TestClasses.*;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Test for {@link Kryo} serialization.
@@ -145,7 +145,7 @@ public class KryoTest {
 		_kryo = new KryoReflectionFactorySupport() {
 
 			@Override
-			@SuppressWarnings({"rawtypes", "unchecked"})
+			@SuppressWarnings({ "rawtypes", "unchecked" })
 			public Serializer<?> getDefaultSerializer(final Class type) {
 				if (EnumSet.class.isAssignableFrom(type)) {
 					return new EnumSetSerializer();
@@ -432,8 +432,8 @@ public class KryoTest {
 		final Holder<Pattern> deserialized = deserialize(serialize(pattern), Holder.class);
 		assertDeepEquals(deserialized, pattern);
 
-		final Holder<Pattern> patternWithFlags = new Holder<Pattern>(
-				Pattern.compile("\n", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE));
+		final Holder<Pattern> patternWithFlags =
+				new Holder<Pattern>(Pattern.compile("\n", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE));
 		@SuppressWarnings("unchecked")
 		final Holder<Pattern> deserializedWithFlags = deserialize(serialize(patternWithFlags), Holder.class);
 		assertDeepEquals(deserializedWithFlags, patternWithFlags);
@@ -445,24 +445,24 @@ public class KryoTest {
 		final Holder<Pattern> copy = _kryo.copy(pattern);
 		assertDeepEquals(copy, pattern);
 
-		final Holder<Pattern> patternWithFlags = new Holder<Pattern>(
-				Pattern.compile("\n", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE));
+		final Holder<Pattern> patternWithFlags =
+				new Holder<Pattern>(Pattern.compile("\n", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE));
 		final Holder<Pattern> copyWithFlags = _kryo.copy(patternWithFlags);
 		assertDeepEquals(copyWithFlags, patternWithFlags);
 	}
 
 	@Test(enabled = true)
 	public void testStringBuffer() throws Exception {
-		final StringBuffer stringBuffer = new StringBuffer(
-				"<stringbuffer>with some content \n& some lines...</stringbuffer>");
+		final StringBuffer stringBuffer =
+				new StringBuffer("<stringbuffer>with some content \n& some lines...</stringbuffer>");
 		final StringBuffer deserialized = deserialize(serialize(stringBuffer), StringBuffer.class);
 		assertDeepEquals(deserialized, stringBuffer);
 	}
 
 	@Test(enabled = true)
 	public void testStringBuilder() throws Exception {
-		final StringBuilder stringBuilder = new StringBuilder(
-				"<stringbuilder>with some content \n& some lines...</stringbuilder>");
+		final StringBuilder stringBuilder =
+				new StringBuilder("<stringbuilder>with some content \n& some lines...</stringbuilder>");
 		final StringBuilder deserialized = deserialize(serialize(stringBuilder), StringBuilder.class);
 		assertDeepEquals(deserialized, stringBuilder);
 	}
@@ -470,8 +470,8 @@ public class KryoTest {
 	@Test(enabled = true)
 	public void testMapWithIntConstructorOnly() throws Exception {
 		final HashMapWithIntConstructorOnly map = new HashMapWithIntConstructorOnly(5);
-		final HashMapWithIntConstructorOnly deserialized = deserialize(serialize(map),
-				HashMapWithIntConstructorOnly.class);
+		final HashMapWithIntConstructorOnly deserialized =
+				deserialize(serialize(map), HashMapWithIntConstructorOnly.class);
 		assertDeepEquals(deserialized, map);
 
 	}
@@ -491,9 +491,9 @@ public class KryoTest {
 	public Object[][] unmodifiableCollections() {
 		final HashMap<String, String> m = new HashMap<String, String>();
 		m.put("foo", "bar");
-		return new Object[][]{{Collections.unmodifiableList(new ArrayList<String>(Arrays.asList("foo", "bar")))},
-				{Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("foo", "bar")))},
-				{Collections.unmodifiableMap(m)},};
+		return new Object[][] { { Collections.unmodifiableList(new ArrayList<String>(Arrays.asList("foo", "bar"))) },
+				{ Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("foo", "bar"))) },
+				{ Collections.unmodifiableMap(m) }, };
 	}
 
 	@SuppressWarnings("unchecked")
@@ -515,9 +515,9 @@ public class KryoTest {
 	public Object[][] synchronizedCollections() {
 		final HashMap<String, String> m = new HashMap<String, String>();
 		m.put("foo", "bar");
-		return new Object[][]{{Collections.synchronizedList(new ArrayList<String>(Arrays.asList("foo", "bar")))},
-				{Collections.synchronizedSet(new HashSet<String>(Arrays.asList("foo", "bar")))},
-				{Collections.synchronizedMap(m)},};
+		return new Object[][] { { Collections.synchronizedList(new ArrayList<String>(Arrays.asList("foo", "bar"))) },
+				{ Collections.synchronizedSet(new HashSet<String>(Arrays.asList("foo", "bar"))) },
+				{ Collections.synchronizedMap(m) }, };
 	}
 
 	@SuppressWarnings("unchecked")
@@ -538,14 +538,14 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilCollectionsEmptyList() throws Exception {
-		final Holder<List<String>> emptyList = new Holder<List<String>>(Collections.<String> emptyList());
+		final Holder<List<String>> emptyList = new Holder<List<String>>(Collections.<String>emptyList());
 		final Holder<List<String>> deserialized = deserialize(serialize(emptyList), Holder.class);
 		assertDeepEquals(deserialized, emptyList);
 	}
 
 	@Test(enabled = true)
 	public void testCopyJavaUtilCollectionsEmptyList() throws Exception {
-		final Holder<List<String>> emptyList = new Holder<List<String>>(Collections.<String> emptyList());
+		final Holder<List<String>> emptyList = new Holder<List<String>>(Collections.<String>emptyList());
 		final Holder<List<String>> copy = _kryo.copy(emptyList);
 		assertDeepEquals(copy, emptyList);
 	}
@@ -553,14 +553,14 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilCollectionsEmptySet() throws Exception {
-		final Holder<Set<String>> emptyList = new Holder<Set<String>>(Collections.<String> emptySet());
+		final Holder<Set<String>> emptyList = new Holder<Set<String>>(Collections.<String>emptySet());
 		final Holder<Set<String>> deserialized = deserialize(serialize(emptyList), Holder.class);
 		assertDeepEquals(deserialized, emptyList);
 	}
 
 	@Test(enabled = true)
 	public void testCopyJavaUtilCollectionsEmptySet() throws Exception {
-		final Holder<Set<String>> emptyList = new Holder<Set<String>>(Collections.<String> emptySet());
+		final Holder<Set<String>> emptyList = new Holder<Set<String>>(Collections.<String>emptySet());
 		final Holder<Set<String>> copy = _kryo.copy(emptyList);
 		assertDeepEquals(copy, emptyList);
 	}
@@ -568,16 +568,16 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilCollectionsEmptyMap() throws Exception {
-		final Holder<Map<String, String>> emptyMap = new Holder<Map<String, String>>(
-				Collections.<String, String> emptyMap());
+		final Holder<Map<String, String>> emptyMap =
+				new Holder<Map<String, String>>(Collections.<String, String>emptyMap());
 		final Holder<Map<String, String>> deserialized = deserialize(serialize(emptyMap), Holder.class);
 		assertDeepEquals(deserialized, emptyMap);
 	}
 
 	@Test(enabled = true)
 	public void testCopyJavaUtilCollectionsEmptyMap() throws Exception {
-		final Holder<Map<String, String>> emptyMap = new Holder<Map<String, String>>(
-				Collections.<String, String> emptyMap());
+		final Holder<Map<String, String>> emptyMap =
+				new Holder<Map<String, String>>(Collections.<String, String>emptyMap());
 		final Holder<Map<String, String>> copy = _kryo.copy(emptyMap);
 		assertDeepEquals(copy, emptyMap);
 	}
@@ -585,7 +585,7 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilArraysAsListEmpty() throws Exception {
-		final Holder<List<String>> asListHolder = new Holder<List<String>>(Arrays.<String> asList());
+		final Holder<List<String>> asListHolder = new Holder<List<String>>(Arrays.<String>asList());
 		final Holder<List<String>> deserialized = deserialize(serialize(asListHolder), Holder.class);
 		assertDeepEquals(deserialized, asListHolder);
 	}
@@ -593,7 +593,7 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilArraysAsListPrimitiveArrayElement() throws Exception {
-		final int[] values = {1, 2};
+		final int[] values = { 1, 2 };
 		@SuppressWarnings("rawtypes")
 		final Holder<List<String>> asListHolder = new Holder(Arrays.asList(values));
 		final Holder<List<String>> deserialized = deserialize(serialize(asListHolder), Holder.class);
@@ -603,7 +603,7 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilArraysAsListBoxedPrimitives() throws Exception {
-		final Integer[] values = {1, 2};
+		final Integer[] values = { 1, 2 };
 		final List<Integer> list = Arrays.asList(values);
 		@SuppressWarnings("rawtypes")
 		final Holder<List<Integer>> asListHolder = new Holder(list);
@@ -614,7 +614,7 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilArraysAsListString() throws Exception {
-		final Holder<List<String>> asListHolder = new Holder<List<String>>(Arrays.<String> asList("foo", "bar"));
+		final Holder<List<String>> asListHolder = new Holder<List<String>>(Arrays.<String>asList("foo", "bar"));
 		final Holder<List<String>> deserialized = deserialize(serialize(asListHolder), Holder.class);
 		assertDeepEquals(deserialized, asListHolder);
 	}
@@ -622,15 +622,15 @@ public class KryoTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testJavaUtilArraysAsListEmail() throws Exception {
-		final Holder<List<Email>> asListHolder = new Holder<List<Email>>(
-				Arrays.asList(new Email("foo", "foo@example.org")));
+		final Holder<List<Email>> asListHolder =
+				new Holder<List<Email>>(Arrays.asList(new Email("foo", "foo@example.org")));
 		final Holder<List<Email>> deserialized = deserialize(serialize(asListHolder), Holder.class);
 		assertDeepEquals(deserialized, asListHolder);
 	}
 
 	@Test(enabled = true)
 	public void testCopyJavaUtilArraysAsList() throws Exception {
-		final List<String> list = Arrays.<String> asList("foo", "bar");
+		final List<String> list = Arrays.<String>asList("foo", "bar");
 		final List<String> copy = _kryo.copy(list);
 		assertDeepEquals(copy, list);
 	}
@@ -682,8 +682,8 @@ public class KryoTest {
 
 	@DataProvider(name = "sharedObjectIdentityProvider")
 	protected Object[][] createSharedObjectIdentityProviderData() {
-		return new Object[][]{{AtomicInteger.class.getSimpleName(), new AtomicInteger(42)},
-				{Email.class.getSimpleName(), new Email("foo bar", "foo.bar@example.com")}};
+		return new Object[][] { { AtomicInteger.class.getSimpleName(), new AtomicInteger(42) },
+				{ Email.class.getSimpleName(), new Email("foo bar", "foo.bar@example.com") } };
 	}
 
 	@SuppressWarnings("unchecked")
@@ -712,22 +712,22 @@ public class KryoTest {
 
 	@DataProvider(name = "typesAsSessionAttributesProvider")
 	protected Object[][] createTypesAsSessionAttributesData() {
-		return new Object[][]{{Boolean.class, Boolean.TRUE}, {String.class, "42"},
-				{StringBuilder.class, new StringBuilder("42")}, {StringBuffer.class, new StringBuffer("42")},
-				{Class.class, String.class}, {Long.class, new Long(42)}, {Integer.class, new Integer(42)},
-				{Character.class, new Character('c')}, {Byte.class, new Byte("b".getBytes()[0])},
-				{Double.class, new Double(42d)}, {Float.class, new Float(42f)},
-				{Short.class, new Short((short) 42)}, {BigDecimal.class, new BigDecimal(42)},
-				{AtomicInteger.class, new AtomicInteger(42)}, {AtomicLong.class, new AtomicLong(42)},
-				{MutableInt.class, new MutableInt(42)}, {Integer[].class, new Integer[]{42}},
-				{Date.class, new Date(System.currentTimeMillis() - 10000)},
-				{Calendar.class, Calendar.getInstance()}, {Currency.class, Currency.getInstance("EUR")},
-				{ArrayList.class, new ArrayList<String>(Arrays.asList("foo"))}, {int[].class, new int[]{1, 2}},
-				{long[].class, new long[]{1, 2}}, {short[].class, new short[]{1, 2}},
-				{float[].class, new float[]{1, 2}}, {double[].class, new double[]{1, 2}},
-				{int[].class, new int[]{1, 2}}, {byte[].class, "42".getBytes()},
-				{char[].class, "42".toCharArray()}, {String[].class, new String[]{"23", "42"}},
-				{Person[].class, new Person[]{createPerson("foo bar", Gender.MALE, 42)}}};
+		return new Object[][] { { Boolean.class, Boolean.TRUE }, { String.class, "42" },
+				{ StringBuilder.class, new StringBuilder("42") }, { StringBuffer.class, new StringBuffer("42") },
+				{ Class.class, String.class }, { Long.class, new Long(42) }, { Integer.class, new Integer(42) },
+				{ Character.class, new Character('c') }, { Byte.class, new Byte("b".getBytes()[0]) },
+				{ Double.class, new Double(42d) }, { Float.class, new Float(42f) },
+				{ Short.class, new Short((short) 42) }, { BigDecimal.class, new BigDecimal(42) },
+				{ AtomicInteger.class, new AtomicInteger(42) }, { AtomicLong.class, new AtomicLong(42) },
+				{ MutableInt.class, new MutableInt(42) }, { Integer[].class, new Integer[] { 42 } },
+				{ Date.class, new Date(System.currentTimeMillis() - 10000) },
+				{ Calendar.class, Calendar.getInstance() }, { Currency.class, Currency.getInstance("EUR") },
+				{ ArrayList.class, new ArrayList<String>(Arrays.asList("foo")) }, { int[].class, new int[] { 1, 2 } },
+				{ long[].class, new long[] { 1, 2 } }, { short[].class, new short[] { 1, 2 } },
+				{ float[].class, new float[] { 1, 2 } }, { double[].class, new double[] { 1, 2 } },
+				{ int[].class, new int[] { 1, 2 } }, { byte[].class, "42".getBytes() },
+				{ char[].class, "42".toCharArray() }, { String[].class, new String[] { "23", "42" } },
+				{ Person[].class, new Person[] { createPerson("foo bar", Gender.MALE, 42) } } };
 	}
 
 	@Test(enabled = true, dataProvider = "typesAsSessionAttributesProvider")
@@ -747,8 +747,8 @@ public class KryoTest {
 	@Test(enabled = true)
 	public void testClassWithoutDefaultConstructor() throws Exception {
 		final ClassWithoutDefaultConstructor obj = TestClasses.createClassWithoutDefaultConstructor("foo");
-		final ClassWithoutDefaultConstructor deserialized = deserialize(serialize(obj),
-				ClassWithoutDefaultConstructor.class);
+		final ClassWithoutDefaultConstructor deserialized =
+				deserialize(serialize(obj), ClassWithoutDefaultConstructor.class);
 		assertDeepEquals(deserialized, obj);
 	}
 
@@ -791,7 +791,7 @@ public class KryoTest {
 		private final Map<String, Integer> _bazens;
 
 		public EntityWithCollections() {
-			_bars = new String[]{"foo", "bar"};
+			_bars = new String[] { "foo", "bar" };
 			_foos = new ArrayList<String>(Arrays.asList("foo", "bar"));
 			_bazens = new HashMap<String, Integer>();
 			_bazens.put("foo", 1);

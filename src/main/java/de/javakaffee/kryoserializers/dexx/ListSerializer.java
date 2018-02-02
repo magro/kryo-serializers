@@ -35,24 +35,6 @@ public class ListSerializer extends Serializer<List> {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
 	}
 
-	@Override
-	public void write(Kryo kryo, Output output, List object) {
-		output.writeInt(object.size(), true);
-		for (Object elm : object) {
-			kryo.writeClassAndObject(output, elm);
-		}
-	}
-
-	@Override
-	public List<Object> read(Kryo kryo, Input input, Class<List> aClass) {
-		final int size = input.readInt(true);
-		final Object[] list = new Object[size];
-		for (int i = 0; i < size; ++i) {
-			list[i] = kryo.readClassAndObject(input);
-		}
-		return IndexedLists.copyOf(list);
-	}
-
 	/**
 	 * Creates a new {@link  de.javakaffee.kryoserializers.guava.ImmutableListSerializer} and registers its serializer
 	 *
@@ -81,5 +63,23 @@ public class ListSerializer extends Serializer<List> {
 		kryo.register(IndexedLists.of(1, 2, 3, 4, 5, 6, 7, 8, 10).getClass(), serializer);
 		kryo.register(IndexedLists.of(1, 2, 3, 4, 5, 6, 7, 8, 10, 11).getClass(), serializer);
 
+	}
+
+	@Override
+	public void write(Kryo kryo, Output output, List object) {
+		output.writeInt(object.size(), true);
+		for (Object elm : object) {
+			kryo.writeClassAndObject(output, elm);
+		}
+	}
+
+	@Override
+	public List<Object> read(Kryo kryo, Input input, Class<List> aClass) {
+		final int size = input.readInt(true);
+		final Object[] list = new Object[size];
+		for (int i = 0; i < size; ++i) {
+			list[i] = kryo.readClassAndObject(input);
+		}
+		return IndexedLists.copyOf(list);
 	}
 }

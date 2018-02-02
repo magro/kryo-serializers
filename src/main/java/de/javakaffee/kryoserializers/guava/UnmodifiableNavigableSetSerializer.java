@@ -53,6 +53,21 @@ public class UnmodifiableNavigableSetSerializer extends Serializer<NavigableSet<
 		}
 	}
 
+	/**
+	 * Creates a new {@link UnmodifiableNavigableSetSerializer} and registers its serializer
+	 * for the UnmodifiableNavigableSetSerializer related class.
+	 *
+	 * @param kryo the {@link Kryo} instance to set the serializer on
+	 */
+	public static void registerSerializers(final Kryo kryo) {
+
+		// UnmodifiableNavigableSetSerializer (private class)
+
+		final UnmodifiableNavigableSetSerializer serializer = new UnmodifiableNavigableSetSerializer();
+
+		kryo.register(Sets.unmodifiableNavigableSet(new TreeSet<Object>()).getClass(), serializer);
+	}
+
 	@VisibleForTesting
 	protected Object getDelegateFromUnmodifiableNavigableSet(NavigableSet<?> object) {
 		try {
@@ -78,20 +93,5 @@ public class UnmodifiableNavigableSetSerializer extends Serializer<NavigableSet<
 	@Override
 	public NavigableSet<?> copy(Kryo kryo, NavigableSet<?> original) {
 		return Sets.unmodifiableNavigableSet((NavigableSet<?>) kryo.copy(getDelegateFromUnmodifiableNavigableSet(original)));
-	}
-
-	/**
-	 * Creates a new {@link UnmodifiableNavigableSetSerializer} and registers its serializer
-	 * for the UnmodifiableNavigableSetSerializer related class.
-	 *
-	 * @param kryo the {@link Kryo} instance to set the serializer on
-	 */
-	public static void registerSerializers(final Kryo kryo) {
-
-		// UnmodifiableNavigableSetSerializer (private class)
-
-		final UnmodifiableNavigableSetSerializer serializer = new UnmodifiableNavigableSetSerializer();
-
-		kryo.register(Sets.unmodifiableNavigableSet(new TreeSet<Object>()).getClass(), serializer);
 	}
 }

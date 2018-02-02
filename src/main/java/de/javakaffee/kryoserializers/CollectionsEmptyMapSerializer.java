@@ -42,5 +42,6 @@ public class CollectionsEmptyMapSerializer extends Serializer<Map<?, ?>> {
 	}
 
 	@Override
-	public void write(final Kryo kryo, final Output output, final Map<?, ?> object) {}
+	public void write(final Kryo kryo, final Output output, final Map<?, ?> object) {
+	}
 }

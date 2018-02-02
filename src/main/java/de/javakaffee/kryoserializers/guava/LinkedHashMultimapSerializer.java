@@ -26,7 +26,8 @@ import com.google.common.collect.LinkedHashMultimap;
  * A kryo {@link Serializer} for guava-libraries {@link LinkedHashMultimap}.
  * This does not yet support {@link Kryo#copy(java.lang.Object)}.
  */
-public class LinkedHashMultimapSerializer extends MultimapSerializerBase<Object, Object, LinkedHashMultimap<Object, Object>> {
+public class LinkedHashMultimapSerializer
+		extends MultimapSerializerBase<Object, Object, LinkedHashMultimap<Object, Object>> {
 
 	private static final boolean DOES_NOT_ACCEPT_NULL = false;
 
@@ -34,6 +35,16 @@ public class LinkedHashMultimapSerializer extends MultimapSerializerBase<Object,
 
 	public LinkedHashMultimapSerializer() {
 		super(DOES_NOT_ACCEPT_NULL, IMMUTABLE);
+	}
+
+	/**
+	 * Creates a new {@link LinkedHashMultimapSerializer} and registers its serializer.
+	 *
+	 * @param kryo the {@link Kryo} instance to set the serializer on
+	 */
+	public static void registerSerializers(final Kryo kryo) {
+		final LinkedHashMultimapSerializer serializer = new LinkedHashMultimapSerializer();
+		kryo.register(LinkedHashMultimap.class, serializer);
 	}
 
 	@Override
@@ -46,15 +57,5 @@ public class LinkedHashMultimapSerializer extends MultimapSerializerBase<Object,
 		final LinkedHashMultimap<Object, Object> multimap = LinkedHashMultimap.create();
 		readMultimap(kryo, input, multimap);
 		return multimap;
-	}
-
-	/**
-	 * Creates a new {@link LinkedHashMultimapSerializer} and registers its serializer.
-	 *
-	 * @param kryo the {@link Kryo} instance to set the serializer on
-	 */
-	public static void registerSerializers(final Kryo kryo) {
-		final LinkedHashMultimapSerializer serializer = new LinkedHashMultimapSerializer();
-		kryo.register(LinkedHashMultimap.class, serializer);
 	}
 }

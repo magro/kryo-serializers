@@ -35,12 +35,6 @@ import net.sf.cglib.proxy.Factory;
  */
 public class CGLibProxySerializer extends Serializer<Object> {
 
-	/**
-	 * This class is used as a marker class - written to the class attribute
-	 * on serialization and checked on deserialization (via {@link CGLibProxySerializer#canSerialize(Class)}).
-	 */
-	public static interface CGLibProxyMarker {}
-
 	public static final String DEFAULT_NAMING_MARKER = "$$EnhancerByCGLIB$$";
 
 	public static boolean canSerialize(final Class<?> cls) {
@@ -68,6 +62,13 @@ public class CGLibProxySerializer extends Serializer<Object> {
 		e.setSuperclass(targetClass);
 		e.setCallbacks(callbacks);
 		return e.create();
+	}
+
+	/**
+	 * This class is used as a marker class - written to the class attribute
+	 * on serialization and checked on deserialization (via {@link CGLibProxySerializer#canSerialize(Class)}).
+	 */
+	public static interface CGLibProxyMarker {
 	}
 
 }

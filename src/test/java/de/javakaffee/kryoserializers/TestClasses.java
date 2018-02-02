@@ -21,17 +21,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Currency;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -61,7 +51,8 @@ public class TestClasses {
 		return person;
 	}
 
-	static Person createPerson(final String name, final Gender gender, final Integer age, final String... emailAddresses) {
+	static Person createPerson(final String name, final Gender gender, final Integer age,
+			final String... emailAddresses) {
 		final Person person = new Person();
 		person.setName(name);
 		person.setGender(gender);
@@ -91,8 +82,12 @@ public class TestClasses {
 
 	static SomeInterface createProxy() {
 		return (SomeInterface) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-				new Class<?>[]{SomeInterface.class, Serializable.class},
+				new Class<?>[] { SomeInterface.class, Serializable.class },
 				new MyInvocationHandler(SomeInterfaceImpl.class));
+	}
+
+	static interface SomeInterface {
+		String hello();
 	}
 
 	static class MyInvocationHandler implements InvocationHandler {
@@ -110,10 +105,6 @@ public class TestClasses {
 			}
 			return method.invoke(_target, args);
 		}
-	}
-
-	static interface SomeInterface {
-		String hello();
 	}
 
 	static class SomeInterfaceImpl implements SomeInterface {
@@ -136,35 +127,30 @@ public class TestClasses {
 			_body = new Body();
 		}
 
-		class Body {}
+		class Body {
+		}
 
 	}
 
 	public static class Person implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-
-		static enum Gender {
-			MALE,
-			FEMALE
-		}
-
+		private final Collection<Person> _friends = new ArrayList<Person>();
 		private String _name;
 		private Gender _gender;
 		private Integer _age;
 		private Map<String, Object> _props;
-		private final Collection<Person> _friends = new ArrayList<Person>();
 
 		public String getName() {
 			return _name;
 		}
 
-		public void addFriend(final Person p) {
-			_friends.add(p);
-		}
-
 		public void setName(final String name) {
 			_name = name;
+		}
+
+		public void addFriend(final Person p) {
+			_friends.add(p);
 		}
 
 		public Map<String, Object> getProps() {
@@ -208,21 +194,11 @@ public class TestClasses {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((_age == null)
-					? 0
-					: _age.hashCode());
-			result = prime * result + ((_friends == null)
-					? 0
-					: _friends.size());
-			result = prime * result + ((_gender == null)
-					? 0
-					: _gender.hashCode());
-			result = prime * result + ((_name == null)
-					? 0
-					: _name.hashCode());
-			result = prime * result + ((_props == null)
-					? 0
-					: _props.hashCode());
+			result = prime * result + ((_age == null) ? 0 : _age.hashCode());
+			result = prime * result + ((_friends == null) ? 0 : _friends.size());
+			result = prime * result + ((_gender == null) ? 0 : _gender.hashCode());
+			result = prime * result + ((_name == null) ? 0 : _name.hashCode());
+			result = prime * result + ((_props == null) ? 0 : _props.hashCode());
 			return result;
 		}
 
@@ -278,8 +254,13 @@ public class TestClasses {
 
 		@Override
 		public String toString() {
-			return "Person [_age=" + _age + ", _friends.size=" + _friends.size() + ", _gender=" + _gender + ", _name=" + _name
-					+ ", _props=" + _props + "]";
+			return "Person [_age=" + _age + ", _friends.size=" + _friends.size() + ", _gender=" + _gender + ", _name="
+					+ _name + ", _props=" + _props + "]";
+		}
+
+		static enum Gender {
+			MALE,
+			FEMALE
 		}
 
 	}
@@ -291,7 +272,8 @@ public class TestClasses {
 		private String _name;
 		private String _email;
 
-		public Email() {}
+		public Email() {
+		}
 
 		public Email(final String name, final String email) {
 			super();
@@ -319,12 +301,8 @@ public class TestClasses {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((_email == null)
-					? 0
-					: _email.hashCode());
-			result = prime * result + ((_name == null)
-					? 0
-					: _name.hashCode());
+			result = prime * result + ((_email == null) ? 0 : _email.hashCode());
+			result = prime * result + ((_name == null) ? 0 : _name.hashCode());
 			return result;
 		}
 
@@ -367,7 +345,8 @@ public class TestClasses {
 	public static class PublicClass {
 		PrivateClass privateClass;
 
-		public PublicClass() {}
+		public PublicClass() {
+		}
 
 		public PublicClass(final PrivateClass protectedClass) {
 			this.privateClass = protectedClass;
@@ -377,9 +356,7 @@ public class TestClasses {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((privateClass == null)
-					? 0
-					: privateClass.hashCode());
+			result = prime * result + ((privateClass == null) ? 0 : privateClass.hashCode());
 			return result;
 		}
 
@@ -413,9 +390,7 @@ public class TestClasses {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((foo == null)
-					? 0
-					: foo.hashCode());
+			result = prime * result + ((foo == null) ? 0 : foo.hashCode());
 			return result;
 		}
 
@@ -453,9 +428,7 @@ public class TestClasses {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((value == null)
-					? 0
-					: value.hashCode());
+			result = prime * result + ((value == null) ? 0 : value.hashCode());
 			return result;
 		}
 
@@ -490,14 +463,17 @@ public class TestClasses {
 	@SuppressWarnings("unused")
 	public static class MyContainer {
 
-		private int _int;
-		private long _long;
 		private final boolean _boolean;
 		private final Boolean _Boolean;
 		private final Class<?> _Class;
-		private String _String;
 		private final StringBuilder _StringBuilder;
 		private final StringBuffer _StringBuffer;
+		private final Currency _Currency;
+		private final Set<String> _HashSet;
+		private final Map<String, Integer> _HashMap;
+		private int _int;
+		private long _long;
+		private String _String;
 		private Long _Long;
 		private Integer _Integer;
 		private Character _Character;
@@ -512,10 +488,7 @@ public class TestClasses {
 		private Integer[] _IntegerArray;
 		private Date _Date;
 		private Calendar _Calendar;
-		private final Currency _Currency;
 		private List<String> _ArrayList;
-		private final Set<String> _HashSet;
-		private final Map<String, Integer> _HashMap;
 		private int[] _intArray;
 		private long[] _longArray;
 		private short[] _shortArray;
@@ -547,7 +520,7 @@ public class TestClasses {
 			_AtomicInteger = new AtomicInteger(10);
 			_AtomicLong = new AtomicLong(11);
 			_MutableInt = new MutableInt(12);
-			_IntegerArray = new Integer[]{13};
+			_IntegerArray = new Integer[] { 13 };
 			_Date = new Date(System.currentTimeMillis() - 10000);
 			_Calendar = Calendar.getInstance();
 			_Currency = Currency.getInstance("EUR");
@@ -559,15 +532,15 @@ public class TestClasses {
 			_HashMap.put("foo", 23);
 			_HashMap.put("bar", 42);
 
-			_intArray = new int[]{1, 2};
-			_longArray = new long[]{1, 2};
-			_shortArray = new short[]{1, 2};
-			_floatArray = new float[]{1, 2};
-			_doubleArray = new double[]{1, 2};
+			_intArray = new int[] { 1, 2 };
+			_longArray = new long[] { 1, 2 };
+			_shortArray = new short[] { 1, 2 };
+			_floatArray = new float[] { 1, 2 };
+			_doubleArray = new double[] { 1, 2 };
 			_byteArray = "42".getBytes();
 			_charArray = "42".toCharArray();
-			_StringArray = new String[]{"23", "42"};
-			_PersonArray = new Person[]{createPerson("foo bar", Gender.MALE, 42)};
+			_StringArray = new String[] { "23", "42" };
+			_PersonArray = new Person[] { createPerson("foo bar", Gender.MALE, 42) };
 
 		}
 
@@ -803,7 +776,8 @@ public class TestClasses {
 		/**
 		 * Default constructor, added for kryo...
 		 */
-		public Holder() {}
+		public Holder() {
+		}
 
 		public Holder(final T item) {
 			this.item = item;
@@ -847,7 +821,8 @@ public class TestClasses {
 		private static final long serialVersionUID = 1L;
 
 		@SuppressWarnings("unused")
-		private HashMapWithIntConstructorOnly() {}
+		private HashMapWithIntConstructorOnly() {
+		}
 
 		public HashMapWithIntConstructorOnly(final int size) {
 			super(size);

@@ -18,14 +18,7 @@ package de.javakaffee.kryoserializers.jodatime;
 
 import org.joda.time.Chronology;
 import org.joda.time.Interval;
-import org.joda.time.chrono.BuddhistChronology;
-import org.joda.time.chrono.CopticChronology;
-import org.joda.time.chrono.EthiopicChronology;
-import org.joda.time.chrono.GJChronology;
-import org.joda.time.chrono.GregorianChronology;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.chrono.IslamicChronology;
-import org.joda.time.chrono.JulianChronology;
+import org.joda.time.chrono.*;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -48,7 +41,6 @@ import com.esotericsoftware.kryo.io.Output;
  * <li>{@link BuddhistChronology}</li>
  * <li>{@link GJChronology}</li>
  * </ul>
- *
  */
 public class JodaIntervalSerializer extends Serializer<Interval> {
 

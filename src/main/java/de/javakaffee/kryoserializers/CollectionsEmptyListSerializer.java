@@ -42,5 +42,6 @@ public class CollectionsEmptyListSerializer extends Serializer<List<?>> {
 	}
 
 	@Override
-	public void write(final Kryo kryo, final Output output, final List<?> object) {}
+	public void write(final Kryo kryo, final Output output, final List<?> object) {
+	}
 }
