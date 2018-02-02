@@ -3,6 +3,7 @@ plugins {
 	id 'java-library'
 	id 'maven-publish'
 	id 'findbugs'
+	id 'osgi'
 	id 'com.diffplug.gradle.spotless' version '3.8.0'
 	id 'com.github.ben-manes.versions' version '0.17.0'
 	id 'com.google.protobuf' version "0.8.4"
@@ -15,6 +16,17 @@ description = 'Additional Kryo serializers for standard JDK types (e.g. currency
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
+jar {
+	manifest {
+		(it as OsgiManifest).with {
+			instruction 'Import-Package',
+				'com.esotericsoftware.kryo*;version="[3.0.3,4.*)"',
+				'com.esotericsoftware.minlog*;version="[1.2,2.0)"',
+				'sun.reflect;resolution:=optional'
+		}
+	}
+}
+
 cobertura {
 	coverageFormats = [
 		'html',
@@ -24,8 +36,8 @@ cobertura {
 
 tasks.withType(FindBugs) {
 	reports {
-		xml.enabled false
-		html.enabled true
+		xml.enabled = false
+		html.enabled = true
 	}
 }
 
