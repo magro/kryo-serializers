@@ -38,7 +38,6 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultClassResolver;
 import com.esotericsoftware.kryo.util.MapReferenceResolver;
-import com.esotericsoftware.minlog.Log;
 
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 
@@ -48,7 +47,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 
 /**
- * Test for {@link CGLibProxyFormat}.
+ * Test for {@link CGLibProxySerializer}.
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
@@ -96,7 +95,7 @@ public class CGLibProxySerializerTest {
 
 	@Test(enabled = false)
 	public void testProxiesFromFileWrite() throws Exception {
-		Log.TRACE = true;
+		//Log.TRACE = true;
 		final ClassToProxy obj = new ClassToProxy();
 		obj._value = "foo";
 		final ClassToProxy proxy1 = createProxy(obj);
@@ -116,7 +115,7 @@ public class CGLibProxySerializerTest {
 	@SuppressWarnings("unchecked")
 	@Test(enabled = true)
 	public void testProxiesFromFileRead() throws Exception {
-		Log.TRACE = true;
+		//Log.TRACE = true;
 		final InputStream in = new FileInputStream(new File(getClass().getResource("/cglib-data-1.ser").toURI()));
 		final Input input = new Input(in);
 		final List<ClassToProxy> proxies = (List<ClassToProxy>) _kryo.readClassAndObject(input);

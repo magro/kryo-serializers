@@ -27,13 +27,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 
+import com.google.common.base.Charsets;
+
 import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 
 /**
- * Test for {@link JavolutionTranscoder}
+ * Test utilities
  *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
+@SuppressWarnings({ "SameParameterValue", "WeakerAccess", "unused" })
 public class TestClasses {
 
 	static Person createPerson(final String name, final Gender gender, final String... emailAddresses) {
@@ -41,7 +44,7 @@ public class TestClasses {
 		person.setName(name);
 		person.setGender(gender);
 		if (emailAddresses != null) {
-			final HashMap<String, Object> props = new HashMap<String, Object>();
+			final HashMap<String, Object> props = new HashMap<>();
 			for (int i = 0; i < emailAddresses.length; i++) {
 				final String emailAddress = emailAddresses[i];
 				props.put("email" + i, new Email(name, emailAddress));
@@ -57,7 +60,7 @@ public class TestClasses {
 		person.setName(name);
 		person.setGender(gender);
 		person.setAge(age);
-		final HashMap<String, Object> props = new HashMap<String, Object>();
+		final HashMap<String, Object> props = new HashMap<>();
 		for (int i = 0; i < emailAddresses.length; i++) {
 			final String emailAddress = emailAddresses[i];
 			props.put("email" + i, new Email(name, emailAddress));
@@ -86,7 +89,7 @@ public class TestClasses {
 				new MyInvocationHandler(SomeInterfaceImpl.class));
 	}
 
-	static interface SomeInterface {
+	interface SomeInterface {
 		String hello();
 	}
 
@@ -135,7 +138,7 @@ public class TestClasses {
 	public static class Person implements Serializable {
 
 		private static final long serialVersionUID = 1L;
-		private final Collection<Person> _friends = new ArrayList<Person>();
+		private final Collection<Person> _friends = new ArrayList<>();
 		private String _name;
 		private Gender _gender;
 		private Integer _age;
@@ -181,11 +184,6 @@ public class TestClasses {
 			return _friends;
 		}
 
-		/**
-		 * @param friends
-		 * @param friends2
-		 * @return
-		 */
 		private boolean flatEquals(final Collection<?> c1, final Collection<?> c2) {
 			return c1 == c2 || c1 != null && c2 != null && c1.size() == c2.size();
 		}
@@ -195,7 +193,7 @@ public class TestClasses {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((_age == null) ? 0 : _age.hashCode());
-			result = prime * result + ((_friends == null) ? 0 : _friends.size());
+			result = prime * result + _friends.size();
 			result = prime * result + ((_gender == null) ? 0 : _gender.hashCode());
 			result = prime * result + ((_name == null) ? 0 : _name.hashCode());
 			result = prime * result + ((_props == null) ? 0 : _props.hashCode());
@@ -221,11 +219,7 @@ public class TestClasses {
 			} else if (!_age.equals(other._age)) {
 				return false;
 			}
-			if (_friends == null) {
-				if (other._friends != null) {
-					return false;
-				}
-			} else if (!flatEquals(_friends, other._friends)) {
+			if (!flatEquals(_friends, other._friends)) {
 				return false;
 			}
 			if (_gender == null) {
@@ -243,13 +237,9 @@ public class TestClasses {
 				return false;
 			}
 			if (_props == null) {
-				if (other._props != null) {
-					return false;
-				}
-			} else if (!_props.equals(other._props)) {
-				return false;
-			}
-			return true;
+				return other._props == null;
+			} else
+				return _props.equals(other._props);
 		}
 
 		@Override
@@ -258,7 +248,7 @@ public class TestClasses {
 					+ _name + ", _props=" + _props + "]";
 		}
 
-		static enum Gender {
+		enum Gender {
 			MALE,
 			FEMALE
 		}
@@ -326,13 +316,9 @@ public class TestClasses {
 				return false;
 			}
 			if (_name == null) {
-				if (other._name != null) {
-					return false;
-				}
-			} else if (!_name.equals(other._name)) {
-				return false;
-			}
-			return true;
+				return other._name == null;
+			} else
+				return _name.equals(other._name);
 		}
 
 		@Override
@@ -373,13 +359,9 @@ public class TestClasses {
 			}
 			final PublicClass other = (PublicClass) obj;
 			if (privateClass == null) {
-				if (other.privateClass != null) {
-					return false;
-				}
-			} else if (!privateClass.equals(other.privateClass)) {
-				return false;
-			}
-			return true;
+				return other.privateClass == null;
+			} else
+				return privateClass.equals(other.privateClass);
 		}
 	}
 
@@ -407,13 +389,9 @@ public class TestClasses {
 			}
 			final PrivateClass other = (PrivateClass) obj;
 			if (foo == null) {
-				if (other.foo != null) {
-					return false;
-				}
-			} else if (!foo.equals(other.foo)) {
-				return false;
-			}
-			return true;
+				return other.foo == null;
+			} else
+				return foo.equals(other.foo);
 		}
 	}
 
@@ -445,13 +423,9 @@ public class TestClasses {
 			}
 			final ClassWithoutDefaultConstructor other = (ClassWithoutDefaultConstructor) obj;
 			if (value == null) {
-				if (other.value != null) {
-					return false;
-				}
-			} else if (!value.equals(other.value)) {
-				return false;
-			}
-			return true;
+				return other.value == null;
+			} else
+				return value.equals(other.value);
 		}
 
 		@Override
@@ -499,6 +473,7 @@ public class TestClasses {
 		private String[] _StringArray;
 		private Person[] _PersonArray;
 
+		@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 		public MyContainer() {
 
 			_int = 1;
@@ -509,13 +484,13 @@ public class TestClasses {
 			_String = "3";
 			_StringBuffer = new StringBuffer("foo");
 			_StringBuilder = new StringBuilder("foo");
-			_Long = new Long(4);
-			_Integer = new Integer(5);
-			_Character = new Character('c');
-			_Byte = new Byte("b".getBytes()[0]);
-			_Double = new Double(6d);
-			_Float = new Float(7f);
-			_Short = new Short((short) 8);
+			_Long = 4L;
+			_Integer = 5;
+			_Character = 'c';
+			_Byte = "b".getBytes(Charsets.UTF_8)[0];
+			_Double = 6d;
+			_Float = 7f;
+			_Short = (short) 8;
 			_BigDecimal = new BigDecimal(9);
 			_AtomicInteger = new AtomicInteger(10);
 			_AtomicLong = new AtomicLong(11);
@@ -524,11 +499,11 @@ public class TestClasses {
 			_Date = new Date(System.currentTimeMillis() - 10000);
 			_Calendar = Calendar.getInstance();
 			_Currency = Currency.getInstance("EUR");
-			_ArrayList = new ArrayList<String>(Arrays.asList("foo"));
-			_HashSet = new HashSet<String>();
+			_ArrayList = new ArrayList<>(Arrays.asList("foo"));
+			_HashSet = new HashSet<>();
 			_HashSet.add("14");
 
-			_HashMap = new HashMap<String, Integer>();
+			_HashMap = new HashMap<>();
 			_HashMap.put("foo", 23);
 			_HashMap.put("bar", 42);
 
@@ -537,7 +512,7 @@ public class TestClasses {
 			_shortArray = new short[] { 1, 2 };
 			_floatArray = new float[] { 1, 2 };
 			_doubleArray = new double[] { 1, 2 };
-			_byteArray = "42".getBytes();
+			_byteArray = "42".getBytes(Charsets.UTF_8);
 			_charArray = "42".toCharArray();
 			_StringArray = new String[] { "23", "42" };
 			_PersonArray = new Person[] { createPerson("foo bar", Gender.MALE, 42) };
@@ -811,6 +786,7 @@ public class TestClasses {
 	static class HolderArray<T> {
 		Holder<T>[] holders;
 
+		@SafeVarargs
 		public HolderArray(final Holder<T>... holders) {
 			this.holders = holders;
 		}

@@ -53,7 +53,8 @@ public class LinkedListMultimapSerializer
 	}
 
 	@Override
-	public LinkedListMultimap<Object, Object> read(Kryo kryo, Input input, Class<LinkedListMultimap<Object, Object>> type) {
+	public LinkedListMultimap<Object, Object> read(Kryo kryo, Input input,
+			Class<LinkedListMultimap<Object, Object>> type) {
 		final LinkedListMultimap<Object, Object> multimap = LinkedListMultimap.create();
 		readMultimap(kryo, input, multimap);
 		return multimap;

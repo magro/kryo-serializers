@@ -82,7 +82,7 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
 			final Collection<Class<? extends Annotation>> marked, final boolean disregarding) {
 		super(kryo, type);
 		this.disregarding = disregarding;
-		this.marked = new HashSet<Class<? extends Annotation>>(marked);
+		this.marked = new HashSet<>(marked);
 		rebuildCachedFields();
 	}
 

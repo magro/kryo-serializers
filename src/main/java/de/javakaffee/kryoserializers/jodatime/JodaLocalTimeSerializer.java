@@ -48,7 +48,7 @@ public class JodaLocalTimeSerializer extends Serializer<LocalTime> {
 	@Override
 	public void write(Kryo kryo, Output output, LocalTime object) {
 		final int time = object.getMillisOfDay();
-		output.writeInt(time, true);
+		output.writeLong(time, true);
 
 		//LocalTime always converts the internal DateTimeZone to UTC so there is no need to serialize it.
 		final String chronologyId = IdentifiableChronology.getChronologyId(object.getChronology());
@@ -57,7 +57,7 @@ public class JodaLocalTimeSerializer extends Serializer<LocalTime> {
 
 	@Override
 	public LocalTime read(Kryo kryo, Input input, Class<LocalTime> type) {
-		final int time = input.readInt(true);
+		final long time = input.readLong(true);
 		final Chronology chronology = IdentifiableChronology.readChronology(input);
 
 		//LocalTime always converts the internal DateTimeZone to UTC.

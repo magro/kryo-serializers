@@ -18,6 +18,7 @@ package de.javakaffee.kryoserializers.guava;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -30,7 +31,7 @@ import com.google.common.collect.Maps;
 /**
  * A kryo {@link Serializer} for guava-libraries {@link ImmutableSortedMap}.
  */
-public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<Object, ? extends Object>> {
+public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<Object, ?>> {
 
 	private static final boolean DOES_NOT_ACCEPT_NULL = true;
 	private static final boolean IMMUTABLE = true;
@@ -52,25 +53,16 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
 		kryo.register(ImmutableSortedMap.class, serializer);
 		kryo.register(ImmutableSortedMap.of().getClass(), serializer);
 
-		final Comparable<Object> k1 = new Comparable<Object>() {
-			@Override
-			public int compareTo(Object o) {
-				return o == this ? 0 : -1;
-			}
-		};
-		final Comparable<Object> k2 = new Comparable<Object>() {
-			@Override
-			public int compareTo(Object o) {
-				return o == this ? 0 : 1;
-			}
-		};
+		final DummyComparable k1 = new DummyComparable(1);
+		final DummyComparable k2 = new DummyComparable(0);
+
 		final Object v1 = new Object();
 		final Object v2 = new Object();
 
 		kryo.register(ImmutableSortedMap.of(k1, v1).getClass(), serializer);
 		kryo.register(ImmutableSortedMap.of(k1, v1, k2, v2).getClass(), serializer);
 
-		Map<DummyEnum, Object> enumMap = new EnumMap<DummyEnum, Object>(DummyEnum.class);
+		Map<DummyEnum, Object> enumMap = new EnumMap<>(DummyEnum.class);
 		for (DummyEnum e : DummyEnum.values()) {
 			enumMap.put(e, v1);
 		}
@@ -79,20 +71,47 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
 	}
 
 	@Override
-	public void write(Kryo kryo, Output output, ImmutableSortedMap<Object, ? extends Object> immutableMap) {
+	public void write(Kryo kryo, Output output, ImmutableSortedMap<Object, ?> immutableMap) {
 		kryo.writeObject(output, Maps.newTreeMap(immutableMap));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input,
-			Class<ImmutableSortedMap<Object, ? extends Object>> type) {
+	public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableSortedMap<Object, ?>> type) {
 		Map map = kryo.readObject(input, TreeMap.class);
 		return ImmutableSortedMap.copyOf(map);
 	}
 
 	private enum DummyEnum {
-		VALUE1,
-		VALUE2
+		VALUE_1,
+		VALUE_2
+	}
+
+	private static class DummyComparable implements Comparable<DummyComparable> {
+		private final int ordering;
+
+		private DummyComparable(int ordering) {
+			this.ordering = ordering;
+		}
+
+		@Override
+		public int compareTo(DummyComparable o) {
+			return Integer.compare(ordering, o.ordering);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o)
+				return true;
+			if (o == null || getClass() != o.getClass())
+				return false;
+			DummyComparable that = (DummyComparable) o;
+			return ordering == that.ordering;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(ordering);
+		}
 	}
 }

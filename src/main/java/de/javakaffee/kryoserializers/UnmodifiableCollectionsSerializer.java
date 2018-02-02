@@ -65,7 +65,6 @@ public class UnmodifiableCollectionsSerializer extends Serializer<Object> {
 	 */
 	public static void registerSerializers(final Kryo kryo) {
 		final UnmodifiableCollectionsSerializer serializer = new UnmodifiableCollectionsSerializer();
-		UnmodifiableCollection.values();
 		for (final UnmodifiableCollection item : UnmodifiableCollection.values()) {
 			kryo.register(item.type, serializer);
 		}

@@ -65,7 +65,6 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
 	 */
 	public static void registerSerializers(final Kryo kryo) {
 		final SynchronizedCollectionsSerializer serializer = new SynchronizedCollectionsSerializer();
-		SynchronizedCollection.values();
 		for (final SynchronizedCollection item : SynchronizedCollection.values()) {
 			kryo.register(item.type, serializer);
 		}

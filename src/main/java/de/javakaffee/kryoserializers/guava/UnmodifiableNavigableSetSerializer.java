@@ -92,6 +92,7 @@ public class UnmodifiableNavigableSetSerializer extends Serializer<NavigableSet<
 
 	@Override
 	public NavigableSet<?> copy(Kryo kryo, NavigableSet<?> original) {
-		return Sets.unmodifiableNavigableSet((NavigableSet<?>) kryo.copy(getDelegateFromUnmodifiableNavigableSet(original)));
+		return Sets.unmodifiableNavigableSet(
+				(NavigableSet<?>) kryo.copy(getDelegateFromUnmodifiableNavigableSet(original)));
 	}
 }
