@@ -1,11 +1,11 @@
-syntax = "proto3";
+syntax = "proto2";
 package ProtocolBuffers; // the namespace for the compiled classes
 
 option java_package = "de.javakaffee.kryoserializers.protobuf";
 option java_outer_classname = "SampleProtoBOuterClass";
 
 message SampleProtoB {
-    uint32 identifier = 1;
-    string state = 2;
-    string city = 3;
+    required uint32 identifier = 1;
+    required string state = 2;
+    required string city = 3;
 }
