@@ -20,8 +20,8 @@ public class ProtobufSerializerTest {
     @BeforeTest
     public void setUp() throws Exception {
         _kryo = new Kryo();
-        _kryo.register(SampleProtoA.class, new ProtobufSerializer());
-        _kryo.register(SampleProtoB.class, new ProtobufSerializer());
+        _kryo.register(SampleProtoA.class, new ProtobufSerializer<SampleProtoA>());
+        _kryo.register(SampleProtoB.class, new ProtobufSerializer<SampleProtoB>());
     }
 
     @Test
