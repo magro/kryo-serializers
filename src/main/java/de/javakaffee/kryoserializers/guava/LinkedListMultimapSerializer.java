@@ -4,12 +4,11 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * A kryo {@link Serializer} for guava-libraries {@link LinkedListMultimap}.
- * This does not yet support {@link Kryo#copy(java.lang.Object)}.
  */
 public class LinkedListMultimapSerializer extends MultimapSerializerBase<Object, Object, LinkedListMultimap<Object, Object>> {
 
@@ -31,6 +30,11 @@ public class LinkedListMultimapSerializer extends MultimapSerializerBase<Object,
         final LinkedListMultimap<Object, Object> multimap = LinkedListMultimap.create();
         readMultimap(kryo, input, multimap);
         return multimap;
+    }
+
+    @Override
+    protected Multimap createCopy(Kryo kryo, Multimap original) {
+        return LinkedListMultimap.create(original.keySet().size());
     }
 
     /**

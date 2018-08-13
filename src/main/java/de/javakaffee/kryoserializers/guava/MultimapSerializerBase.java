@@ -1,13 +1,12 @@
 package de.javakaffee.kryoserializers.guava;
 
-import java.util.Map;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
 import com.google.common.collect.Multimap;
+import java.util.Iterator;
+import java.util.Map;
 
 public abstract class MultimapSerializerBase<K, V, T extends Multimap<K, V>> extends Serializer<T> {
 
@@ -30,5 +29,20 @@ public abstract class MultimapSerializerBase<K, V, T extends Multimap<K, V>> ext
             final V value = (V) kryo.readClassAndObject(input);
             multimap.put(key, value);
         }
+    }
+
+    protected abstract Multimap createCopy(Kryo kryo, Multimap original);
+
+    @Override
+    public Multimap copy(final Kryo kryo, final Multimap original) {
+        Multimap copy = createCopy(kryo, original);
+        Iterator<Map.Entry> iter = original.entries().iterator();
+
+        while(iter.hasNext()) {
+            Map.Entry entry = iter.next();
+            copy.put(kryo.copy(entry.getKey()), kryo.copy(entry.getValue()));
+        }
+
+        return copy;
     }
 }
