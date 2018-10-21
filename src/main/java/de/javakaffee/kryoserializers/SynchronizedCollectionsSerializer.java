@@ -77,7 +77,9 @@ public class SynchronizedCollectionsSerializer extends Serializer<Object> {
             final SynchronizedCollection collection = SynchronizedCollection.valueOfType( object.getClass() );
             // the ordinal could be replaced by s.th. else (e.g. a explicitely managed "id")
             output.writeInt( collection.ordinal(), true );
-            kryo.writeClassAndObject( output, collection.sourceCollectionField.get( object ) );
+            synchronized (object) {
+                kryo.writeClassAndObject( output, collection.sourceCollectionField.get( object ) );
+            }
         } catch ( final RuntimeException e ) {
             // Don't eat and wrap RuntimeExceptions because the ObjectBuffer.write...
             // handles SerializationException specifically (resizing the buffer)...
