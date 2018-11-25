@@ -1,3 +1,4 @@
+syntax = "proto2";
 package ProtocolBuffers; // the namespace for the compiled classes
 
 option java_package = "de.javakaffee.kryoserializers.protobuf";

@@ -4,13 +4,14 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.AbstractMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import static com.esotericsoftware.kryo.Kryo.NULL;
 
-public class ProtobufSerializer<T extends GeneratedMessage> extends Serializer<T> {
+public class ProtobufSerializer<T extends AbstractMessage> extends Serializer<T> {
 
     private Method parseFromMethod = null;
 
