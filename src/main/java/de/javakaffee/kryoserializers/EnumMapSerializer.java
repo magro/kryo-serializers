@@ -80,7 +80,7 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
         final EnumMap rawResult = result;
         final int size = input.readInt(true);
         for ( int i = 0; i < size; i++ ) {
-            final int ordinal = input.readInt(true);
+            final int ordinal = input.readVarInt(true);
             final Enum<?> key = enumConstants[ordinal];
             final Object value = kryo.readClassAndObject( input );
             rawResult.put( key, value );
@@ -93,7 +93,7 @@ public class EnumMapSerializer extends Serializer<EnumMap<? extends Enum<?>, ?>>
         kryo.writeClass( output, getKeyType( map ) );
         output.writeInt(map.size(), true);
         for ( final Map.Entry<? extends Enum<?>,?> entry :  map.entrySet() ) {
-            output.writeInt(entry.getKey().ordinal(), true);
+            output.writeVarInt(entry.getKey().ordinal(), true);
             kryo.writeClassAndObject(output, entry.getValue());
         }
         if ( TRACE ) trace( "kryo", "Wrote EnumMap: " + map );
