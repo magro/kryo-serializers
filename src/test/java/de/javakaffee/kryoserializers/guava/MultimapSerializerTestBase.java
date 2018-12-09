@@ -3,7 +3,6 @@ package de.javakaffee.kryoserializers.guava;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 
@@ -16,15 +15,15 @@ public abstract class MultimapSerializerTestBase {
     }
 
     protected <K, V> void assertEqualMultimaps(boolean orderedKeys, boolean orderedValues,
-            Multimap<K, V> actual, Multimap<K, V> expected) {
+        Multimap<K, V> actual, Multimap<K, V> expected) {
         if (orderedKeys) {
-            Assert.assertEquals(actual.keySet(), expected.keySet());
+            Assert.assertEquals(actual.keySet().toArray(), expected.keySet().toArray());
         } else {
             Assert.assertEqualsNoOrder(actual.keySet().toArray(), expected.keySet().toArray());
         }
         for (final K key : expected.keySet()) {
             if (orderedValues) {
-                Assert.assertEquals(actual.get(key), expected.get(key));
+                Assert.assertEquals(actual.get(key).toArray(), expected.get(key).toArray());
             } else {
                 Assert.assertEqualsNoOrder(actual.get(key).toArray(), expected.get(key).toArray());
             }

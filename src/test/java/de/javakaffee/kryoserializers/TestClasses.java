@@ -17,6 +17,7 @@
 package de.javakaffee.kryoserializers;
 
 import java.io.Serializable;
+import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -34,20 +35,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.commons.lang.mutable.MutableInt;
-
-import de.javakaffee.kryoserializers.TestClasses.Person.Gender;
 
 
 /**
- * Test for {@link JavolutionTranscoder}
- *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
 public class TestClasses {
 
-    static Person createPerson( final String name, final Gender gender, final String... emailAddresses ) {
+    public static Person createPerson( final String name, final Gender gender, final String... emailAddresses ) {
         final Person person = new Person();
         person.setName( name );
         person.setGender( gender );
@@ -62,7 +58,7 @@ public class TestClasses {
         return person;
     }
 
-    static Person createPerson( final String name, final Gender gender, final Integer age, final String... emailAddresses ) {
+    public static Person createPerson( final String name, final Gender gender, final Integer age, final String... emailAddresses ) {
         final Person person = new Person();
         person.setName( name );
         person.setGender( gender );
@@ -146,7 +142,7 @@ public class TestClasses {
 
         private static final long serialVersionUID = 1L;
 
-        static enum Gender {
+        public enum Gender {
                 MALE,
                 FEMALE
         }

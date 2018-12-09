@@ -4,13 +4,13 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
+import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 
 /**
  * A kryo {@link Serializer} for guava-libraries {@link TreeMultimap}.
- * The default comparator is assumed so the multimaps are not null-safe.
- * This does not yet support {@link Kryo#copy(java.lang.Object)}.
+ * For reading / writing, the default comparator is assumed so the multimaps are not null-safe.
+ * For copying, the copy contains the same comparator instances as the original.
  */
 public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, Comparable, TreeMultimap<Comparable, Comparable>> {
 
@@ -33,6 +33,12 @@ public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, C
         final TreeMultimap<Comparable, Comparable> multimap = TreeMultimap.create();
         readMultimap(kryo, input, multimap);
         return multimap;
+    }
+
+    @Override
+    protected Multimap createCopy(Kryo kryo, Multimap original) {
+        TreeMultimap tm = (TreeMultimap) original;
+        return TreeMultimap.create(tm.keyComparator(), tm.valueComparator());
     }
 
     /**
