@@ -21,7 +21,7 @@ public class ImmutableSortedSetSerializerTest {
     @BeforeTest
     public void setUp() throws Exception {
         _kryo = new Kryo();
-
+        _kryo.setRegistrationRequired(false);
         ImmutableSortedSetSerializer.registerSerializers(_kryo);
     }
 

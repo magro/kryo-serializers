@@ -26,7 +26,7 @@ public class HashMultimapSerializer extends MultimapSerializerBase<Object, Objec
     }
 
     @Override
-    public HashMultimap<Object, Object> read(Kryo kryo, Input input, Class<HashMultimap<Object, Object>> type) {
+    public HashMultimap<Object, Object> read(Kryo kryo, Input input, Class<? extends HashMultimap<Object, Object>> type) {
         final HashMultimap<Object, Object> multimap = HashMultimap.create();
         readMultimap(kryo, input, multimap);
         return multimap;

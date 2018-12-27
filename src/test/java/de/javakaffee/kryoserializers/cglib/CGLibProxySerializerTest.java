@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import net.sf.cglib.core.DefaultNamingPolicy;
 import net.sf.cglib.core.Predicate;
 import net.sf.cglib.proxy.Enhancer;
@@ -43,7 +44,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Kryo.DefaultInstantiatorStrategy;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -54,7 +54,7 @@ import com.esotericsoftware.minlog.Log;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 
 /**
- * Test for {@link CGLibProxyFormat}.
+ * Test for {@link CGLibProxySerializer}.
  * 
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
  */
@@ -89,6 +89,7 @@ public class CGLibProxySerializerTest {
             }
 
         };
+        kryo.setRegistrationRequired(false);
         // The default strategy is needed so that HashMap is created via the constructor,
         // the StdInstantiatorStrategy (fallback) is needed for classes without default
         // constructor (e.g. DelegatingHandler).
@@ -100,7 +101,7 @@ public class CGLibProxySerializerTest {
         return kryo;
     }
 
-    @Test( enabled = false )
+    @Test( enabled = true )
     public void testProxiesFromFileWrite() throws Exception {
         Log.TRACE = true;
         final ClassToProxy obj = new ClassToProxy();

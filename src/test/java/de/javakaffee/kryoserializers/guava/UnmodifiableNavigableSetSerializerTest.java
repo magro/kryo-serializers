@@ -28,7 +28,7 @@ public class UnmodifiableNavigableSetSerializerTest {
     @BeforeTest
     public void setUp() {
         _kryo = new Kryo();
-
+        _kryo.setRegistrationRequired(false);
         UnmodifiableNavigableSetSerializer.registerSerializers(_kryo);
     }
 

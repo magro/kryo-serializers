@@ -40,7 +40,7 @@ public class JodaLocalTimeSerializer extends Serializer<LocalTime> {
     }
 
     @Override
-    public LocalTime read(Kryo kryo, Input input, Class<LocalTime> type) {
+    public LocalTime read(Kryo kryo, Input input, Class<? extends LocalTime> type) {
         final int time = input.readInt(true);
         final Chronology chronology = IdentifiableChronology.readChronology(input);
 

@@ -826,10 +826,9 @@ public class KryoTest {
             final Map<?, ?> m2 = (Map<?, ?>) another;
             Assert.assertEquals( m1.size(), m2.size() );
             final Iterator<? extends Map.Entry<?, ?>> iter1 = m1.entrySet().iterator();
-            final Iterator<? extends Map.Entry<?, ?>> iter2 = m2.entrySet().iterator();
             while( iter1.hasNext() ) {
-                Assert.assertTrue( iter2.hasNext() );
-                assertDeepEquals( iter1.next(), iter2.next(), alreadyChecked );
+                Map.Entry<?, ?> entry1 = iter1.next();
+                assertDeepEquals(entry1.getValue(), m2.get(entry1.getKey()), alreadyChecked );
             }
             return;
         }

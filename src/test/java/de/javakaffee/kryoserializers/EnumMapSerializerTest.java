@@ -44,6 +44,8 @@ public class EnumMapSerializerTest {
 
 	@Test
     public void testDeepCopy() throws Exception {
+    	_kryo.register(java.util.HashSet.class);
+
 		final Set<String> mambaAka = new HashSet<String>();
 		mambaAka.add("Beatrix Kiddo");
 		mambaAka.add("The Bride");

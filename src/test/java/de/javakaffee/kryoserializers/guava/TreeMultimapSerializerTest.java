@@ -21,6 +21,7 @@ public class TreeMultimapSerializerTest extends MultimapSerializerTestBase {
     @BeforeClass
     public void initializeKyroWithSerializer() {
         _kryo = new Kryo();
+        _kryo.setRegistrationRequired(false);
         TreeMultimapSerializer.registerSerializers(_kryo);
     }
 

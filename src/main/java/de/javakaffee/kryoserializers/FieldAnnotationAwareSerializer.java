@@ -10,8 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.factories.SerializerFactory;
+import com.esotericsoftware.kryo.SerializerFactory;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 
 /**
@@ -43,7 +42,7 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
     /**
      * A factory for creating instances of {@link FieldAnnotationAwareSerializer}.
      */
-    public static class Factory implements SerializerFactory {
+    public static class Factory implements SerializerFactory<FieldAnnotationAwareSerializer<Object>> {
 
         private final Collection<Class<? extends Annotation>> marked;
         private final boolean disregarding;
@@ -63,7 +62,12 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
         }
 
         @Override
-        public Serializer<?> makeSerializer(final Kryo kryo, final Class<?> type) {
+        public boolean isSupported(Class type) {
+            return true;
+        }
+
+        @Override
+        public FieldAnnotationAwareSerializer<Object> newSerializer(final Kryo kryo, final Class type) {
             return new FieldAnnotationAwareSerializer<Object>(kryo, type, marked, disregarding);
         }
     }
@@ -99,24 +103,26 @@ public class FieldAnnotationAwareSerializer<T> extends FieldSerializer<T> {
         super(kryo, type);
         this.disregarding = disregarding;
         this.marked = new HashSet<Class<? extends Annotation>>(marked);
-        rebuildCachedFields();
+
+        removeFields();
     }
 
     @Override
-    protected void rebuildCachedFields() {
+    public void updateFields() {
         // In order to avoid rebuilding the cached fields twice, the super constructor's call
         // to this method will be suppressed. This can be done by a simple check of the initialization
         // state of a property of this subclass.
         if (marked == null) {
             return;
         }
-        super.rebuildCachedFields();
+
+        super.updateFields();
         removeFields();
     }
 
     private void removeFields() {
-        final CachedField<?>[] cachedFields = getFields();
-        for (final CachedField<?> cachedField : cachedFields) {
+        final CachedField[] cachedFields = getFields();
+        for (final CachedField cachedField : cachedFields) {
             final Field field = cachedField.getField();
             if (isRemove(field)) {
                 if (TRACE) {

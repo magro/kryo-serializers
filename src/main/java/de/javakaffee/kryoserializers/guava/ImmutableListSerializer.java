@@ -31,7 +31,7 @@ public class ImmutableListSerializer extends Serializer<ImmutableList<Object>> {
     }
 
     @Override
-    public ImmutableList<Object> read(Kryo kryo, Input input, Class<ImmutableList<Object>> type) {
+    public ImmutableList<Object> read(Kryo kryo, Input input, Class<? extends ImmutableList<Object>> type) {
         final int size = input.readInt(true);
         final Object[] list = new Object[size];
         for (int i = 0; i < size; ++i) {

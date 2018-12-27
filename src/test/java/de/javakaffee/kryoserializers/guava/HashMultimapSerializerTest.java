@@ -15,6 +15,7 @@ public class HashMultimapSerializerTest extends MultimapSerializerTestBase {
     @BeforeClass
     public void initializeKyroWithSerializer() {
         _kryo = new Kryo();
+        _kryo.setRegistrationRequired(false);
         HashMultimapSerializer.registerSerializers(_kryo);
     }
 

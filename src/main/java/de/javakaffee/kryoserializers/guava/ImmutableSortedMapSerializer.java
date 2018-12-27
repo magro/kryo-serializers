@@ -30,7 +30,7 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
     }
 
     @Override
-    public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableSortedMap<Object, ? extends Object>> type) {
+    public ImmutableSortedMap<Object, Object> read(Kryo kryo, Input input, Class<? extends ImmutableSortedMap<Object, ? extends Object>> type) {
         Map map = kryo.readObject(input, TreeMap.class);
         return ImmutableSortedMap.copyOf(map);
     }
@@ -42,6 +42,9 @@ public class ImmutableSortedMapSerializer extends Serializer<ImmutableSortedMap<
      * @param kryo the {@link Kryo} instance to set the serializer on
      */
     public static void registerSerializers(final Kryo kryo) {
+
+        // we're writing a TreeMap, therefore we should register it
+        kryo.register(java.util.TreeMap.class);
 
         final ImmutableSortedMapSerializer serializer = new ImmutableSortedMapSerializer();
 

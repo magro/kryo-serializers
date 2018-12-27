@@ -42,7 +42,7 @@ public class CollectionsSingletonMapSerializer extends Serializer<Map<?, ?>> {
     }
 
     @Override
-    public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
+    public Map<?, ?> read(final Kryo kryo, final Input input, final Class<? extends Map<?, ?>> type) {
         final Object key = kryo.readClassAndObject( input );
         final Object value = kryo.readClassAndObject( input );
         return Collections.singletonMap( key, value );

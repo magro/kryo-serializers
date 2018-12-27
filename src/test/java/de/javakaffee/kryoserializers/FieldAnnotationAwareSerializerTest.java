@@ -12,10 +12,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 
+import com.esotericsoftware.kryo.SerializerFactory;
 import org.testng.annotations.Test;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.factories.SerializerFactory;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
@@ -53,6 +53,7 @@ public class FieldAnnotationAwareSerializerTest {
 		final SerializerFactory disregardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
                 Arrays.<Class<? extends Annotation>>asList(CustomMark.class), true);
         kryo.addDefaultSerializer(CustomBean.class, disregardingSerializerFactory);
+        kryo.register(CustomBean.class);
 
         final byte[] buffer = makeBuffer();
 
@@ -77,6 +78,7 @@ public class FieldAnnotationAwareSerializerTest {
 		final SerializerFactory regardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
                 Arrays.<Class<? extends Annotation>>asList(CustomMark.class), false);
         kryo.addDefaultSerializer(CustomBean.class, regardingSerializerFactory);
+        kryo.register(CustomBean.class);
 
         final byte[] buffer = makeBuffer();
 

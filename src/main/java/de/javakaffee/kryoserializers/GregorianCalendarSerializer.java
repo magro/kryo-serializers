@@ -52,7 +52,7 @@ public class GregorianCalendarSerializer extends Serializer<GregorianCalendar> {
     }
 
     @Override
-    public GregorianCalendar read(final Kryo kryo, final Input input, final Class<GregorianCalendar> type) {
+    public GregorianCalendar read(final Kryo kryo, final Input input, final Class<? extends GregorianCalendar> type) {
         final Calendar result = GregorianCalendar.getInstance();
         
         result.setTimeInMillis( input.readLong( true ) );

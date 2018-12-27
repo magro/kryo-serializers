@@ -31,7 +31,7 @@ public class MapSerializer extends Serializer<Map<Object, ? extends Object>> {
     }
 
     @Override
-    public Map<Object, Object> read(Kryo kryo, Input input, Class<Map<Object, ? extends Object>> type) {
+    public Map<Object, Object> read(Kryo kryo, Input input, Class<? extends Map<Object, ? extends Object>> type) {
         HashMap<Object, Object> map = kryo.readObject(input, HashMap.class);
         ArrayList<Pair<Object, Object>> listOfPairs = new ArrayList();
 

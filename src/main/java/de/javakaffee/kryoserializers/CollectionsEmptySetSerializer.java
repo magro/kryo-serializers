@@ -38,7 +38,7 @@ public class CollectionsEmptySetSerializer extends Serializer<Set<?>> {
     }
 
     @Override
-    public Set<?> read(final Kryo kryo, final Input input, final Class<Set<?>> type) {
+    public Set<?> read(final Kryo kryo, final Input input, final Class<? extends Set<?>> type) {
         return Collections.EMPTY_SET;
     }
 

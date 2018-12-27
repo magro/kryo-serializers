@@ -30,7 +30,7 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
     }
 
     @Override
-    public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMap<Object, ? extends Object>> type) {
+    public ImmutableMap<Object, Object> read(Kryo kryo, Input input, Class<? extends ImmutableMap<Object, ? extends Object>> type) {
         Map map = kryo.readObject(input, HashMap.class);
         return ImmutableMap.copyOf(map);
     }
@@ -42,6 +42,9 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
      * @param kryo the {@link Kryo} instance to set the serializer on
      */
     public static void registerSerializers(final Kryo kryo) {
+
+        // we're writing a HashMap, therefore we should register it
+        kryo.register(java.util.HashMap.class);
 
         final ImmutableMapSerializer serializer = new ImmutableMapSerializer();
 

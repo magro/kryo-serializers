@@ -22,7 +22,7 @@ public class MapSerializerTest {
     @BeforeTest
     public void setUp() throws Exception {
         _kryo = new Kryo();
-
+        _kryo.setRegistrationRequired(false);
         MapSerializer.registerSerializers(_kryo);
     }
 

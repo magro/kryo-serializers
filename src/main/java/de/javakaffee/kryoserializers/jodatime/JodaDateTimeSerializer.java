@@ -68,7 +68,7 @@ public class JodaDateTimeSerializer extends Serializer<DateTime> {
     }
 
     @Override
-    public DateTime read(final Kryo kryo, final Input input, final Class<DateTime> type) {
+    public DateTime read(final Kryo kryo, final Input input, final Class<? extends DateTime> type) {
         final long millis = input.readLong(true);
         final Chronology chronology = IdentifiableChronology.readChronology( input );
         final DateTimeZone tz = readTimeZone( input );

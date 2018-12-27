@@ -29,7 +29,7 @@ public class TreeMultimapSerializer extends MultimapSerializerBase<Comparable, C
     }
 
     @Override
-    public TreeMultimap<Comparable, Comparable> read(Kryo kryo, Input input, Class<TreeMultimap<Comparable, Comparable>> type) {
+    public TreeMultimap<Comparable, Comparable> read(Kryo kryo, Input input, Class<? extends TreeMultimap<Comparable, Comparable>> type) {
         final TreeMultimap<Comparable, Comparable> multimap = TreeMultimap.create();
         readMultimap(kryo, input, multimap);
         return multimap;

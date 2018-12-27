@@ -55,6 +55,7 @@ public class SubListSerializersTest {
             }
 
         };
+        _kryo.setRegistrationRequired(false);
     }
 
     private void doTest(final List<TestEnum> subList) {

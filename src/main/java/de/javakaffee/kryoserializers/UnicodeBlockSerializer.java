@@ -9,8 +9,6 @@ import java.lang.Character.UnicodeBlock;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.IdentityHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A kryo {@link Serializer} for fields of type {@link UnicodeBlock}, which is effectively but not
@@ -65,7 +63,7 @@ public class UnicodeBlockSerializer extends Serializer<UnicodeBlock> {
 
     @Override
     public UnicodeBlock read(final Kryo kryo, final Input input,
-                             final Class<UnicodeBlock> unicodeBlockClass) {
+                             final Class<? extends UnicodeBlock> unicodeBlockClass) {
         String name = input.readString();
         return (name == null) ? null : UnicodeBlock.forName(name);
     }
