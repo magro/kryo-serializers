@@ -39,7 +39,7 @@ public class ProtobufSerializer<T extends AbstractMessage> extends Serializer<T>
     }
 
     @Override
-    public T read(Kryo kryo, Input input, Class<T> type) {
+    public T read(Kryo kryo, Input input, Class<? extends T> type) {
         // Read the length of our byte array
         int length = input.readInt(true);
 
@@ -66,7 +66,7 @@ public class ProtobufSerializer<T extends AbstractMessage> extends Serializer<T>
      * Caches method reflection lookup
      * @throws NoSuchMethodException
      */
-    private Method getParseFromMethod(Class<T> type) throws NoSuchMethodException {
+    private Method getParseFromMethod(Class<? extends T> type) throws NoSuchMethodException {
         if (parseFromMethod == null) {
             parseFromMethod = type.getMethod("parseFrom", byte[].class);
         }

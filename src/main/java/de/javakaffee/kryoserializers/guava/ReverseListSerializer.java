@@ -55,7 +55,7 @@ public abstract class ReverseListSerializer extends Serializer<List<Object>> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public List<Object> read(Kryo kryo, Input input, Class<List<Object>> type) {
+        public List<Object> read(Kryo kryo, Input input, Class<? extends List<Object>> type) {
             // reading a "forward" list as a LinkedList and returning the reversed list.
             List forwardList = (List) serializer.read(kryo, input, (Class) LinkedList.class);
             return Lists.reverse(forwardList);
@@ -69,7 +69,7 @@ public abstract class ReverseListSerializer extends Serializer<List<Object>> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public List<Object> read(Kryo kryo, Input input, Class<List<Object>> type) {
+        public List<Object> read(Kryo kryo, Input input, Class<? extends List<Object>> type) {
             // reading a "forward" list as a ArrayList and returning the reversed list.
             List forwardList = (List) serializer.read(kryo, input, (Class) ArrayList.class);
             return Lists.reverse(forwardList);

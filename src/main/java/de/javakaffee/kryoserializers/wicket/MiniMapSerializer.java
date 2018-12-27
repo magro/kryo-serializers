@@ -72,7 +72,7 @@ public class MiniMapSerializer extends Serializer<MiniMap<Object, Object>> {
     }
 
     @Override
-    public MiniMap<Object, Object> read(final Kryo kryo, final Input input, final Class<MiniMap<Object, Object>> type) {
+    public MiniMap<Object, Object> read(final Kryo kryo, final Input input, final Class<? extends MiniMap<Object, Object>> type) {
         final int maxEntries = input.readInt( true );
         final MiniMap<Object, Object> result = new MiniMap<Object, Object>( maxEntries );
         final int size = input.readInt( true );

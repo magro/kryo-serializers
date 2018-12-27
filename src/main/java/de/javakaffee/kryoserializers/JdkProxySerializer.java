@@ -32,7 +32,7 @@ import com.esotericsoftware.kryo.io.Output;
 public class JdkProxySerializer extends Serializer<Object> {
 
     @Override
-    public Object read(final Kryo kryo, final Input input, final Class<Object> type) {
+    public Object read(final Kryo kryo, final Input input, final Class<? extends Object> type) {
         final InvocationHandler invocationHandler = (InvocationHandler) kryo.readClassAndObject( input );
         final Class<?>[] interfaces = kryo.readObject( input, Class[].class );
         final ClassLoader classLoader = kryo.getClassLoader();

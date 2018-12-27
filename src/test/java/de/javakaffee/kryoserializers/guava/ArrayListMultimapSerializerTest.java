@@ -16,6 +16,7 @@ public class ArrayListMultimapSerializerTest extends MultimapSerializerTestBase 
     @BeforeClass
     public void initializeKyroWithSerializer() {
         _kryo = new Kryo();
+        _kryo.setRegistrationRequired(false);
         ArrayListMultimapSerializer.registerSerializers(_kryo);
     }
 

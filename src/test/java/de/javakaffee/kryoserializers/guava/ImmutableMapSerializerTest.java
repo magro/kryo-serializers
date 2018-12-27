@@ -26,7 +26,7 @@ public class ImmutableMapSerializerTest {
     @BeforeTest
     public void setUp() throws Exception {
         _kryo = new Kryo();
-
+        _kryo.setRegistrationRequired(false);
         ImmutableMapSerializer.registerSerializers(_kryo);
     }
 

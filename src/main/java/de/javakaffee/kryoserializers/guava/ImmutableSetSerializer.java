@@ -31,7 +31,7 @@ public class ImmutableSetSerializer extends Serializer<ImmutableSet<Object>> {
     }
 
     @Override
-    public ImmutableSet<Object> read(Kryo kryo, Input input, Class<ImmutableSet<Object>> type) {
+    public ImmutableSet<Object> read(Kryo kryo, Input input, Class<? extends ImmutableSet<Object>> type) {
         final int size = input.readInt(true);
         ImmutableSet.Builder<Object> builder = ImmutableSet.builder();
         for (int i = 0; i < size; ++i) {

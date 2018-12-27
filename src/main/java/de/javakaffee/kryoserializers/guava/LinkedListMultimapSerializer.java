@@ -26,7 +26,7 @@ public class LinkedListMultimapSerializer extends MultimapSerializerBase<Object,
     }
 
     @Override
-    public LinkedListMultimap<Object, Object> read(Kryo kryo, Input input, Class<LinkedListMultimap<Object, Object>> type) {
+    public LinkedListMultimap<Object, Object> read(Kryo kryo, Input input, Class<? extends LinkedListMultimap<Object, Object>> type) {
         final LinkedListMultimap<Object, Object> multimap = LinkedListMultimap.create();
         readMultimap(kryo, input, multimap);
         return multimap;

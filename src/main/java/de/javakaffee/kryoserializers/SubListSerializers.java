@@ -123,7 +123,7 @@ public class SubListSerializers {
         }
 
         @Override
-        public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
+        public List<?> read(final Kryo kryo, final Input input, final Class<? extends List<?>> clazz) {
             kryo.reference(FAKE_REFERENCE);
             final List<?> list = (List<?>) kryo.readClassAndObject(input);
             final int fromIndex = input.readInt(true);
@@ -207,7 +207,7 @@ public class SubListSerializers {
         }
 
         @Override
-        public List<?> read(final Kryo kryo, final Input input, final Class<List<?>> clazz) {
+        public List<?> read(final Kryo kryo, final Input input, final Class<? extends List<?>> clazz) {
             kryo.reference(FAKE_REFERENCE);
             final List<?> list = (List<?>) kryo.readClassAndObject(input);
             final int fromIndex = input.readInt(true);

@@ -29,7 +29,7 @@ public class ImmutableSortedSetSerializer extends Serializer<ImmutableSortedSet<
   }
 
   @Override
-  public ImmutableSortedSet<Object> read(Kryo kryo, Input input, Class<ImmutableSortedSet<Object>> type) {
+  public ImmutableSortedSet<Object> read(Kryo kryo, Input input, Class<? extends ImmutableSortedSet<Object>> type) {
     @SuppressWarnings ("unchecked")
     ImmutableSortedSet.Builder<Object> builder = ImmutableSortedSet.orderedBy((Comparator<Object>)kryo.readClassAndObject (input));
     final int size = input.readInt(true);

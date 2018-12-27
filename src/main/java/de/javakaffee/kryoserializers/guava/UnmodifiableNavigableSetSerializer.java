@@ -55,7 +55,7 @@ public class UnmodifiableNavigableSetSerializer extends Serializer<NavigableSet<
     }
 
     @Override
-    public NavigableSet<?> read(Kryo kryo, Input input, Class<NavigableSet<?>> type) {
+    public NavigableSet<?> read(Kryo kryo, Input input, Class<? extends NavigableSet<?>> type) {
         return Sets.unmodifiableNavigableSet((NavigableSet<?>) kryo.readClassAndObject(input));
     }
 

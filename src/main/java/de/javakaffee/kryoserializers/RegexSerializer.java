@@ -26,7 +26,7 @@ public class RegexSerializer extends Serializer<Pattern> {
     }
 
     @Override
-    public Pattern read(final Kryo kryo, final Input input, final Class<Pattern> patternClass) {
+    public Pattern read(final Kryo kryo, final Input input, final Class<? extends Pattern> patternClass) {
         String regex = input.readString();
         int flags = input.readInt(true);
         return Pattern.compile(regex, flags);

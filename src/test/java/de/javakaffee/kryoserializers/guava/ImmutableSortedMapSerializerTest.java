@@ -24,6 +24,7 @@ public class ImmutableSortedMapSerializerTest {
     @BeforeTest
     public void setUp() throws Exception {
         _kryo = new Kryo();
+        _kryo.setRegistrationRequired(false);
         ImmutableSortedMapSerializer.registerSerializers(_kryo);
     }
 

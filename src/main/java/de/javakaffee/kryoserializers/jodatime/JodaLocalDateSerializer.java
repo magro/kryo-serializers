@@ -67,7 +67,7 @@ public class JodaLocalDateSerializer extends Serializer<LocalDate> {
    }
 
    @Override
-   public LocalDate read(final Kryo kryo, final Input input, final Class<LocalDate> type) {
+   public LocalDate read(final Kryo kryo, final Input input, final Class<? extends LocalDate> type) {
       final int packedYearMonthDay = input.readInt(true);
       final Chronology chronology = IdentifiableChronology.readChronology(input);
       return new LocalDate(packedYearMonthDay / (13 * 32),

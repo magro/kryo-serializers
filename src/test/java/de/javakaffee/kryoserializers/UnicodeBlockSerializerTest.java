@@ -1,19 +1,18 @@
 package de.javakaffee.kryoserializers;
 
-import static de.javakaffee.kryoserializers.KryoTest.deserialize;
-import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Kryo.DefaultInstantiatorStrategy;
-
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import org.objenesis.ObjenesisStd;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.lang.Character.UnicodeBlock;
+
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 
 /**
  * Test for {@link UnicodeBlockSerializer}.
@@ -39,6 +38,7 @@ public class UnicodeBlockSerializerTest {
         final DefaultInstantiatorStrategy instantiatorStrategy = new DefaultInstantiatorStrategy();
         instantiatorStrategy.setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
         kryo.setInstantiatorStrategy(instantiatorStrategy);
+        kryo.register(ThingWithUnicodeBlock.class);
         kryo.register(UnicodeBlock.class, new UnicodeBlockSerializer());
     }
 

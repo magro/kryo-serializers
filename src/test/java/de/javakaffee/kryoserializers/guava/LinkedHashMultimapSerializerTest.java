@@ -15,6 +15,7 @@ public class LinkedHashMultimapSerializerTest extends MultimapSerializerTestBase
     @BeforeClass
     public void initializeKryoWithSerializer() {
         _kryo = new Kryo();
+        _kryo.setRegistrationRequired(false);
         LinkedHashMultimapSerializer.registerSerializers(_kryo);
     }
 

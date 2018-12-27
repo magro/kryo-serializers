@@ -26,7 +26,7 @@ public class ArrayListMultimapSerializer extends MultimapSerializerBase<Object, 
     }
 
     @Override
-    public ArrayListMultimap<Object, Object> read(Kryo kryo, Input input, Class<ArrayListMultimap<Object, Object>> type) {
+    public ArrayListMultimap<Object, Object> read(Kryo kryo, Input input, Class<? extends ArrayListMultimap<Object, Object>> type) {
         final ArrayListMultimap<Object, Object> multimap = ArrayListMultimap.create();
         readMultimap(kryo, input, multimap);
         return multimap;

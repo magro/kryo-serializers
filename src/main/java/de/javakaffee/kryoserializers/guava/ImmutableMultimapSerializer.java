@@ -1,6 +1,7 @@
 package de.javakaffee.kryoserializers.guava;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Registration;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -34,7 +35,7 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
     }
 
     @Override
-    public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input, Class<ImmutableMultimap<Object, Object>> type) {
+    public ImmutableMultimap<Object, Object> read(Kryo kryo, Input input, Class<? extends ImmutableMultimap<Object, Object>> type) {
         final ImmutableMultimap.Builder builder;
         if (type.equals (ImmutableListMultimap.class)) {
             builder = ImmutableMultimap.builder();
@@ -56,6 +57,14 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
         return builder.build();
     }
 
+    /* kryo.getSerializer (invoking kryo.getRegistration) throws an exception if registration is required,
+     * therefore we're getting a potentially existing serializer on another way.
+     */
+    private static Serializer<?> getSerializer(Kryo kryo, Class<?> type) {
+        Registration registration = kryo.getClassResolver().getRegistration(type);
+        return registration != null ? registration.getSerializer() : null;
+    }
+
     /**
      * Creates a new {@link ImmutableMultimapSerializer} and registers its serializer
      * for the several ImmutableMultimap related classes.
@@ -63,10 +72,11 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
      * @param kryo the {@link Kryo} instance to set the serializer on
      */
     public static void registerSerializers(final Kryo kryo) {
+
         // ImmutableMap is used by ImmutableMultimap. However,
         // we already have a separate serializer class for ImmutableMap,
         // ImmutableMapSerializer. If it is not already being used, register it.
-        Serializer immutableMapSerializer = kryo.getSerializer(ImmutableMap.class);
+        Serializer immutableMapSerializer = getSerializer(kryo, ImmutableMap.class);
         if (!(immutableMapSerializer instanceof ImmutableMapSerializer)) {
             ImmutableMapSerializer.registerSerializers(kryo);
         }
@@ -74,7 +84,7 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
         // ImmutableList is used by ImmutableListMultimap. However,
         // we already have a separate serializer class for ImmutableList,
         // ImmutableListSerializer. If it is not already being used, register it.
-        Serializer immutableListSerializer = kryo.getSerializer(ImmutableList.class);
+        Serializer immutableListSerializer = getSerializer(kryo, ImmutableList.class);
         if (!(immutableListSerializer instanceof ImmutableListSerializer)) {
             ImmutableListSerializer.registerSerializers(kryo);
         }
@@ -82,7 +92,7 @@ public class ImmutableMultimapSerializer extends Serializer<ImmutableMultimap<Ob
         // ImmutableSet is used by ImmutableSetMultimap. However,
         // we already have a separate serializer class for ImmutableSet,
         // ImmutableSetSerializer. If it is not already being used, register it.
-        Serializer immutableSetSerializer = kryo.getSerializer(ImmutableSet.class);
+        Serializer immutableSetSerializer = getSerializer(kryo, ImmutableSet.class);
         if (!(immutableSetSerializer instanceof ImmutableSetSerializer)) {
             ImmutableSetSerializer.registerSerializers(kryo);
         }

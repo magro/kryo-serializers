@@ -37,7 +37,7 @@ public class CollectionsEmptyMapSerializer extends Serializer<Map<?, ?>> {
     }
 
     @Override
-    public Map<?, ?> read(final Kryo kryo, final Input input, final Class<Map<?, ?>> type) {
+    public Map<?, ?> read(final Kryo kryo, final Input input, final Class<? extends Map<?, ?>> type) {
         return Collections.EMPTY_MAP;
     }
 

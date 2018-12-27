@@ -55,7 +55,7 @@ public class DateSerializer extends Serializer<Date> {
      * {@inheritDoc}
      */
     @Override
-    public Date read(final Kryo kryo, final Input input, final Class<Date> type) {
+    public Date read(final Kryo kryo, final Input input, final Class<? extends Date> type) {
         try {
             return _constructor.newInstance(input.readLong(true));
         } catch (final Exception e) {

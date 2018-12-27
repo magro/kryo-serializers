@@ -56,7 +56,7 @@ public class JodaIntervalSerializer extends Serializer<Interval> {
     }
 
     @Override
-    public Interval read(final Kryo kryo, final Input input, final Class<Interval> type) {
+    public Interval read(final Kryo kryo, final Input input, final Class<? extends Interval> type) {
         
         long startMillis = input.readLong(true);
         long endMillis = input.readLong(true);

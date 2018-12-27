@@ -29,7 +29,7 @@ public class ListSerializer extends Serializer<List> {
     }
 
     @Override
-    public List<Object> read(Kryo kryo, Input input, Class<List> aClass) {
+    public List<Object> read(Kryo kryo, Input input, Class<? extends List> aClass) {
         final int size = input.readInt(true);
         final Object[] list = new Object[size];
         for (int i = 0; i < size; ++i) {

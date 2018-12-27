@@ -59,7 +59,7 @@ public class JodaLocalDateTimeSerializer extends Serializer<LocalDateTime> {
    public JodaLocalDateTimeSerializer() { setImmutable(true); }
 
    @Override
-   public LocalDateTime read(Kryo kryo, Input input, Class<LocalDateTime> type) {
+   public LocalDateTime read(Kryo kryo, Input input, Class<? extends LocalDateTime> type) {
       final long packedLocalDateTime = input.readLong(true);
       final int packedYearMonthDay = (int)(packedLocalDateTime / 86400000);
       final int millisOfDay = (int)(packedLocalDateTime % 86400000);
