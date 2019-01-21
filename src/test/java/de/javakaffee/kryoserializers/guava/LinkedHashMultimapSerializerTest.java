@@ -30,7 +30,7 @@ public class LinkedHashMultimapSerializerTest extends MultimapSerializerTestBase
 
     @Test(dataProvider = "Google Guava multimaps")
     public void testMultimapCopy(Object[] contents) {
-        final LinkedHashMultimap<Comparable, Comparable> multimap = LinkedHashMultimap.create().create();
+        final LinkedHashMultimap<Comparable, Comparable> multimap = LinkedHashMultimap.create();
         populateMultimap(multimap, contents);
 
         LinkedHashMultimap<Comparable, Comparable> copy = _kryo.copy(multimap);
