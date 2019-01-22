@@ -36,15 +36,19 @@ A project that provides [kryo](https://github.com/EsotericSoftware/kryo) (v2, v3
 * dexx/SetSerializer - serializer for dexx collecttions' Set
 * dexx/MapSerializer - serializer for dexx collections' Map
 * guava/ArrayListMultimapSerializer - serializer for guava-libraries' ArrayListMultimap
+* guava/ArrayTableSerializer - serializer for guava-libraries' ArrayTable
+* guava/HashBasedTableSerializer - serializer for guava-libraries' HashBasedTable
 * guava/HashMultimapSerializer -- serializer for guava-libraries' HashMultimap
 * guava/ImmutableListSerializer - serializer for guava-libraries' ImmutableList
 * guava/ImmutableSetSerializer - serializer for guava-libraries' ImmutableSet
 * guava/ImmutableMapSerializer - serializer for guava-libraries' ImmutableMap
 * guava/ImmutableMultimapSerializer - serializer for guava-libraries' ImmutableMultimap
 * guava/ImmutableSortedSetSerializer - serializer for guava-libraries' ImmutableSortedSet
+* guava/ImmutableTableSerializer - serializer for guava-libraries' ImmutableTable
 * guava/LinkedHashMultimapSerializer - serializer for guava-libraries' LinkedHashMultimap
 * guava/LinkedListMultimapSerializer - serializer for guava-libraries' LinkedListMultimap
 * guava/ReverseListSerializer - serializer for guava-libraries' Lists.ReverseList / Lists.reverse
+* guava/TreeBasedTableSerializer - serializer for guava-libraries' TreeBasedTable
 * guava/TreeMultimapSerializer - serializer for guava-libraries' TreeMultimap
 * guava/UnmodifiableNavigableSetSerializer - serializer for guava-libraries' UnmodifiableNavigableSet
 * jodatime/JodaDateTimeSerializer - serializer for joda's DateTime
@@ -101,19 +105,23 @@ kryo.register( LocalDateTime.class, new JodaLocalTimeSerializer() );
 kryo.register( SampleProtoA.class, new ProtobufSerializer() ); // or override Kryo.getDefaultSerializer as shown below
 // wicket
 kryo.register( MiniMap.class, new MiniMapSerializer() );
-// guava ImmutableList, ImmutableSet, ImmutableMap, ImmutableMultimap, ReverseList, UnmodifiableNavigableSet
+// guava ImmutableList, ImmutableSet, ImmutableMap, ImmutableMultimap, ImmutableTable, ReverseList, UnmodifiableNavigableSet
 ImmutableListSerializer.registerSerializers( kryo );
 ImmutableSetSerializer.registerSerializers( kryo );
 ImmutableMapSerializer.registerSerializers( kryo );
 ImmutableMultimapSerializer.registerSerializers( kryo );
+ImmutableTableSerializer.registerSerializers( kryo );
 ReverseListSerializer.registerSerializers( kryo );
 UnmodifiableNavigableSetSerializer.registerSerializers( kryo );
-// guava ArrayListMultimap, HashMultimap, LinkedHashMultimap, LinkedListMultimap, TreeMultimap
+// guava ArrayListMultimap, HashMultimap, LinkedHashMultimap, LinkedListMultimap, TreeMultimap, ArrayTable, HashBasedTable, TreeBasedTable
 ArrayListMultimapSerializer.registerSerializers( kryo );
 HashMultimapSerializer.registerSerializers( kryo );
 LinkedHashMultimapSerializer.registerSerializers( kryo );
 LinkedListMultimapSerializer.registerSerializers( kryo );
 TreeMultimapSerializer.registerSerializers( kryo );
+ArrayTableSerializer.registerSerializers( kryo );
+HashBasedTableSerializer.registerSerializers( kryo );
+TreeBasedTableSerializer.registerSerializers( kryo );
 ```
 
 The following code snippet shows how to use the `KryoReflectionFactorySupport` (can only be used with sun/oracle jdk!) and how other serializers are registered via the `getDefaultSerializer` lookup. If you don't want to use the `KryoReflectionFactorySupport` you can override the `getDefaultSerializer` method for your `new Kryo()` instance.
