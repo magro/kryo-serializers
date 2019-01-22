@@ -6,7 +6,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.google.common.collect.Table;
 
-import java.util.Set;
+import java.util.Map;
 
 
 public abstract class TableSerializerBase<R, C, V, T extends Table<R, C, V>> extends Serializer<T> {
@@ -16,12 +16,17 @@ public abstract class TableSerializerBase<R, C, V, T extends Table<R, C, V>> ext
     }
 
     public void writeTable(Kryo kryo, Output output, Table<R, C, V> table) {
-        Set<Table.Cell<R, C, V>> cells = table.cellSet();
-        output.writeInt(cells.size(), true);
-        for (Table.Cell<R, C, V> cell : cells) {
-            kryo.writeClassAndObject(output, cell.getRowKey());
-            kryo.writeClassAndObject(output, cell.getColumnKey());
-            kryo.writeClassAndObject(output, cell.getValue());
+        Map<R, Map<C, V>> rowMap = table.rowMap();
+        output.writeInt(rowMap.size(), true);
+        for (R r : rowMap.keySet()) {
+            kryo.writeClassAndObject(output, r);
+            Map<C, V> colMap = rowMap.get(r);
+            output.writeInt(colMap.size(), true);
+            for (C c : colMap.keySet()) {
+                V v = colMap.get(c);
+                kryo.writeClassAndObject(output, c);
+                kryo.writeClassAndObject(output, v);
+            }
         }
     }
 
@@ -35,12 +40,15 @@ public abstract class TableSerializerBase<R, C, V, T extends Table<R, C, V>> ext
     }
 
     public void readTable(Kryo kryo, Input input, CellConsumer<R, C, V> cellConsumer) {
-        final int size = input.readInt(true);
-        for (int i = 0; i < size; ++i) {
-            R rowKey = (R) kryo.readClassAndObject(input);
-            C colKey = (C) kryo.readClassAndObject(input);
-            V value = (V) kryo.readClassAndObject(input);
-            cellConsumer.accept(rowKey, colKey, value);
+        int rows = input.readInt(true);
+        for (int i = 0; i < rows; i++) {
+            R r = (R) kryo.readClassAndObject(input);
+            int cols = input.readInt(true);
+            for (int j = 0; j < cols; j++) {
+                C c = (C) kryo.readClassAndObject(input);
+                V v = (V) kryo.readClassAndObject(input);
+                cellConsumer.accept(r, c, v);
+            }
         }
     }
 
