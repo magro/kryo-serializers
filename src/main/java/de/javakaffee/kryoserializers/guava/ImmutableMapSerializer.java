@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Maps;
 
 import java.util.EnumMap;
@@ -48,6 +49,16 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
 
         final ImmutableMapSerializer serializer = new ImmutableMapSerializer();
 
+        // ImmutableMap (abstract class)
+        //  +- EmptyImmutableBiMap
+        //  +- SingletonImmutableBiMap
+        //  +- RegularImmutableMap
+        //  +- ImmutableEnumMap
+        //  +- RowMap from DenseImmutableTable
+        //  +- Row from DenseImmutableTable
+        //  +- ColumnMap from DenseImmutableTable
+        //  +- Column from DenseImmutableTable
+
         kryo.register(ImmutableMap.class, serializer);
         kryo.register(ImmutableMap.of().getClass(), serializer);
 
@@ -57,12 +68,22 @@ public class ImmutableMapSerializer extends Serializer<ImmutableMap<Object, ? ex
         kryo.register(ImmutableMap.of(o1, o1).getClass(), serializer);
         kryo.register(ImmutableMap.of(o1, o1, o2, o2).getClass(), serializer);
 
-        Map<DummyEnum,Object> enumMap = new EnumMap<DummyEnum, Object>(DummyEnum.class);
+        Map<DummyEnum, Object> enumMap = new EnumMap<DummyEnum, Object>(DummyEnum.class);
         for (DummyEnum e : DummyEnum.values()) {
             enumMap.put(e, o1);
         }
 
         kryo.register(ImmutableMap.copyOf(enumMap).getClass(), serializer);
+
+        ImmutableTable<Object, Object, Object> denseImmutableTable = ImmutableTable.builder()
+                .put("a", 1, 1)
+                .put("b", 1, 1)
+                .build();
+
+        kryo.register(denseImmutableTable.rowMap().getClass(), serializer); // RowMap
+        kryo.register(denseImmutableTable.rowMap().get("a").getClass(), serializer); // Row
+        kryo.register(denseImmutableTable.columnMap().getClass(), serializer); // ColumnMap
+        kryo.register(denseImmutableTable.columnMap().get(1).getClass(), serializer); // Column
     }
 
     private enum DummyEnum {
