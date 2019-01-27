@@ -19,6 +19,7 @@ package de.javakaffee.kryoserializers;
 import java.lang.reflect.Field;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -76,27 +77,25 @@ public class SubListSerializers {
      */
     public static Kryo addDefaultSerializers(Kryo kryo) {
         ArrayListSubListSerializer.addDefaultSerializer(kryo);
+        AbstractListSubListSerializer.addDefaultSerializer(kryo);
         JavaUtilSubListSerializer.addDefaultSerializer(kryo);
         return kryo;
     }
 
     /**
-     * Supports sublists created via {@link ArrayList#subList(int, int)} since java7 (oracle jdk,
-     * represented by <code>java.util.ArrayList$SubList</code>).
+     * Supports sublists created via {@link ArrayList#subList(int, int)} since java7 and {@link LinkedList#subList(int, int)} since java9 (openjdk).
      */
-    public static class ArrayListSubListSerializer extends Serializer<List<?>> {
-
-        public static final Class<?> SUBLIST_CLASS = SubListSerializers.getClassOrNull("java.util.ArrayList$SubList");
+    private static class SubListSerializer extends Serializer<List<?>> {
 
         private Field _parentField;
         private Field _parentOffsetField;
         private Field _sizeField;
 
-        public ArrayListSubListSerializer() {
+        public SubListSerializer(String subListClassName) {
             try {
-                final Class<?> clazz = Class.forName("java.util.ArrayList$SubList");
-                _parentField = clazz.getDeclaredField("parent");
-                _parentOffsetField = clazz.getDeclaredField( "parentOffset" );
+                final Class<?> clazz = Class.forName(subListClassName);
+                _parentField = getParentField(clazz);
+                _parentOffsetField = getOffsetField(clazz);
                 _sizeField = clazz.getDeclaredField( "size" );
                 _parentField.setAccessible( true );
                 _parentOffsetField.setAccessible( true );
@@ -106,20 +105,23 @@ public class SubListSerializers {
             }
         }
 
-        /**
-         * Can be used to determine, if the given type can be handled by this serializer.
-         * 
-         * @param type
-         *            the class to check.
-         * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
-         */
-        public static boolean canSerialize(final Class<?> type) {
-            return SUBLIST_CLASS != null && SUBLIST_CLASS.isAssignableFrom(type);
+        private static Field getParentField(Class clazz) throws NoSuchFieldException {
+            try {
+                // java 9+
+                return clazz.getDeclaredField("root");
+            } catch(NoSuchFieldException e) {
+                return clazz.getDeclaredField("parent");
+            }
         }
 
-        public static Kryo addDefaultSerializer(Kryo kryo) {
-            if(SUBLIST_CLASS != null) kryo.addDefaultSerializer(SUBLIST_CLASS, new ArrayListSubListSerializer());
-            return kryo;
+        private static Field getOffsetField(Class<?> clazz) throws NoSuchFieldException {
+            try {
+                // up to jdk8 (which also has an "offset" field (we don't need) - therefore we check "parentOffset" first
+                return clazz.getDeclaredField( "parentOffset" );
+            } catch (NoSuchFieldException e) {
+                // jdk9+ only has "offset" which is the parent offset
+                return clazz.getDeclaredField( "offset" );
+            }
         }
 
         @Override
@@ -161,6 +163,90 @@ public class SubListSerializers {
             } catch(final Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    /**
+     * Supports sublists created via {@link ArrayList#subList(int, int)} since java7 (oracle jdk,
+     * represented by <code>java.util.ArrayList$SubList</code>).
+     */
+    public static class ArrayListSubListSerializer extends Serializer<List<?>> {
+
+        public static final Class<?> SUBLIST_CLASS = SubListSerializers.getClassOrNull("java.util.ArrayList$SubList");
+
+        private final SubListSerializer delegate = new SubListSerializer("java.util.ArrayList$SubList");
+
+        /**
+         * Can be used to determine, if the given type can be handled by this serializer.
+         * 
+         * @param type
+         *            the class to check.
+         * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
+         */
+        public static boolean canSerialize(final Class<?> type) {
+            return SUBLIST_CLASS != null && SUBLIST_CLASS.isAssignableFrom(type);
+        }
+
+        public static Kryo addDefaultSerializer(Kryo kryo) {
+            if(SUBLIST_CLASS != null) kryo.addDefaultSerializer(SUBLIST_CLASS, new ArrayListSubListSerializer());
+            return kryo;
+        }
+
+        @Override
+        public List<?> read(final Kryo kryo, final Input input, final Class<? extends List<?>> clazz) {
+            return delegate.read(kryo, input, clazz);
+        }
+
+        @Override
+        public void write(final Kryo kryo, final Output output, final List<?> obj) {
+            delegate.write(kryo, output, obj);
+        }
+
+        @Override
+        public List<?> copy(final Kryo kryo, final List<?> original) {
+            return delegate.copy(kryo, original);
+        }
+    }
+
+    /**
+     * Supports sublists created via {@link LinkedList#subList(int, int)} since java9 (oracle jdk,
+     * represented by <code>java.util.AbstractList$SubList</code>).
+     */
+    public static class AbstractListSubListSerializer extends Serializer<List<?>> {
+
+        public static final Class<?> SUBLIST_CLASS = SubListSerializers.getClassOrNull("java.util.AbstractList$SubList");
+
+        private final SubListSerializer delegate = new SubListSerializer("java.util.AbstractList$SubList");
+
+        /**
+         * Can be used to determine, if the given type can be handled by this serializer.
+         *
+         * @param type
+         *            the class to check.
+         * @return <code>true</code> if the given class can be serialized/deserialized by this serializer.
+         */
+        public static boolean canSerialize(final Class<?> type) {
+            return SUBLIST_CLASS != null && SUBLIST_CLASS.isAssignableFrom(type);
+        }
+
+        public static Kryo addDefaultSerializer(Kryo kryo) {
+            if(SUBLIST_CLASS != null) kryo.addDefaultSerializer(SUBLIST_CLASS, new AbstractListSubListSerializer());
+            return kryo;
+        }
+
+        @Override
+        public List<?> read(final Kryo kryo, final Input input, final Class<? extends List<?>> clazz) {
+            return delegate.read(kryo, input, clazz);
+        }
+
+        @Override
+        public void write(final Kryo kryo, final Output output, final List<?> obj) {
+            delegate.write(kryo, output, obj);
+        }
+
+        @Override
+        public List<?> copy(final Kryo kryo, final List<?> original) {
+            return delegate.copy(kryo, original);
         }
     }
 

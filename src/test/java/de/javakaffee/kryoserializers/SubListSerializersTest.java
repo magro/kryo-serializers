@@ -16,22 +16,20 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static de.javakaffee.kryoserializers.KryoTest.deserialize;
-import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.assertEquals;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
-import org.objenesis.strategy.StdInstantiatorStrategy;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test for {@link SubListSerializers}.
