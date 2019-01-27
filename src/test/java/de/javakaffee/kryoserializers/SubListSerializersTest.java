@@ -16,20 +16,20 @@
  */
 package de.javakaffee.kryoserializers;
 
-import static de.javakaffee.kryoserializers.KryoTest.deserialize;
-import static de.javakaffee.kryoserializers.KryoTest.serialize;
-import static org.testng.Assert.assertEquals;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
+import static de.javakaffee.kryoserializers.KryoTest.deserialize;
+import static de.javakaffee.kryoserializers.KryoTest.serialize;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test for {@link SubListSerializers}.
@@ -42,20 +42,12 @@ public class SubListSerializersTest {
 
     @BeforeClass
     public void beforeClass() {
-        _kryo = new KryoReflectionFactorySupport() {
-
-            @Override
-            @SuppressWarnings("rawtypes")
-            public Serializer<?> getDefaultSerializer(final Class type) {
-                final Serializer<List<?>> subListSerializer = SubListSerializers.createFor(type);
-                if ( subListSerializer != null ) {
-                    return subListSerializer;
-                }
-                return super.getDefaultSerializer(type);
-            }
-
-        };
+        _kryo = new Kryo();
         _kryo.setRegistrationRequired(false);
+        SubListSerializers.addDefaultSerializers(_kryo);
+        final DefaultInstantiatorStrategy instantiatorStrategy = new DefaultInstantiatorStrategy();
+        instantiatorStrategy.setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+        _kryo.setInstantiatorStrategy(instantiatorStrategy);
     }
 
     private void doTest(final List<TestEnum> subList) {
