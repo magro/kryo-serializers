@@ -34,7 +34,7 @@ public abstract class MultimapSerializerBase<K, V, T extends Multimap<K, V>> ext
     protected abstract Multimap createCopy(Kryo kryo, Multimap original);
 
     @Override
-    public Multimap copy(final Kryo kryo, final Multimap original) {
+    public T copy(final Kryo kryo, final Multimap original) {
         Multimap copy = createCopy(kryo, original);
         Iterator<Map.Entry> iter = original.entries().iterator();
 
@@ -43,6 +43,6 @@ public abstract class MultimapSerializerBase<K, V, T extends Multimap<K, V>> ext
             copy.put(kryo.copy(entry.getKey()), kryo.copy(entry.getValue()));
         }
 
-        return copy;
+        return (T) copy;
     }
 }

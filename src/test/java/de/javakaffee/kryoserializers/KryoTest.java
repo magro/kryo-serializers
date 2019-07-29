@@ -128,6 +128,7 @@ public class KryoTest {
         _kryo.register( UUID.class, new UUIDSerializer() );
         _kryo.register( GregorianCalendar.class, new GregorianCalendarSerializer() );
         _kryo.register( InvocationHandler.class, new JdkProxySerializer() );
+        _kryo.setReferences(true);
         UnmodifiableCollectionsSerializer.registerSerializers( _kryo );
         SynchronizedCollectionsSerializer.registerSerializers( _kryo );
     }

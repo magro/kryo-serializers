@@ -49,7 +49,6 @@ public class FieldAnnotationAwareSerializerTest {
     public void testExcludeFields() throws Exception {
 
         final Kryo kryo = new Kryo();
-        @SuppressWarnings("unchecked")
 		final SerializerFactory disregardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
                 Arrays.<Class<? extends Annotation>>asList(CustomMark.class), true);
         kryo.addDefaultSerializer(CustomBean.class, disregardingSerializerFactory);
@@ -74,7 +73,6 @@ public class FieldAnnotationAwareSerializerTest {
     public void testIncludeFields() throws Exception {
 
         final Kryo kryo = new Kryo();
-        @SuppressWarnings("unchecked")
 		final SerializerFactory regardingSerializerFactory = new FieldAnnotationAwareSerializer.Factory(
                 Arrays.<Class<? extends Annotation>>asList(CustomMark.class), false);
         kryo.addDefaultSerializer(CustomBean.class, regardingSerializerFactory);
