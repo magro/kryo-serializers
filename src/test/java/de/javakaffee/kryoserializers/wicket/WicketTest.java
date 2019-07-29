@@ -67,7 +67,7 @@ public class WicketTest {
             
         };
         _kryo.setRegistrationRequired( false );
-        
+        _kryo.setReferences(true);
         final WebApplication application = new WebApplication() {
             
             @Override
