@@ -100,7 +100,7 @@ SetSerializer.registerSerializers( kryo );
 kryo.register( DateTime.class, new JodaDateTimeSerializer() );
 kryo.register( LocalDate.class, new JodaLocalDateSerializer() );
 kryo.register( LocalDateTime.class, new JodaLocalDateTimeSerializer() );
-kryo.register( LocalDateTime.class, new JodaLocalTimeSerializer() );
+kryo.register( LocalTime.class, new JodaLocalTimeSerializer() );
 // protobuf
 kryo.register( SampleProtoA.class, new ProtobufSerializer() ); // or override Kryo.getDefaultSerializer as shown below
 // wicket
