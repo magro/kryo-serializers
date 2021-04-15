@@ -232,6 +232,22 @@
 			<version>0.6</version>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.amazon.ion</groupId>
+			<artifactId>ion-java</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-ion</artifactId>
+			<version>2.11.1</version>
+		</dependency>
+		<!-- Required for getting all subclasses of IonValue -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.12</version>
+		</dependency>
 
 		<!-- Testing -->
 		<dependency>
