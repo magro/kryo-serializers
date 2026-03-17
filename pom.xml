@@ -14,7 +14,7 @@
 	<packaging>bundle</packaging>
 	<name>kryo serializers</name>
 	<description>
-    Additional kryo (http://kryo.googlecode.com) serializers for standard jdk types (e.g. currency, jdk proxies) and some for external libs (e.g. joda time, cglib proxies, wicket).
+    Additional kryo (https://kryo.googlecode.com) serializers for standard jdk types (e.g. currency, jdk proxies) and some for external libs (e.g. joda time, cglib proxies, wicket).
     </description>
 	<url>https://github.com/magro/kryo-serializers</url>
 
@@ -29,7 +29,7 @@
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -137,7 +137,7 @@
 						<inherited>true</inherited>
 						<configuration>
 							<links>
-								<link>http://download.oracle.com/javase/7/docs/api/</link>
+								<link>https://download.oracle.com/javase/7/docs/api/</link>
 							</links>
 						</configuration>
 					</reportSet>
@@ -276,7 +276,7 @@
 		<repository>
 			<id>jcenter</id>
 			<name>bintray</name>
-			<url>http://jcenter.bintray.com</url>
+			<url>https://jcenter.bintray.com</url>
 		</repository>
 
 		<!--
